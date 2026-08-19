@@ -9,11 +9,11 @@
 ## Test Server
 
 ```bash
-npm run dev -- --port 5000  # Start test server
-npx playwright test         # Run tests
+npx playwright test   # webServer가 포트 5006 테스트 서버를 자동 기동
 ```
 
-**Important:** Test server uses port 5000, dev server uses 3874.
+**Important:** 테스트 서버는 5006 (playwright.config.ts `webServer`가 자동
+기동 — 수동으로 띄우지 않는다), 개발 서버는 3874.
 
 ## Screenshot Storage
 
@@ -29,7 +29,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Feature Name", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("http://localhost:5000");
+    await page.goto("/"); // baseURL 상대경로 — 포트 하드코딩 금지
   });
 
   test("should do something", async ({ page }) => {
