@@ -469,6 +469,19 @@ export function TextEditorOverlay() {
         ref={outerContainerRef}
         style={style}
         tabIndex={-1}
+        onKeyDown={(e) => {
+          // Escape = 편집 종료 (editors.md 계약). 전역 단축키 핸들러는
+          // contenteditable 가드로 이 키를 받지 못하므로 여기서 처리한다.
+          // mention 팝업이 열려 있으면 Tiptap 쪽 Escape(팝업 닫기)에 양보.
+          if (
+            e.key === "Escape" &&
+            !document.querySelector("[data-tippy-root]")
+          ) {
+            e.stopPropagation();
+            setActiveEditor(null);
+            setEditingTextId(null);
+          }
+        }}
         onMouseDown={(e) => {
           // 클릭 시 에디터에 포커스 유지 (blur 방지)
           e.stopPropagation();

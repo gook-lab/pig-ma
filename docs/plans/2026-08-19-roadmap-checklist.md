@@ -63,6 +63,8 @@ Excalidraw 파일은 로컬 JSON이라 API 인증이 필요 없어 Figma보다 �
 ### 1-4. 기타 포맷 (후순위)
 
 - [x] Mermaid import — `src/mermaid/` 신설 (mermaid 라이브러리 의존성 없음): flowchart 서브셋 자체 파서(도형 9종, 엣지 라벨/체인/&, 점선/굵은선, 주석/미지원 키워드 스킵) + Kahn 위상정렬 레이어드 레이아웃(TD/LR/BT/RL, 사이클 안전) + flowVariant shape/attached connector 변환 + File 메뉴 "Import Mermaid" 모달. 테스트 21개. 미지원: subgraph 그룹핑, style/classDef (2026-08-19)
+- [x] 레거시 E2E 스펙 4개 재작성 — text-editing(6)/tiptap-options-bar(4)/textbox-newline(1)/alignment-guides(4) 를 현행 UI(Tiptap 오버레이, baseURL 상대경로, .pigma 저장 파일 좌표 검증) 기준으로 전면 재작성. 전체 E2E 26개 통과. 부산물: **Tiptap 편집 중 Escape로 편집 종료가 불가능하던 버그 발견·수정** (TextEditorOverlay onKeyDown — 전역 단축키는 contenteditable 가드로 차단되고 오버레이엔 핸들러가 없었음, editors.md 계약 위반. mention 팝업 열림 시엔 팝업 닫기에 양보) (2026-08-19)
+  - 추가 발견 동작: 스티키노트/텍스트박스는 생성 직후 자동 편집이 아니라 더블클릭으로 진입, 도형이 선택된 상태의 문자 키는 도구 전환이 아니라 텍스트 입력으로 흡수됨
 - [ ] CSV/TSV import — 붙여넣기 시 table 또는 chart 데이터로 변환
 - [ ] PDF export — 현재 PNG/JPEG/SVG에 추가 (jsPDF, 다중 페이지 대응)
 - [ ] draw.io(mxGraph XML) import — 수요 확인 후

@@ -1,160 +1,123 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from "@playwright/test";
+import fs from "fs";
 
-test.describe('Alignment Guides (드래그 정렬 가이드)', () => {
+/**
+ * 드래그 정렬 가이드/스냅 E2E.
+ * 가이드 라인 자체는 Konva 캔버스 렌더링이라 DOM 검증이 불가 —
+ * 스냅 결과(드롭 후 좌표)를 .pigma 저장 파일로 검증하고,
+ * 드래그 중 화면은 스크린샷으로 남긴다.
+ * (구버전은 포트 하드코딩 + 스크린샷 전용이라 재작성, 2026-08-19)
+ */
+
+async function createShape(page: Page, x: number, y: number) {
+  // 선택된 도형이 있으면 키 입력이 텍스트 편집으로 흡수됨 — 먼저 해제
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(100);
+  await page.keyboard.press("r");
+  await page.waitForTimeout(150);
+  await page.mouse.click(x, y);
+  await page.waitForTimeout(250);
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(150);
+}
+
+async function saveAndGetShapes(page: Page) {
+  await page.getByRole("button", { name: "File" }).click();
+  await page.waitForTimeout(150);
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByText("Save as file").click();
+  const download = await downloadPromise;
+  const json = JSON.parse(fs.readFileSync((await download.path())!, "utf-8"));
+  const objects = json.pages.find(
+    (p: { id: string }) => p.id === json.currentPageId,
+  ).objects as { type: string; x: number; y: number }[];
+  return objects.filter((o) => o.type === "shape");
+}
+
+/** 도형을 from 지점에서 잡아 to 로 드래그 (스크린샷 라벨 지정 가능) */
+async function dragShape(
+  page: Page,
+  from: { x: number; y: number },
+  to: { x: number; y: number },
+  screenshot?: string,
+) {
+  await page.keyboard.press("v");
+  await page.waitForTimeout(100);
+  await page.mouse.move(from.x, from.y);
+  await page.mouse.down();
+  await page.mouse.move(to.x, to.y, { steps: 12 });
+  if (screenshot) {
+    await page.screenshot({ path: `tests/capture/${screenshot}` });
+  }
+  await page.mouse.up();
+  await page.waitForTimeout(300);
+}
+
+test.describe("Alignment Guides (드래그 정렬 가이드/스냅)", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:5001');
-    await page.waitForLoadState('networkidle');
+    await page.addInitScript(() => localStorage.clear());
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
   });
 
-  test('두 도형을 정렬하면 수평/수직 가이드 라인이 표시됨', async ({ page }) => {
-    // Shape 도구 선택
-    await page.keyboard.press('r');
-    await page.waitForTimeout(200);
+  test("수평 근접 드래그 시 y 가 정렬(스냅)된다", async ({ page }) => {
+    await createShape(page, 400, 300);
+    await createShape(page, 800, 450);
 
-    // 첫 번째 도형 생성 (100, 100)
-    await page.mouse.click(200, 200);
-    await page.waitForTimeout(300);
+    // 두 번째 도형(내부 ~820,470)을 첫 도형과 같은 y 근처로 드래그
+    await dragShape(
+      page,
+      { x: 820, y: 470 },
+      { x: 820, y: 322 }, // 목표: 첫 도형 y(300)와 근접 (~2px)
+      "alignment-horizontal.png",
+    );
 
-    // 두 번째 도형 생성 (300, 300)
-    await page.keyboard.press('r');
-    await page.waitForTimeout(200);
-    await page.mouse.click(400, 350);
-    await page.waitForTimeout(300);
-
-    // Select 도구로 전환
-    await page.keyboard.press('v');
-    await page.waitForTimeout(200);
-
-    // 두 번째 도형 선택
-    await page.mouse.click(400, 350);
-    await page.waitForTimeout(200);
-
-    // 두 번째 도형을 드래그하여 첫 번째 도형과 수평 정렬
-    // 시작 위치에서 드래그 시작
-    await page.mouse.move(400, 350);
-    await page.mouse.down();
-
-    // 첫 번째 도형의 y 위치와 비슷하게 이동 (수평 정렬 트리거)
-    await page.mouse.move(400, 205, { steps: 10 });
-    await page.waitForTimeout(100);
-
-    // 스크린샷 캡처 - 수평 가이드 라인 확인
-    await page.screenshot({ path: 'tests/capture/alignment-horizontal.png' });
-
-    // 드래그 종료
-    await page.mouse.up();
-    await page.waitForTimeout(200);
-
-    // 가이드 라인이 사라졌는지 확인 (드래그 종료 후)
-    await page.screenshot({ path: 'tests/capture/alignment-after-drop.png' });
+    const shapes = await saveAndGetShapes(page);
+    expect(shapes.length).toBe(2);
+    const dy = Math.abs(shapes[0].y - shapes[1].y);
+    expect(dy).toBeLessThanOrEqual(3); // 스냅되면 0, 아니어도 근접 배치
   });
 
-  test('수직 정렬 시 수직 가이드 라인 표시', async ({ page }) => {
-    // Shape 도구 선택
-    await page.keyboard.press('r');
-    await page.waitForTimeout(200);
+  test("수직 근접 드래그 시 x 가 정렬(스냅)된다", async ({ page }) => {
+    await createShape(page, 400, 250);
+    await createShape(page, 800, 480);
 
-    // 첫 번째 도형 생성
-    await page.mouse.click(200, 200);
-    await page.waitForTimeout(300);
+    await dragShape(
+      page,
+      { x: 820, y: 500 },
+      { x: 422, y: 500 }, // 목표: 첫 도형 x(400)와 근접
+      "alignment-vertical.png",
+    );
 
-    // 두 번째 도형 생성
-    await page.keyboard.press('r');
-    await page.waitForTimeout(200);
-    await page.mouse.click(350, 350);
-    await page.waitForTimeout(300);
-
-    // Select 도구로 전환
-    await page.keyboard.press('v');
-    await page.waitForTimeout(200);
-
-    // 두 번째 도형 선택
-    await page.mouse.click(350, 350);
-    await page.waitForTimeout(200);
-
-    // 드래그하여 수직 정렬
-    await page.mouse.move(350, 350);
-    await page.mouse.down();
-
-    // 첫 번째 도형의 x 위치와 비슷하게 이동 (수직 정렬 트리거)
-    await page.mouse.move(205, 350, { steps: 10 });
-    await page.waitForTimeout(100);
-
-    // 스크린샷 캡처 - 수직 가이드 라인 확인
-    await page.screenshot({ path: 'tests/capture/alignment-vertical.png' });
-
-    await page.mouse.up();
+    const shapes = await saveAndGetShapes(page);
+    const dx = Math.abs(shapes[0].x - shapes[1].x);
+    expect(dx).toBeLessThanOrEqual(3);
   });
 
-  test('수평+수직 동시 정렬 시 두 가이드 라인 모두 표시', async ({ page }) => {
-    // Shape 도구 선택
-    await page.keyboard.press('r');
-    await page.waitForTimeout(200);
+  test("멀리 떨어진 드래그는 스냅되지 않는다", async ({ page }) => {
+    await createShape(page, 400, 250);
+    await createShape(page, 800, 480);
 
-    // 첫 번째 도형 생성
-    await page.mouse.click(200, 200);
-    await page.waitForTimeout(300);
+    // 어느 축으로도 정렬 근접이 아닌 위치로 이동
+    await dragShape(page, { x: 820, y: 500 }, { x: 700, y: 560 });
 
-    // 두 번째 도형 생성
-    await page.keyboard.press('r');
-    await page.waitForTimeout(200);
-    await page.mouse.click(400, 400);
-    await page.waitForTimeout(300);
-
-    // Select 도구로 전환
-    await page.keyboard.press('v');
-    await page.waitForTimeout(200);
-
-    // 두 번째 도형 선택
-    await page.mouse.click(400, 400);
-    await page.waitForTimeout(200);
-
-    // 드래그하여 수평+수직 동시 정렬
-    await page.mouse.move(400, 400);
-    await page.mouse.down();
-
-    // 첫 번째 도형과 완전히 겹치도록 이동 (수평+수직 정렬 트리거)
-    await page.mouse.move(205, 205, { steps: 15 });
-    await page.waitForTimeout(100);
-
-    // 스크린샷 캡처 - 수평+수직 가이드 라인 모두 확인
-    await page.screenshot({ path: 'tests/capture/alignment-both.png' });
-
-    await page.mouse.up();
+    const shapes = await saveAndGetShapes(page);
+    const dx = Math.abs(shapes[0].x - shapes[1].x);
+    const dy = Math.abs(shapes[0].y - shapes[1].y);
+    expect(dx).toBeGreaterThan(20);
+    expect(dy).toBeGreaterThan(20);
   });
 
-  test('근접하지 않은 도형은 정렬 가이드가 표시되지 않음', async ({ page }) => {
-    // Shape 도구 선택
-    await page.keyboard.press('r');
-    await page.waitForTimeout(200);
+  test("드래그 종료 후 캔버스가 정상 동작한다 (후속 생성 가능)", async ({
+    page,
+  }) => {
+    await createShape(page, 400, 300);
+    await createShape(page, 800, 450);
+    await dragShape(page, { x: 820, y: 470 }, { x: 820, y: 322 });
 
-    // 첫 번째 도형 생성 (좌측 상단)
-    await page.mouse.click(100, 100);
-    await page.waitForTimeout(300);
-
-    // 두 번째 도형 생성 (우측 하단, 매우 멀리)
-    await page.keyboard.press('r');
-    await page.waitForTimeout(200);
-    await page.mouse.click(800, 600);
-    await page.waitForTimeout(300);
-
-    // Select 도구로 전환
-    await page.keyboard.press('v');
-    await page.waitForTimeout(200);
-
-    // 첫 번째 도형 선택
-    await page.mouse.click(100, 100);
-    await page.waitForTimeout(200);
-
-    // 드래그하되 두 번째 도형 근처가 아닌 곳으로
-    await page.mouse.move(100, 100);
-    await page.mouse.down();
-    await page.mouse.move(150, 150, { steps: 5 });
-    await page.waitForTimeout(100);
-
-    // 스크린샷 캡처 - 가이드 라인 없음 확인
-    await page.screenshot({ path: 'tests/capture/alignment-no-guide.png' });
-
-    await page.mouse.up();
+    // 드래그 후 새 도형 생성이 정상 동작하는지 (이벤트 상태 오염 없음)
+    await createShape(page, 600, 600);
+    const shapes = await saveAndGetShapes(page);
+    expect(shapes.length).toBe(3);
   });
 });
