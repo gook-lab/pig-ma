@@ -15,6 +15,7 @@ import {
   ChevronDown,
   Image,
   Workflow,
+  RotateCcw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FigmaImportModal } from "./FigmaImportModal";
@@ -26,6 +27,8 @@ import {
   downloadPigmaFile,
   readPigmaFile,
   applyPigmaFile,
+  getBackupInfo,
+  restoreBackup,
   PigmaFileError,
   PIGMA_FILE_EXTENSION,
 } from "@/utils/pigmaFile";
@@ -92,6 +95,8 @@ export function FileMenu() {
   const pigmaInputRef = useRef<HTMLInputElement>(null);
   const excalidrawInputRef = useRef<HTMLInputElement>(null);
   const isLocked = useCanvasStore((s) => s.isLocked);
+  // 메뉴가 열릴 때만 백업 존재 여부 조회 (localStorage 접근 최소화)
+  const backupInfo = showMenu ? getBackupInfo() : null;
 
   // Close menu on outside click
   useEffect(() => {
@@ -132,14 +137,15 @@ export function FileMenu() {
       ) {
         return;
       }
-      applyPigmaFile(file);
+      const { backedUp } = applyPigmaFile(file);
       const objectCount = file.pages.reduce(
         (sum, p) => sum + p.objects.length,
         0,
       );
       toast.success({
         title: "Project opened",
-        message: `"${file.projectName}" — ${file.pages.length} page(s), ${objectCount} object(s)`,
+        message: `"${file.projectName}" — ${file.pages.length} page(s), ${objectCount} object(s)${backedUp ? ". Previous project backed up" : ""}`,
+        duration: 3000,
       });
     } catch (err) {
       toast.error({
@@ -167,6 +173,23 @@ export function FileMenu() {
     } else {
       toast.success({
         message: `Exported ${exportedCount} object(s) to .excalidraw`,
+      });
+    }
+  };
+
+  const handleRestoreBackup = () => {
+    setShowMenu(false);
+    try {
+      const file = restoreBackup();
+      toast.success({
+        title: "Backup restored",
+        message: `"${file.projectName}" — restore again to switch back`,
+        duration: 3000,
+      });
+    } catch (err) {
+      toast.error({
+        title: "Failed to restore backup",
+        message: err instanceof PigmaFileError ? err.message : "Unknown error",
       });
     }
   };
@@ -240,6 +263,16 @@ export function FileMenu() {
               isLocked={isLocked}
               onClick={handleSavePigma}
             />
+            {backupInfo && (
+              <MenuItem
+                icon={RotateCcw}
+                label="Restore last backup"
+                description={`"${backupInfo.projectName}" before last open`}
+                disabledWhenLocked
+                isLocked={isLocked}
+                onClick={handleRestoreBackup}
+              />
+            )}
             <MenuItem
               icon={Download}
               label="Import Excalidraw"

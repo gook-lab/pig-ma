@@ -184,15 +184,81 @@ export function exportCurrentProject(): PigmaFile {
   });
 }
 
+// ============================================================================
+// 자동 백업 — 프로젝트 교체 직전 스냅샷을 localStorage 에 보관
+// ============================================================================
+
+const BACKUP_STORAGE_KEY = "pigma-backup-before-open";
+
+export interface PigmaBackupInfo {
+  projectName: string;
+  savedAt: string;
+}
+
+function safeLocalStorage(): Storage | null {
+  return typeof localStorage === "undefined" ? null : localStorage;
+}
+
+/** 보관된 백업의 요약 정보. 없거나 손상됐으면 null */
+export function getBackupInfo(): PigmaBackupInfo | null {
+  const storage = safeLocalStorage();
+  if (!storage) return null;
+  try {
+    const raw = storage.getItem(BACKUP_STORAGE_KEY);
+    if (!raw) return null;
+    const file = parsePigmaFile(raw);
+    return { projectName: file.projectName, savedAt: file.exportedAt };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 백업을 복원한다. applyPigmaFile 이 복원 직전 상태를 다시 백업하므로
+ * 결과적으로 현재 프로젝트 ↔ 백업이 서로 교환된다 (재복원으로 되돌리기 가능).
+ * 백업이 없으면 PigmaFileError.
+ */
+export function restoreBackup(): PigmaFile {
+  const storage = safeLocalStorage();
+  const raw = storage?.getItem(BACKUP_STORAGE_KEY);
+  if (!raw) {
+    throw new PigmaFileError("No backup found");
+  }
+  const file = parsePigmaFile(raw);
+  applyPigmaFile(file);
+  return file;
+}
+
+export interface ApplyPigmaResult {
+  /** 교체 직전 프로젝트가 백업되었는지 (localStorage 용량 초과 등이면 false) */
+  backedUp: boolean;
+}
+
 /**
  * PigmaFile 을 store 에 적용한다. 현재 프로젝트를 통째로 교체하며,
  * undo 히스토리도 초기화한다 (파일 열기를 undo 로 되돌릴 수 없음).
+ * 교체 직전 프로젝트는 자동 백업된다 — restoreBackup() 으로 복구 가능.
  */
-export function applyPigmaFile(file: PigmaFile): void {
+export function applyPigmaFile(file: PigmaFile): ApplyPigmaResult {
   const current =
     file.pages.find((p) => p.id === file.currentPageId) ?? file.pages[0];
   if (!current) {
     throw new PigmaFileError("File contains no pages");
+  }
+
+  // 교체 직전 상태 백업 (best-effort — 실패해도 열기는 진행)
+  let backedUp = false;
+  const storage = safeLocalStorage();
+  if (storage) {
+    try {
+      storage.setItem(
+        BACKUP_STORAGE_KEY,
+        JSON.stringify(exportCurrentProject()),
+      );
+      backedUp = true;
+    } catch {
+      // 이미지가 많아 quota 초과 등 — 백업 없이 진행
+    }
   }
 
   useCanvasStore.setState({
@@ -209,6 +275,7 @@ export function applyPigmaFile(file: PigmaFile): void {
     editingTextId: null,
   });
   useCanvasStore.temporal.getState().clear();
+  return { backedUp };
 }
 
 /** PigmaFile 을 .pigma 파일로 다운로드한다 */

@@ -94,8 +94,9 @@ Excalidraw 파일은 로컬 JSON이라 API 인증이 필요 없어 Figma보다 �
 
 - [x] alert → 토스트 통일 + import/export 성공 피드백 — 기존 `utils/toast.ts`(react-hot-toast 래퍼) 재사용. FileMenu: .pigma 저장/열기, Excalidraw import/export 성공 토스트(개수 포함) + 에러 토스트, Mermaid 모달: 성공 토스트. `.pigma` 열기 confirm은 파괴적 동작이라 window.confirm 유지 (모달 교체는 후속). useImageDrop 드롭 경로도 완료 — 이미지 용량 초과/파일 열기 실패 toast.error, .pigma 열기 성공(프로젝트명)·.excalidraw import 성공(개수+스킵) toast.success (다른 세션, 2026-08-19)
 - [x] ExportPanel 마운트를 hideUI 가드 밖으로 이동 — Hide UI 토글 시 패널 상태 유실 방지 (교차검증 비고 반영)
-- [ ] .pigma 열기 시 현재 프로젝트 자동 백업
-- [ ] E2E 테스트 — 파일 열기/저장, Excalidraw/Mermaid import, 정렬/분배
+- [x] .pigma 열기 시 현재 프로젝트 자동 백업 — applyPigmaFile 내부에서 교체 직전 스냅샷을 localStorage 보관 (File 메뉴·드롭 경로 모두 커버), File 메뉴 "Restore last backup"으로 복원 = 현재↔백업 스왑(재복원 가능), quota 초과 시 backedUp:false 로 열기는 진행. 유닛 테스트 4개 (2026-08-19)
+- [x] E2E 테스트 — `tests/file-io.spec.ts`(7개: .pigma 저장/열기/백업복원, Excalidraw import/export, Mermaid 성공/실패) + `tests/align-distribute.spec.ts`(4개: 옵션바 표시/정렬/분배/비활성). 정렬 결과는 .pigma 다운로드 파일 좌표로 검증. 부산물: **CustomToast가 title prop을 렌더링하지 않던 결함 발견·수정** (2026-08-19)
+  - E2E 작성 노하우: 도형 생성 직후 텍스트 편집 모드가 키 입력을 삼킴(Escape 필요), R 키는 좌측 Shapes 패널(~290px)을 열어 x>300 클릭 필요, 파일 열기는 filechooser 이벤트 사용(숨김 input에 직접 setInputFiles 하면 chooser가 삼킴)
 - [ ] tsc pre-existing 에러 점진 청산 (~520줄, "신규 에러 0" 규칙은 유지 중)
 - [x] 번들 사이즈 개선 — 사용자 결정에 따라 **konva/react-konva/@tiptap/* 외부화(peerDependencies)** 실행 (2026-08-19)
   - vite lib external 정규식(konva 서브패스 포함) + `output.interop: 'auto'` (기본 interop 이 @tiptap CJS require 를 깨뜨림 — "configure is not a function")

@@ -14,6 +14,7 @@ interface CustomToastProps {
 export function CustomToast({
   t,
   type = "success",
+  title,
   message,
 }: Readonly<CustomToastProps>) {
   const getToastStyles = () => {
@@ -50,10 +51,13 @@ export function CustomToast({
       )}
     >
       <section className="w-full p-3">
-        <p className="flex items-center justify-start gap-3 text-sm font-semibold">
+        <div className="flex items-start justify-start gap-3 text-sm">
           {icon}
-          <span>{message}</span>
-        </p>
+          <div>
+            {title && <p className="font-semibold">{title}</p>}
+            <p className={title ? "opacity-90" : "font-semibold"}>{message}</p>
+          </div>
+        </div>
       </section>
     </div>
   );
