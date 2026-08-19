@@ -112,7 +112,8 @@ export function useMention({ inputRef, text, setText }: UseMentionOptions) {
       }
       if (e.key === "Enter" || e.key === "Tab") {
         e.preventDefault();
-        selectMention(filteredUsers[mentionIndex]);
+        const user = filteredUsers[mentionIndex];
+        if (user) selectMention(user);
         return true;
       }
       if (e.key === "Escape") {

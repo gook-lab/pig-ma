@@ -25,8 +25,8 @@ export const ZOOM_LEVELS = ZOOM_LEVELS_PERCENT.map((p) => p / 100);
 export const DEFAULT_ZOOM = 1.0;
 
 // 최소/최대 줌
-export const MIN_ZOOM = ZOOM_LEVELS[0]; // 0.1 (10%)
-export const MAX_ZOOM = ZOOM_LEVELS[ZOOM_LEVELS.length - 1]; // 4.0 (400%)
+export const MIN_ZOOM = ZOOM_LEVELS[0]!; // 0.1 (10%)
+export const MAX_ZOOM = ZOOM_LEVELS[ZOOM_LEVELS.length - 1]!; // 4.0 (400%)
 
 // 기본 줌 인덱스 (100% = index 7)
 export const DEFAULT_ZOOM_INDEX = ZOOM_LEVELS.indexOf(1.0);
@@ -37,7 +37,7 @@ export const DEFAULT_ZOOM_INDEX = ZOOM_LEVELS.indexOf(1.0);
 export function zoomIn(currentZoom: number): number {
   const currentIndex = findClosestZoomIndex(currentZoom);
   const nextIndex = Math.min(currentIndex + 1, ZOOM_LEVELS.length - 1);
-  return ZOOM_LEVELS[nextIndex];
+  return ZOOM_LEVELS[nextIndex]!;
 }
 
 /**
@@ -46,7 +46,7 @@ export function zoomIn(currentZoom: number): number {
 export function zoomOut(currentZoom: number): number {
   const currentIndex = findClosestZoomIndex(currentZoom);
   const prevIndex = Math.max(currentIndex - 1, 0);
-  return ZOOM_LEVELS[prevIndex];
+  return ZOOM_LEVELS[prevIndex]!;
 }
 
 /**
@@ -54,10 +54,10 @@ export function zoomOut(currentZoom: number): number {
  */
 export function findClosestZoomIndex(zoom: number): number {
   let closestIndex = 0;
-  let closestDiff = Math.abs(ZOOM_LEVELS[0] - zoom);
+  let closestDiff = Math.abs(ZOOM_LEVELS[0]! - zoom);
 
   for (let i = 1; i < ZOOM_LEVELS.length; i++) {
-    const diff = Math.abs(ZOOM_LEVELS[i] - zoom);
+    const diff = Math.abs(ZOOM_LEVELS[i]! - zoom);
     if (diff < closestDiff) {
       closestDiff = diff;
       closestIndex = i;
@@ -71,7 +71,7 @@ export function findClosestZoomIndex(zoom: number): number {
  * 줌 값을 가장 가까운 줌 레벨로 스냅
  */
 export function snapToZoomLevel(zoom: number): number {
-  return ZOOM_LEVELS[findClosestZoomIndex(zoom)];
+  return ZOOM_LEVELS[findClosestZoomIndex(zoom)]!;
 }
 
 /**

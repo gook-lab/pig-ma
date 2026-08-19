@@ -41,10 +41,10 @@ export function mergeAdjacentSegments(segments: TextSegment[]): TextSegment[] {
   if (segments.length === 0) return [];
 
   const result: TextSegment[] = [];
-  let current = { ...segments[0] };
+  let current = { ...segments[0]! };
 
   for (let i = 1; i < segments.length; i++) {
-    const next = segments[i];
+    const next = segments[i]!;
     if (segmentsHaveSameStyle(current, next)) {
       current.text += next.text;
     } else {
@@ -135,8 +135,11 @@ export function toggleStyleInRange(
   endIndex: number,
   styleKey: "fontWeight" | "textDecoration",
   activeValue: "bold" | "line-through",
-  inactiveValue: "normal" | "none",
+  inactiveValue?: "normal" | "none",
 ): TextSegment[] {
+  // Smart default for inactiveValue based on activeValue
+  const inactive = inactiveValue ?? (activeValue === "bold" ? "normal" : "none");
+
   // Check if all characters in range have the style
   let currentIndex = 0;
   let allHaveStyle = true;
@@ -155,7 +158,7 @@ export function toggleStyleInRange(
     currentIndex = segmentEnd;
   }
 
-  const newValue = allHaveStyle ? inactiveValue : activeValue;
+  const newValue = allHaveStyle ? inactive : activeValue;
   return splitAndApplyStyle(segments, startIndex, endIndex, {
     [styleKey]: newValue,
   });
@@ -227,7 +230,7 @@ export function calculateLineBreaks(
   let lineIndex = 0;
 
   for (let segIdx = 0; segIdx < segments.length; segIdx++) {
-    const segment = segments[segIdx];
+    const segment = segments[segIdx]!;
     const fontSize = segment.fontSize ?? defaultFontSize;
     const fontFamily = defaultFontFamily;
     const fontWeight = segment.fontWeight ?? "normal";
@@ -235,7 +238,7 @@ export function calculateLineBreaks(
     let segStartChar = 0;
 
     for (let i = 0; i < segment.text.length; i++) {
-      const char = segment.text[i];
+      const char = segment.text[i]!;
 
       // Handle explicit line breaks
       if (char === "\n") {
@@ -274,7 +277,7 @@ export function calculateLineBreaks(
         if (char !== " ") {
           // Look back for a space
           for (let j = i - 1; j > segStartChar; j--) {
-            if (segment.text[j] === " ") {
+            if (segment.text[j]! === " ") {
               wrapPoint = j + 1;
               break;
             }
@@ -294,13 +297,13 @@ export function calculateLineBreaks(
         lineIndex++;
         currentLine = {
           segments: [],
-          indent: lineIndents[lineIndex] ?? 0,
+          indent: lineIndents[lineIndex]!,
         };
         currentLineWidth = currentLine.indent * 20;
         segStartChar = wrapPoint;
 
         // Skip leading space on new line
-        if (segment.text[segStartChar] === " ") {
+        if (segment.text[segStartChar]! === " ") {
           segStartChar++;
         }
 
@@ -340,7 +343,7 @@ export function getCharIndexFromSegments(
 ): number {
   let index = 0;
   for (let i = 0; i < segmentIndex && i < segments.length; i++) {
-    index += segments[i].text.length;
+    index += segments[i]!.text.length;
   }
   return index + charOffset;
 }
@@ -355,7 +358,7 @@ export function getSegmentFromCharIndex(
   let currentIndex = 0;
 
   for (let i = 0; i < segments.length; i++) {
-    const segmentEnd = currentIndex + segments[i].text.length;
+    const segmentEnd = currentIndex + segments[i]!.text.length;
     if (charIndex < segmentEnd) {
       return {
         segmentIndex: i,
@@ -369,7 +372,7 @@ export function getSegmentFromCharIndex(
   return {
     segmentIndex: Math.max(0, segments.length - 1),
     charOffset:
-      segments.length > 0 ? segments[segments.length - 1].text.length : 0,
+      segments.length > 0 ? segments[segments.length - 1]!.text.length : 0,
   };
 }
 
@@ -413,7 +416,7 @@ export function getCharIndexFromPosition(
     const fontWeight = segment.fontWeight ?? "normal";
 
     for (let i = 0; i < segment.text.length; i++) {
-      const char = segment.text[i];
+      const char = segment.text[i]!;
 
       if (char === "\n") {
         lines.push(currentLine);
@@ -463,25 +466,25 @@ export function getCharIndexFromPosition(
     Math.max(0, Math.floor(clickY / lineHeight)),
     lines.length - 1,
   );
-  const line = lines[clickedLineIndex];
+  const line = lines[clickedLineIndex]!;
 
   // Calculate line start X based on alignment
-  const indentWidth = line.indent * 20;
+  const indentWidth = line!.indent * 20;
   let lineStartX = indentWidth;
   if (textAlign === "center") {
-    lineStartX = (maxWidth - line.width) / 2;
+    lineStartX = (maxWidth - line!.width) / 2;
   } else if (textAlign === "right") {
-    lineStartX = maxWidth - line.width;
+    lineStartX = maxWidth - line!.width;
   }
 
   // If click is before line start, return line start
   if (clickX <= lineStartX) {
-    return line.startIndex;
+    return line!.startIndex;
   }
 
   // If click is after line end, return line end
-  if (clickX >= lineStartX + line.width) {
-    return line.startIndex + line.text.length;
+  if (clickX >= lineStartX + line!.width) {
+    return line!.startIndex + line!.text.length;
   }
 
   // Find character within line
@@ -489,8 +492,8 @@ export function getCharIndexFromPosition(
   let charIndexInLine = 0;
 
   // Get styles for each character in the line
-  for (let i = 0; i < line.text.length; i++) {
-    const globalIdx = line.startIndex + i;
+  for (let i = 0; i < line!.text.length; i++) {
+    const globalIdx = line!.startIndex + i;
     let fontSize = defaultFontSize;
     let fontWeight = "normal";
 
@@ -505,19 +508,19 @@ export function getCharIndexFromPosition(
       idx += seg.text.length;
     }
 
-    const char = line.text[i];
+    const char = line!.text[i]!;
     const charWidth = measureTextWidth(char, fontSize, fontFamily, fontWeight);
 
     // Check if click is within this character
     if (clickX < currentX + charWidth / 2) {
-      return line.startIndex + charIndexInLine;
+      return line!.startIndex + charIndexInLine;
     }
 
     currentX += charWidth;
     charIndexInLine++;
   }
 
-  return line.startIndex + line.text.length;
+  return line!.startIndex + line!.text.length;
 }
 
 /**
@@ -554,7 +557,7 @@ export function calculateRichTextHeight(
     const fontWeight = segment.fontWeight ?? "normal";
 
     for (let i = 0; i < segment.text.length; i++) {
-      const char = segment.text[i];
+      const char = segment.text[i]!;
 
       if (char === "\n") {
         lines.push(currentLine);

@@ -71,10 +71,10 @@ function calculateCharPositions(
 
   for (const segment of richText) {
     const segFontSize = segment.fontSize ?? defaultFontSize;
-    const fontWeight = segment.fontWeight ?? "normal";
+    const fw = segment.fontWeight || "normal";
 
     for (let i = 0; i < segment.text.length; i++) {
-      const char = segment.text[i];
+      const char = segment.text[i]!;
 
       if (char === "\n") {
         lines.push(currentLine);
@@ -88,12 +88,7 @@ function calculateCharPositions(
         continue;
       }
 
-      const charWidth = measureTextWidth(
-        char,
-        segFontSize,
-        fontFamily,
-        fontWeight,
-      );
+      const charWidth = measureTextWidth(char, segFontSize, fontFamily, fw);
       const indentWidth = currentLine.indent * 20;
 
       // Check for word wrap
@@ -111,7 +106,7 @@ function calculateCharPositions(
         };
       }
 
-      currentLine.chars.push({ char, fontSize: segFontSize, fontWeight });
+      currentLine.chars.push({ char, fontSize: segFontSize, fontWeight: fw });
       currentLine.width += charWidth;
       currentLine.maxFontSize = Math.max(currentLine.maxFontSize, segFontSize);
     }
@@ -126,13 +121,13 @@ function calculateCharPositions(
   let cumulativeY = 0;
   for (let i = 0; i < lines.length; i++) {
     lineYPositions.push(cumulativeY);
-    cumulativeY += lineHeights[i];
+    cumulativeY += lineHeights[i]!;
   }
 
   // Calculate positions based on text alignment
   for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
-    const line = lines[lineIdx];
-    const y = lineYPositions[lineIdx];
+    const line = lines[lineIdx]!;
+    const y = lineYPositions[lineIdx]!;
     const indentWidth = line.indent * 20;
     const lineFontSize = line.maxFontSize;
 
@@ -169,7 +164,7 @@ function calculateCharPositions(
       // Add newline character position - use last char's fontSize or default
       const lastCharFontSize =
         line.chars.length > 0
-          ? line.chars[line.chars.length - 1].fontSize
+          ? line.chars[line.chars.length - 1]!.fontSize
           : defaultFontSize;
       positions.push({
         x: currentX,
@@ -182,8 +177,8 @@ function calculateCharPositions(
   }
 
   // Add final position at end of text
-  const lastLine = lines[lines.length - 1];
-  const lastY = lineYPositions[lines.length - 1];
+  const lastLine = lines[lines.length - 1]!;
+  const lastY = lineYPositions[lines.length - 1]!;
   const lastIndent = lastLine.indent * 20;
   let lastX = lastIndent + lastLine.width;
   if (textAlign === "center") {
@@ -194,7 +189,7 @@ function calculateCharPositions(
   // Use last char's fontSize for cursor at end, or default if line is empty
   const lastCharFontSize =
     lastLine.chars.length > 0
-      ? lastLine.chars[lastLine.chars.length - 1].fontSize
+      ? lastLine.chars[lastLine.chars.length - 1]!.fontSize
       : defaultFontSize;
   positions.push({
     x: lastX,
@@ -293,10 +288,10 @@ export const KonvaCursor = memo(function KonvaCursor({
           x: sel.minX,
           y: cumulativeY,
           width: Math.max(sel.maxX - sel.minX, 2),
-          height: lineHeights[lineIdx],
+          height: lineHeights[lineIdx]!,
         });
       }
-      cumulativeY += lineHeights[lineIdx];
+      cumulativeY += lineHeights[lineIdx]!;
     }
 
     return rects;

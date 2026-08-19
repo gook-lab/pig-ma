@@ -104,9 +104,9 @@ export const RichTextRenderer = memo(function RichTextRenderer({
     };
 
     for (let segIdx = 0; segIdx < richText.length; segIdx++) {
-      const segment = richText[segIdx];
+      const segment = richText[segIdx]!;
       const fontSize = segment.fontSize ?? defaultFontSize;
-      const fontFamily = defaultFontFamily;
+      const fontFamily: string = defaultFontFamily || "Pretendard";
       const fontWeight = segment.fontWeight ?? "normal";
       const hasLink = !!segment.link;
       // Link text is blue, otherwise use segment color or default
@@ -200,7 +200,7 @@ export const RichTextRenderer = memo(function RichTextRenderer({
         } else {
           // Accumulate word
           word += char;
-          wordWidth += measureTextWidth(char, fontSize, fontFamily, fontWeight);
+          wordWidth += measureTextWidth(char as string, fontSize, fontFamily, fontWeight);
         }
       }
     }
@@ -308,14 +308,14 @@ export const SimpleRichTextRenderer = memo(function SimpleRichTextRenderer({
     if (richText.length === 0) return null;
     if (richText.length === 1) return richText[0];
 
-    const first = richText[0];
+    const first = richText[0]!;
     const isUniform = richText.every(
       (seg) =>
-        (seg.fontWeight ?? "normal") === (first.fontWeight ?? "normal") &&
-        (seg.textDecoration ?? "none") === (first.textDecoration ?? "none") &&
-        seg.fontSize === first.fontSize &&
-        seg.textColor === first.textColor &&
-        seg.link === first.link, // Also check link uniformity
+        (seg.fontWeight ?? "normal") === (first!.fontWeight ?? "normal") &&
+        (seg.textDecoration ?? "none") === (first!.textDecoration ?? "none") &&
+        seg.fontSize === first!.fontSize &&
+        seg.textColor === first!.textColor &&
+        seg.link === first!.link, // Also check link uniformity
     );
 
     return isUniform ? first : null;

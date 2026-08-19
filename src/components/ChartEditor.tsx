@@ -70,7 +70,7 @@ export function ChartEditor() {
   // Reset title editing only when a different chart is selected
   const prevSelectedIdRef = useRef<string | null>(null);
   useEffect(() => {
-    const currentId = selectedIds.length === 1 ? selectedIds[0] : null;
+    const currentId = selectedIds.length === 1 ? selectedIds[0] ?? null : null;
     if (
       prevSelectedIdRef.current !== null &&
       prevSelectedIdRef.current !== currentId

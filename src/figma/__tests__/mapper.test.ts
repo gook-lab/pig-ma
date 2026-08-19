@@ -291,7 +291,7 @@ describe("pigmaToFigma", () => {
       height: 150,
     });
     expect(node.fills).toHaveLength(1);
-    expect(node.fills![0].color!.r).toBe(1);
+    expect(node.fills![0]!.color!.r).toBe(1);
     expect(node.strokes).toHaveLength(1);
     expect(node.opacity).toBe(0.8);
   });
@@ -437,8 +437,8 @@ describe("round-trip: figmaToPigma → pigmaToFigma", () => {
     const pigma = figmaToPigma(original)!;
     const roundTripped = pigmaToFigma(pigma);
 
-    const origColor = original.fills![0].color!;
-    const rtColor = roundTripped.fills![0].color!;
+    const origColor = original.fills![0]!.color!;
+    const rtColor = roundTripped.fills![0]!.color!;
     // Allow ±1/255 tolerance due to hex rounding
     expect(rtColor.r).toBeCloseTo(origColor.r, 2);
     expect(rtColor.g).toBeCloseTo(origColor.g, 2);
@@ -539,8 +539,8 @@ describe("extractLeafNodes", () => {
 
     const leaves = extractLeafNodes(doc);
     expect(leaves).toHaveLength(2);
-    expect(leaves[0].type).toBe("RECTANGLE");
-    expect(leaves[1].type).toBe("TEXT");
+    expect(leaves[0]!.type).toBe("RECTANGLE");
+    expect(leaves[1]!.type).toBe("TEXT");
   });
 
   it("recurses into frames with children", () => {
@@ -575,7 +575,7 @@ describe("extractLeafNodes", () => {
 
     const leaves = extractLeafNodes(doc);
     expect(leaves).toHaveLength(1);
-    expect(leaves[0].id).toBe("2:1");
+    expect(leaves[0]!.id).toBe("2:1");
   });
 
   it("includes childless FRAME as renderable", () => {
@@ -602,7 +602,7 @@ describe("extractLeafNodes", () => {
 
     const leaves = extractLeafNodes(doc);
     expect(leaves).toHaveLength(1);
-    expect(leaves[0].type).toBe("FRAME");
+    expect(leaves[0]!.type).toBe("FRAME");
   });
 
   it("skips unsupported types but includes VECTOR", () => {
@@ -641,8 +641,8 @@ describe("extractLeafNodes", () => {
 
     const leaves = extractLeafNodes(doc);
     expect(leaves).toHaveLength(2);
-    expect(leaves[0].type).toBe("VECTOR");
-    expect(leaves[1].type).toBe("RECTANGLE");
+    expect(leaves[0]!.type).toBe("VECTOR");
+    expect(leaves[1]!.type).toBe("RECTANGLE");
   });
 
   it("handles empty document", () => {
@@ -699,7 +699,7 @@ describe("extractLeafNodes", () => {
 
     const leaves = extractLeafNodes(doc);
     expect(leaves).toHaveLength(1);
-    expect(leaves[0].id).toBe("3:1");
+    expect(leaves[0]!.id).toBe("3:1");
   });
 });
 
@@ -928,12 +928,12 @@ describe("리치텍스트 매핑 (characterStyleOverrides ↔ Tiptap)", () => {
     const shape = figmaToPigma(richNode());
     const para = shape!.tiptapContent!.content![0]!;
     const [plain, styled] = para.content!;
-    expect(plain.text).toBe("Hello ");
-    expect(plain.marks).toBeUndefined();
-    expect(styled.text).toBe("World");
-    const markTypes = styled.marks!.map((m) => m.type);
+    expect(plain!.text).toBe("Hello ");
+    expect(plain!.marks).toBeUndefined();
+    expect(styled!.text).toBe("World");
+    const markTypes = styled!.marks!.map((m) => m.type);
     expect(markTypes).toContain("bold");
-    const textStyle = styled.marks!.find((m) => m.type === "textStyle");
+    const textStyle = styled!.marks!.find((m) => m.type === "textStyle");
     expect(textStyle!.attrs!.color).toBe("#FF0000");
   });
 
@@ -980,9 +980,9 @@ describe("리치텍스트 서로게이트 페어 (이모지)", () => {
     });
     const para = shape!.tiptapContent!.content![0]!;
     const [plain, bolded] = para.content!;
-    expect(plain.text).toBe("🔥");
-    expect(bolded.text).toBe("ab");
-    expect(bolded.marks!.some((m) => m.type === "bold")).toBe(true);
+    expect(plain!.text).toBe("🔥");
+    expect(bolded!.text).toBe("ab");
+    expect(bolded!.marks!.some((m) => m.type === "bold")).toBe(true);
   });
 
   it("역변환도 코드포인트 단위로 오버라이드를 생성한다", () => {

@@ -216,7 +216,7 @@ export const RichTextEditor = forwardRef<
 
         if (node.childNodes) {
           for (let i = 0; i < node.childNodes.length; i++) {
-            if (walk(node.childNodes[i])) return true;
+            if (walk(node.childNodes[i]!)) return true;
           }
         }
         return false;
@@ -490,9 +490,9 @@ export const RichTextEditor = forwardRef<
     const lines = plainText.slice(0, lineStart).split("\n");
     let lineNumber = 1;
     for (let i = lines.length - 1; i >= 0; i--) {
-      const match = lines[i].match(/^(\d+)\. /);
+      const match = lines[i]!.match(/^(\d+)\. /);
       if (match) {
-        lineNumber = parseInt(match[1]) + 1;
+        lineNumber = parseInt(match[1]!) + 1;
         break;
       }
     }
@@ -603,23 +603,23 @@ export const RichTextEditor = forwardRef<
           const [, indent, bullet, content] = bulletMatch;
 
           // 빈 글머리 줄이면 글머리 제거
-          if (content.trim() === "") {
+          if (content!.trim() === "") {
             const newPlainText =
               plainText.slice(0, lineStart) +
-              indent +
+              indent! +
               plainText.slice(actualLineEnd);
             const newRichText = [{ text: newPlainText }];
             if (editorRef.current) {
               editorRef.current.innerHTML = toHTML(newRichText);
               restoreSelection(
-                lineStart + indent.length,
-                lineStart + indent.length,
+                lineStart + indent!.length,
+                lineStart + indent!.length,
               );
             }
             onChange(newRichText, localLineIndents);
           } else {
             // 다음 줄에 글머리 기호 추가
-            const insertText = "\n" + indent + bullet;
+            const insertText = "\n" + indent! + bullet;
             document.execCommand("insertText", false, insertText);
             handleInput();
           }
@@ -631,26 +631,26 @@ export const RichTextEditor = forwardRef<
         if (numberMatch) {
           e.preventDefault();
           const [, indent, numStr, content] = numberMatch;
-          const currentNum = parseInt(numStr);
+          const currentNum = parseInt(numStr!);
 
           // 빈 번호 줄이면 번호 제거
-          if (content.trim() === "") {
+          if (content!.trim() === "") {
             const newPlainText =
               plainText.slice(0, lineStart) +
-              indent +
+              indent! +
               plainText.slice(actualLineEnd);
             const newRichText = [{ text: newPlainText }];
             if (editorRef.current) {
               editorRef.current.innerHTML = toHTML(newRichText);
               restoreSelection(
-                lineStart + indent.length,
-                lineStart + indent.length,
+                lineStart + indent!.length,
+                lineStart + indent!.length,
               );
             }
             onChange(newRichText, localLineIndents);
           } else {
             // 다음 줄에 증가된 번호 추가
-            const insertText = "\n" + indent + (currentNum + 1) + ". ";
+            const insertText = "\n" + indent! + (currentNum + 1) + ". ";
             document.execCommand("insertText", false, insertText);
             handleInput();
           }

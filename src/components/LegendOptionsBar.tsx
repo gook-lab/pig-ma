@@ -52,19 +52,19 @@ export function LegendOptionsBar({
 
   // 현재 선택된 범례 항목
   const currentLabel = isLineChart
-    ? chartData.series![selectedLegendIndex].name
-    : chartData.items[selectedLegendIndex].label;
+    ? chartData.series![selectedLegendIndex]!.name
+    : chartData.items[selectedLegendIndex]!.label;
 
   const globalColor = chartData.globalColor;
 
   // 실제 적용되는 색상: colorOverride가 true면 개별 색상, 아니면 globalColor 적용
   const currentColor = isLineChart
-    ? chartData.series![selectedLegendIndex].style.colorOverride
-      ? chartData.series![selectedLegendIndex].style.color
-      : (globalColor ?? chartData.series![selectedLegendIndex].style.color)
-    : chartData.items[selectedLegendIndex].colorOverride
-      ? chartData.items[selectedLegendIndex].color
-      : (globalColor ?? chartData.items[selectedLegendIndex].color);
+    ? chartData.series![selectedLegendIndex]!.style.colorOverride
+      ? chartData.series![selectedLegendIndex]!.style.color
+      : (globalColor ?? chartData.series![selectedLegendIndex]!.style.color)
+    : chartData.items[selectedLegendIndex]!.colorOverride
+      ? chartData.items[selectedLegendIndex]!.color
+      : (globalColor ?? chartData.items[selectedLegendIndex]!.color);
 
   // Line chart 시리즈 업데이트
   const handleUpdateSeries = useCallback(
@@ -72,10 +72,10 @@ export function LegendOptionsBar({
       if (!chartData.series) return;
       const newSeries = [...chartData.series];
       newSeries[selectedLegendIndex] = {
-        ...newSeries[selectedLegendIndex],
+        ...newSeries[selectedLegendIndex]!,
         ...updates,
         style: {
-          ...newSeries[selectedLegendIndex].style,
+          ...newSeries[selectedLegendIndex]!.style,
           ...(updates.style || {}),
         },
       };
@@ -94,7 +94,7 @@ export function LegendOptionsBar({
     (updates: Partial<ChartDataItem>) => {
       const newItems = [...chartData.items];
       newItems[selectedLegendIndex] = {
-        ...newItems[selectedLegendIndex],
+        ...newItems[selectedLegendIndex]!,
         ...updates,
       };
       onUpdate({

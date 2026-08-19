@@ -40,7 +40,7 @@ function box(cx: number, cy: number, w: number, h: number) {
 function toPoints(flat: number[]): Pt[] {
   const out: Pt[] = [];
   for (let i = 0; i < flat.length; i += 2)
-    out.push({ x: flat[i], y: flat[i + 1] });
+    out.push({ x: flat[i]!, y: flat[i + 1]! });
   return out;
 }
 
@@ -71,7 +71,9 @@ function segmentEntersRect(a: Pt, b: Pt, r: Rect): boolean {
 
 function crossesRect(path: Pt[], r: Rect): boolean {
   for (let i = 0; i < path.length - 1; i++) {
-    if (segmentEntersRect(path[i], path[i + 1], r)) return true;
+    const p1 = path[i]!;
+    const p2 = path[i + 1]!;
+    if (segmentEntersRect(p1, p2, r)) return true;
   }
   return false;
 }
@@ -80,8 +82,8 @@ function crossesRect(path: Pt[], r: Rect): boolean {
 function isAxisAligned(path: Pt[]): boolean {
   const EPS = 1e-6;
   for (let i = 0; i < path.length - 1; i++) {
-    const a = path[i];
-    const b = path[i + 1];
+    const a = path[i]!;
+    const b = path[i + 1]!;
     if (Math.abs(a.x - b.x) > EPS && Math.abs(a.y - b.y) > EPS) return false;
   }
   return true;
@@ -311,8 +313,8 @@ describe("반전 경로가 도형을 관통하지 않는다", () => {
 describe("혼합 앵커를 존중한다", () => {
   it("right→top: 타깃에 수직으로 진입한다", () => {
     const p = elbow({ x: 100, y: 100 }, { x: 400, y: 300 }, "right", "top");
-    const last = p[p.length - 1];
-    const prev = p[p.length - 2];
+    const last = p[p.length - 1]!;
+    const prev = p[p.length - 2]!;
 
     expect(prev.x).toBe(last.x); // 마지막 선분이 수직
     expect(prev.y).toBeLessThan(last.y); // 위에서 내려온다
@@ -320,8 +322,8 @@ describe("혼합 앵커를 존중한다", () => {
 
   it("bottom→left: 타깃에 수평으로 진입한다", () => {
     const p = elbow({ x: 100, y: 100 }, { x: 400, y: 300 }, "bottom", "left");
-    const last = p[p.length - 1];
-    const prev = p[p.length - 2];
+    const last = p[p.length - 1]!;
+    const prev = p[p.length - 2]!;
 
     expect(prev.y).toBe(last.y); // 마지막 선분이 수평
     expect(prev.x).toBeLessThan(last.x); // 왼쪽에서 들어온다
@@ -335,7 +337,7 @@ describe("혼합 앵커를 존중한다", () => {
 
   it("소스가 left 앵커면 왼쪽으로 출발한다", () => {
     const p = elbow({ x: 400, y: 100 }, { x: 100, y: 300 }, "left", "right");
-    expect(p[1].x).toBeLessThan(p[0].x);
+    expect(p[1]!.x).toBeLessThan(p[0]!.x);
   });
 });
 

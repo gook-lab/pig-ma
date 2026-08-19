@@ -97,7 +97,7 @@ Excalidraw 파일은 로컬 JSON이라 API 인증이 필요 없어 Figma보다 �
 - [x] .pigma 열기 시 현재 프로젝트 자동 백업 — applyPigmaFile 내부에서 교체 직전 스냅샷을 localStorage 보관 (File 메뉴·드롭 경로 모두 커버), File 메뉴 "Restore last backup"으로 복원 = 현재↔백업 스왑(재복원 가능), quota 초과 시 backedUp:false 로 열기는 진행. 유닛 테스트 4개 (2026-08-19)
 - [x] E2E 테스트 — `tests/file-io.spec.ts`(7개: .pigma 저장/열기/백업복원, Excalidraw import/export, Mermaid 성공/실패) + `tests/align-distribute.spec.ts`(4개: 옵션바 표시/정렬/분배/비활성). 정렬 결과는 .pigma 다운로드 파일 좌표로 검증. 부산물: **CustomToast가 title prop을 렌더링하지 않던 결함 발견·수정** (2026-08-19)
   - E2E 작성 노하우: 도형 생성 직후 텍스트 편집 모드가 키 입력을 삼킴(Escape 필요), R 키는 좌측 Shapes 패널(~290px)을 열어 x>300 클릭 필요, 파일 열기는 filechooser 이벤트 사용(숨김 input에 직접 setInputFiles 하면 chooser가 삼킴)
-- [ ] tsc pre-existing 에러 점진 청산 (~520줄, "신규 에러 0" 규칙은 유지 중)
+- [x] tsc pre-existing 에러 전량 청산 — 523건 → **0건** (2026-08-19). noUncheckedIndexedAccess 계열(TS18048/2532/2345/2322 등)을 동작 무변경 타입 내로잉으로 해소(가드/루프 경계 non-null/의미 동일 폴백만, 로직 변경 없음 — 전체 684개 테스트로 검증). `npm run typecheck` 스크립트 추가로 이후 회귀 차단
 - [x] 번들 사이즈 개선 — 사용자 결정에 따라 **konva/react-konva/@tiptap/* 외부화(peerDependencies)** 실행 (2026-08-19)
   - vite lib external 정규식(konva 서브패스 포함) + `output.interop: 'auto'` (기본 interop 이 @tiptap CJS require 를 깨뜨림 — "configure is not a function")
   - 신선한 소비자 검증: npm 7+ peer 16개 자동 설치 ✓, CJS require ✓, ESM 번들 ✓

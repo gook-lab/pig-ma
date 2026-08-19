@@ -12,7 +12,7 @@ import { CHART_COLORS } from "@/constants/colors";
  * 기본 시리즈 스타일
  */
 export const DEFAULT_SERIES_STYLE: LineSeriesStyle = {
-  color: CHART_COLORS[0],
+  color: CHART_COLORS[0]!,
   strokeWidth: 2,
   lineStyle: "solid",
   fillEnabled: false,
@@ -23,7 +23,7 @@ export const DEFAULT_SERIES_STYLE: LineSeriesStyle = {
  * 시리즈 인덱스에 맞는 기본 색상 반환
  */
 export function getSeriesColor(index: number): string {
-  return CHART_COLORS[index % CHART_COLORS.length];
+  return CHART_COLORS[index % CHART_COLORS.length]!;
 }
 
 /**
@@ -83,7 +83,7 @@ export function getSeriesData(data: ChartData): ChartSeries[] {
       name: "Values",
       values,
       style: {
-        color: data.globalColor ?? CHART_COLORS[0],
+        color: data.globalColor ?? CHART_COLORS[0]!,
         strokeWidth: 2,
         lineStyle: "solid",
         fillEnabled: false,
@@ -165,7 +165,7 @@ export function updateSeries(
 ): ChartData {
   const currentSeries = getSeriesData(data);
   const newSeries = [...currentSeries];
-  newSeries[seriesIndex] = { ...newSeries[seriesIndex], ...updates };
+  newSeries[seriesIndex] = { ...newSeries[seriesIndex]!, ...updates };
 
   return {
     ...data,
@@ -182,7 +182,7 @@ export function updateSeriesStyle(
   styleUpdates: Partial<LineSeriesStyle>,
 ): ChartData {
   const currentSeries = getSeriesData(data);
-  const series = currentSeries[seriesIndex];
+  const series = currentSeries[seriesIndex]!;
 
   return updateSeries(data, seriesIndex, {
     style: { ...series.style, ...styleUpdates },
@@ -217,7 +217,7 @@ export function addXAxisPoint(
     {
       label,
       value: defaultValue,
-      color: CHART_COLORS[data.items.length % CHART_COLORS.length],
+      color: CHART_COLORS[data.items.length % CHART_COLORS.length]!,
     },
   ];
 

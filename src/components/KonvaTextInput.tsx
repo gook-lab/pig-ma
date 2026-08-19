@@ -68,7 +68,7 @@ export function calculateCursorPosition(
 
   // 커서가 위치한 줄과 줄 내 위치 찾기
   for (let i = 0; i < lines.length; i++) {
-    const lineLength = lines[i].length;
+    const lineLength = lines[i]!.length;
     if (charCount + lineLength >= cursorIndex) {
       targetLine = i;
       charInLine = cursorIndex - charCount;
@@ -136,7 +136,7 @@ export function calculateSelectionRects(
 
   let charCount = 0;
   for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
-    const line = lines[lineIdx];
+    const line = lines[lineIdx]!;
     const lineStart = charCount;
     const lineEnd = charCount + line.length;
 
@@ -163,7 +163,7 @@ export function calculateSelectionRects(
 
       // 정렬 오프셋
       const lineWidth = measureTextWidth(
-        line,
+        line || "",
         fontSize,
         fontFamily,
         fontWeight,

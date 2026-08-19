@@ -437,7 +437,7 @@ function BarChartRenderer({
         const itemValueOffsetY = item.valueOffsetY ?? valueOffsetY;
         const itemCornerRadius = item.cornerRadius ?? cornerRadius;
         const itemCornerPosition = item.cornerPosition ?? "top";
-        const originalIndex = originalIndices[i];
+        const originalIndex = originalIndices[i]!;
         const isItemSelected = selectedItemIndex === originalIndex;
 
         // 수평/수직에 따른 바 위치 및 크기 계산
@@ -837,8 +837,8 @@ function LineChartRenderer({
 
         // 인접한 라벨 쌍 확인 및 간격 확보
         for (let i = 1; i < labels.length; i++) {
-          const prev = labels[i - 1];
-          const curr = labels[i];
+          const prev = labels[i - 1]!;
+          const curr = labels[i]!;
           const gap = curr.finalY - prev.finalY;
 
           if (gap < minLabelGap) {
@@ -854,7 +854,7 @@ function LineChartRenderer({
       // 겹침 해소가 아래로만 밀면 스택이 한쪽으로 치우친다 —
       // 총 이동량의 절반만큼 되끌어 포인트들 주변에 고르게 배치한다.
       const lastDrift =
-        labels[labels.length - 1].finalY - labels[labels.length - 1].baseY;
+        labels[labels.length - 1]!.finalY - labels[labels.length - 1]!.baseY;
       if (lastDrift > 0) {
         const shift = lastDrift / 2;
         labels.forEach((label) => {
@@ -881,8 +881,8 @@ function LineChartRenderer({
       const areaPoints = [...linePoints];
       // 오른쪽 → 0선 → 왼쪽 → 0선 → 시작점으로 닫기
       const baseY = Math.min(zeroLineY, startY + effectiveHeight);
-      areaPoints.push(linePoints[linePoints.length - 2], baseY);
-      areaPoints.push(linePoints[0], baseY);
+      areaPoints.push(linePoints[linePoints.length - 2]!, baseY);
+      areaPoints.push(linePoints[0]!, baseY);
       return areaPoints;
     },
     [effectiveHeight, startY, zeroLineY],
@@ -1364,7 +1364,7 @@ function PieChartRenderer({
         ]
           .filter(Boolean)
           .join("\n");
-        const originalIndex = originalIndices[i];
+        const originalIndex = originalIndices[i]!;
         const isItemSelected = selectedItemIndex === originalIndex;
 
         // 스타일별 렌더링
@@ -1602,7 +1602,7 @@ function ChartLegend({
   // Calculate total width for alignment
   const getRowWidth = (row: typeof currentRow) => {
     if (row.length === 0) return 0;
-    const lastItem = row[row.length - 1];
+    const lastItem = row[row.length - 1]!;
     return lastItem.x + textOffset + lastItem.label.length * 6;
   };
 

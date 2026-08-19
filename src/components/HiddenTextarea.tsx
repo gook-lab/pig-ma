@@ -259,14 +259,16 @@ export const HiddenTextarea = memo(function HiddenTextarea({
           let newText: string;
           let newCursorPos: number;
 
-          if (content.trim() === "") {
+          if ((content || "").trim() === "") {
             // Empty bullet line - remove bullet
             newText =
-              text.slice(0, lineStart) + indent + text.slice(selectionStart);
-            newCursorPos = lineStart + indent.length;
+              text.slice(0, lineStart) +
+              (indent || "") +
+              text.slice(selectionStart);
+            newCursorPos = lineStart + (indent || "").length;
           } else {
             // Add new bullet line
-            const insertText = "\n" + indent + bullet;
+            const insertText = "\n" + (indent || "") + (bullet || "");
             newText =
               text.slice(0, selectionStart) +
               insertText +
@@ -293,19 +295,21 @@ export const HiddenTextarea = memo(function HiddenTextarea({
         if (numberMatch) {
           e.preventDefault();
           const [, indent, numStr, content] = numberMatch;
-          const num = parseInt(numStr);
+          const num = parseInt(numStr || "0");
 
           let newText: string;
           let newCursorPos: number;
 
-          if (content.trim() === "") {
+          if ((content || "").trim() === "") {
             // Empty number line - remove number
             newText =
-              text.slice(0, lineStart) + indent + text.slice(selectionStart);
-            newCursorPos = lineStart + indent.length;
+              text.slice(0, lineStart) +
+              (indent || "") +
+              text.slice(selectionStart);
+            newCursorPos = lineStart + (indent || "").length;
           } else {
             // Add new numbered line
-            const insertText = "\n" + indent + (num + 1) + ". ";
+            const insertText = "\n" + (indent || "") + (num + 1) + ". ";
             newText =
               text.slice(0, selectionStart) +
               insertText +
@@ -460,14 +464,21 @@ function preserveStylesOnTextChange(
     }
     // else: new text in the middle - no style (default)
 
-    const char = newText[i];
+    const char = newText[i]!;
     const lastSeg = newSegments[newSegments.length - 1];
 
     // Check if can merge with last segment
     if (lastSeg && stylesEqual(lastSeg, style)) {
       lastSeg.text += char;
     } else {
-      newSegments.push({ text: char, ...style });
+      const segment: TextSegment = { text: char };
+      if (style.fontWeight !== undefined) segment.fontWeight = style.fontWeight;
+      if (style.textDecoration !== undefined)
+        segment.textDecoration = style.textDecoration;
+      if (style.fontSize !== undefined) segment.fontSize = style.fontSize;
+      if (style.textColor !== undefined) segment.textColor = style.textColor;
+      if (style.link !== undefined) segment.link = style.link;
+      newSegments.push(segment);
     }
   }
 

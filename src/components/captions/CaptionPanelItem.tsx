@@ -27,7 +27,7 @@ function getAvatarColor(authorId: string): string {
   for (let i = 0; i < authorId.length; i++) {
     hash = authorId.charCodeAt(i) + ((hash << 5) - hash);
   }
-  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length]!;
 }
 
 function formatRelativeTime(dateString: string): string {

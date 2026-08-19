@@ -54,7 +54,7 @@ export function ChartItemOptionsBar({
     return null;
   }
 
-  const item = chartData.items[selectedItemIndex];
+  const item = chartData.items[selectedItemIndex]!;
   const globalColor = chartData.globalColor;
   // 실제 적용되는 색상: colorOverride가 true면 개별 색상, 아니면 globalColor 적용
   const displayColor = item.colorOverride
@@ -87,7 +87,7 @@ export function ChartItemOptionsBar({
     (updates: Partial<ChartDataItem>) => {
       const newItems = [...chartData.items];
       newItems[selectedItemIndex] = {
-        ...newItems[selectedItemIndex],
+        ...newItems[selectedItemIndex]!,
         ...updates,
       };
       onUpdate({
@@ -411,7 +411,7 @@ export function ChartItemOptionsBar({
               min={0}
               max={20}
               value={[cornerRadius]}
-              onValueChange={(v) => handleCornerRadiusChange(v[0])}
+              onValueChange={(v) => handleCornerRadiusChange(v[0]!)}
               onPointerDown={stopMousePropagation}
               className="w-full"
             />

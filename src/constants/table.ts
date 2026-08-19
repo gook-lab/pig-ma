@@ -69,6 +69,6 @@ export function getCellKey(row: number, col: number): string {
  * @example parseCellKey("1-2") => { row: 1, col: 2 }
  */
 export function parseCellKey(cellKey: string): { row: number; col: number } {
-  const [row, col] = cellKey.split("-").map(Number);
-  return { row, col };
+  const parts = cellKey.split("-").map(Number);
+  return { row: parts[0] ?? 0, col: parts[1] ?? 0 };
 }

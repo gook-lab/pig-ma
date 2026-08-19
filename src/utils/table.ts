@@ -19,7 +19,7 @@ export function getCellKey(row: number, col: number): string {
  * @example getCellPosition("1-2") => { row: 1, col: 2 }
  */
 export function getCellPosition(cellKey: string): { row: number; col: number } {
-  const [row, col] = cellKey.split("-").map(Number);
+  const [row, col] = cellKey.split("-").map(Number) as [number, number];
   return { row, col };
 }
 
@@ -467,11 +467,11 @@ export function reorderRow(
   // 행 순서 재배열
   const rowOrder = Array.from({ length: tableData.rowCount }, (_, i) => i);
   const [removed] = rowOrder.splice(fromIndex, 1);
-  rowOrder.splice(toIndex, 0, removed);
+  rowOrder.splice(toIndex, 0, removed!);
 
   // 새로운 인덱스로 셀 복사
   for (let newRow = 0; newRow < rowOrder.length; newRow++) {
-    const oldRow = rowOrder[newRow];
+    const oldRow = rowOrder[newRow]!;
     for (let col = 0; col < tableData.colCount; col++) {
       const oldKey = getCellKey(oldRow, col);
       const newKey = getCellKey(newRow, col);
@@ -484,7 +484,7 @@ export function reorderRow(
 
   // 행 높이 재배열
   const newRowHeights = rowOrder.map(
-    (oldIndex) => tableData.rowHeights[oldIndex],
+    (oldIndex) => tableData.rowHeights[oldIndex]!,
   );
 
   return {
@@ -513,12 +513,12 @@ export function reorderColumn(
   // 열 순서 재배열
   const colOrder = Array.from({ length: tableData.colCount }, (_, i) => i);
   const [removed] = colOrder.splice(fromIndex, 1);
-  colOrder.splice(toIndex, 0, removed);
+  colOrder.splice(toIndex, 0, removed!);
 
   // 새로운 인덱스로 셀 복사
   for (let row = 0; row < tableData.rowCount; row++) {
     for (let newCol = 0; newCol < colOrder.length; newCol++) {
-      const oldCol = colOrder[newCol];
+      const oldCol = colOrder[newCol]!;
       const oldKey = getCellKey(row, oldCol);
       const newKey = getCellKey(row, newCol);
       const cell = tableData.cells[oldKey];
@@ -530,7 +530,7 @@ export function reorderColumn(
 
   // 열 너비 재배열
   const newColWidths = colOrder.map(
-    (oldIndex) => tableData.colWidths[oldIndex],
+    (oldIndex) => tableData.colWidths[oldIndex]!,
   );
 
   return {

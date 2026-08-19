@@ -501,7 +501,9 @@ export function LineSeriesOptionsBar({
                   max={50}
                   step={5}
                   value={[Math.round(fillOpacity * 100)]}
-                  onValueChange={(v) => handleFillOpacityChange(v[0] / 100)}
+                  onValueChange={(v) =>
+                    handleFillOpacityChange((v[0] ?? 50) / 100)
+                  }
                   onKeyDown={stopKeyPropagation}
                   onPointerDown={stopMousePropagation}
                   className="w-10"

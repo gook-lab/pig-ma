@@ -48,7 +48,7 @@ function extractMentionsFromText(
   const regex = /@(\w+)/g;
   let match;
   while ((match = regex.exec(text)) !== null) {
-    mentions.push({ id: match[1], label: match[1] });
+    mentions.push({ id: match[1]!, label: match[1]! });
   }
   return mentions;
 }

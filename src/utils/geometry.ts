@@ -20,8 +20,8 @@ export function getObjectBounds(obj: CanvasObject): Bounds {
         maxX = -Infinity,
         maxY = -Infinity;
       for (let i = 0; i < obj.points.length; i += 2) {
-        const px = obj.points[i];
-        const py = obj.points[i + 1];
+        const px = obj.points[i]!;
+        const py = obj.points[i + 1]!;
         minX = Math.min(minX, px);
         minY = Math.min(minY, py);
         maxX = Math.max(maxX, px);
@@ -290,8 +290,8 @@ export function connectorIntersectsRect(
 
   // Check each segment of the connector
   for (let i = 0; i < points.length - 1; i++) {
-    const p1 = points[i];
-    const p2 = points[i + 1];
+    const p1 = points[i]!;
+    const p2 = points[i + 1]!;
     if (lineSegmentIntersectsRect(p1.x, p1.y, p2.x, p2.y, rect)) {
       return true;
     }
@@ -734,7 +734,7 @@ function findClosestRectEdgePoint(
 
   // 가장 가까운 후보 선택
   candidates.sort((a, b) => a.dist - b.dist);
-  return { point: candidates[0].point, anchor: candidates[0].anchor };
+  return { point: candidates[0]!.point, anchor: candidates[0]!.anchor };
 }
 
 // Find closest point on polygon edge, snapped to grid
@@ -765,8 +765,8 @@ function findClosestPolygonEdgePoint(
   let closestAnchor: AnchorPosition = "center";
 
   for (let i = 0; i < worldVertices.length; i++) {
-    const v1 = worldVertices[i];
-    const v2 = worldVertices[(i + 1) % worldVertices.length];
+    const v1 = worldVertices[i]!;
+    const v2 = worldVertices[(i + 1) % worldVertices.length]!;
 
     // Find closest point on this edge segment
     const edgePoint = closestPointOnSegment(point, v1, v2);
@@ -986,8 +986,8 @@ function getPolygonEdgeAnchors(
   // Calculate edge midpoints
   const anchors: { anchor: AnchorPosition; point: Point }[] = [];
   for (let i = 0; i < vertices.length; i++) {
-    const v1 = vertices[i];
-    const v2 = vertices[(i + 1) % vertices.length];
+    const v1 = vertices[i]!;
+    const v2 = vertices[(i + 1) % vertices.length]!;
     const midX = baseX + (v1.x + v2.x) / 2;
     const midY = baseY + (v1.y + v2.y) / 2;
 
@@ -1500,11 +1500,11 @@ export function calculateAlignmentGuides(
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
           const diff = Math.abs(
-            draggedHorizontalPoints[i] - targetHorizontalPoints[j],
+            draggedHorizontalPoints[i]! - targetHorizontalPoints[j]!,
           );
           if (diff < threshold) {
-            const targetY = targetHorizontalPoints[j];
-            const offset = targetY - draggedHorizontalPoints[i];
+            const targetY = targetHorizontalPoints[j]!;
+            const offset = targetY - draggedHorizontalPoints[i]!;
             const newSnappedY = draggedBounds.y + offset;
 
             // 가장 가까운 스냅 업데이트
@@ -1539,11 +1539,11 @@ export function calculateAlignmentGuides(
       for (let i = 0; i < 3; i++) {
         for (let j = 0; j < 3; j++) {
           const diff = Math.abs(
-            draggedVerticalPoints[i] - targetVerticalPoints[j],
+            draggedVerticalPoints[i]! - targetVerticalPoints[j]!,
           );
           if (diff < threshold) {
-            const targetX = targetVerticalPoints[j];
-            const offset = targetX - draggedVerticalPoints[i];
+            const targetX = targetVerticalPoints[j]!;
+            const offset = targetX - draggedVerticalPoints[i]!;
             const newSnappedX = draggedBounds.x + offset;
 
             // 가장 가까운 스냅 업데이트

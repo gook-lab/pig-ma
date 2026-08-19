@@ -128,13 +128,13 @@ export const Rectangle = memo(function Rectangle({
   // Check if text has mixed styles
   const hasRichFormatting = useMemo(() => {
     if (richText.length <= 1) return false;
-    const first = richText[0];
+    const first = richText[0]!;
     return richText.some(
       (seg) =>
-        (seg.fontWeight ?? "normal") !== (first.fontWeight ?? "normal") ||
-        (seg.textDecoration ?? "none") !== (first.textDecoration ?? "none") ||
-        seg.fontSize !== first.fontSize ||
-        seg.textColor !== first.textColor,
+        (seg.fontWeight ?? "normal") !== (first!.fontWeight ?? "normal") ||
+        (seg.textDecoration ?? "none") !== (first!.textDecoration ?? "none") ||
+        seg.fontSize !== first!.fontSize ||
+        seg.textColor !== first!.textColor,
     );
   }, [richText]);
 

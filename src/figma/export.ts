@@ -310,7 +310,7 @@ function canvasObjectToSvg(obj: CanvasObject): string | null {
       if (!obj.points || obj.points.length < 4) return null;
       const pts: string[] = [];
       for (let i = 0; i < obj.points.length; i += 2) {
-        pts.push(`${obj.x + obj.points[i]},${obj.y + obj.points[i + 1]}`);
+        pts.push(`${obj.x + obj.points[i]!},${obj.y + obj.points[i + 1]!}`);
       }
       const stroke = obj.stroke ?? "#374151";
       const sw = obj.strokeWidth ?? 2;

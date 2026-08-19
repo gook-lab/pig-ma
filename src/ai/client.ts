@@ -207,9 +207,10 @@ async function callGemini(
         error.message.includes("RESOURCE_EXHAUSTED")
       ) {
         const retryMatch = error.message.match(/retry in (\d+(?:\.\d+)?)/i);
-        const retrySeconds = retryMatch
-          ? Math.ceil(parseFloat(retryMatch[1]))
-          : 30;
+        const retrySeconds =
+          retryMatch && retryMatch[1]
+            ? Math.ceil(parseFloat(retryMatch[1]))
+            : 30;
         throw new Error(
           `Gemini rate limited. Retry in ${retrySeconds}s. Try a new API key from aistudio.google.com/apikey`,
         );

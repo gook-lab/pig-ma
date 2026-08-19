@@ -36,7 +36,8 @@
     "preview": "vite preview",
     "prepublishOnly": "npm run build:lib",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json"
   },
   "peerDependencies": {
     "@tiptap/extension-code-block-lowlight": "^3.19.0",

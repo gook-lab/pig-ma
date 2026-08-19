@@ -236,9 +236,9 @@ function simplify(points: Point[]): Point[] {
 
   // 일직선 위의 중간점 제거
   for (let i = out.length - 2; i >= 1; i--) {
-    const a = out[i - 1];
-    const b = out[i];
-    const c = out[i + 1];
+    const a = out[i - 1]!;
+    const b = out[i]!;
+    const c = out[i + 1]!;
     if (!a || !b || !c) continue;
     const collinearH = Math.abs(a.y - b.y) < EPS && Math.abs(b.y - c.y) < EPS;
     const collinearV = Math.abs(a.x - b.x) < EPS && Math.abs(b.x - c.x) < EPS;
@@ -695,7 +695,7 @@ function applyBends(
       let currentX = start.x;
 
       for (let i = 0; i < leftYSteps.length; i++) {
-        const step = leftYSteps[i];
+        const step = leftYSteps[i]!;
         // 저장된 midX 그대로 사용 (재조정 제거)
         const stepMidX = step.midX ?? (currentX + leftX) / 2;
 
@@ -759,7 +759,7 @@ function applyBends(
 
       // 연속 계단 처리 (rightYSteps도 고정값으로 유지)
       for (let i = 0; i < rightYSteps.length; i++) {
-        const step = rightYSteps[i];
+        const step = rightYSteps[i]!;
         // 저장된 midX 그대로 사용 (재조정 제거)
         const stepMidX = step.midX ?? (currentX + end.x) / 2;
 
@@ -811,7 +811,7 @@ function applyBends(
 
       // 연속 계단 처리 (end.y에서 시작)
       for (let i = 0; i < rightYSteps.length; i++) {
-        const step = rightYSteps[i];
+        const step = rightYSteps[i]!;
         // 저장된 midX 그대로 사용 (재조정 제거)
         const stepMidX = step.midX ?? (currentX + end.x) / 2;
 
@@ -889,11 +889,11 @@ function applyBends(
     }
   }
 
-  const result: Point[] = [basePoints[0]];
+  const result: Point[] = [basePoints[0]!];
 
   for (let i = 0; i < basePoints.length - 1; i++) {
-    const segStart = basePoints[i];
-    const segEnd = basePoints[i + 1];
+    const segStart = basePoints[i]!;
+    const segEnd = basePoints[i + 1]!;
     const bend = bendBySegment.get(i);
 
     if (bend) {
@@ -988,8 +988,8 @@ export function calculateElbowPath(
 export function getSegments(points: number[]): Segment[] {
   const segments: Segment[] = [];
   for (let i = 0; i < points.length - 2; i += 2) {
-    const start = { x: points[i], y: points[i + 1] };
-    const end = { x: points[i + 2], y: points[i + 3] };
+    const start = { x: points[i]!, y: points[i + 1]! };
+    const end = { x: points[i + 2]!, y: points[i + 3]! };
 
     if (start.x === end.x && start.y === end.y) continue;
 
@@ -1062,7 +1062,7 @@ export function getMidpointHandlePositions(
 
   if (isStraight) {
     // 직선: 중간에 파란색 핸들 1개
-    const seg = segments[0];
+    const seg = segments[0]!;
     return [
       {
         x: (seg.start.x + seg.end.x) / 2,
@@ -1140,24 +1140,24 @@ export function getMidpointHandlePositions(
   const runIdOf: number[] = [];
   for (let i = 0; i < segments.length; i++) {
     runIdOf[i] =
-      i > 0 && segments[i].direction === segments[i - 1].direction
-        ? runIdOf[i - 1]
+      i > 0 && segments[i]!.direction === segments[i - 1]!.direction
+        ? runIdOf[i - 1]!
         : i;
   }
   const runMidpoint = (i: number): Point => {
-    const id = runIdOf[i];
+    const id = runIdOf[i]!;
     let j = i;
     while (j + 1 < segments.length && runIdOf[j + 1] === id) j++;
     return {
-      x: (segments[id].start.x + segments[j].end.x) / 2,
-      y: (segments[id].start.y + segments[j].end.y) / 2,
+      x: (segments[id]!.start.x + segments[j]!.end.x) / 2,
+      y: (segments[id]!.start.y + segments[j]!.end.y) / 2,
     };
   };
   // 한 런에는 핸들 하나 — 뒤 조각은 분류(플래그 소비)만 하고 핸들은 내지 않는다.
   const emittedRuns = new Set<number>();
 
   for (let i = 0; i < segments.length; i++) {
-    const seg = segments[i];
+    const seg = segments[i]!;
     const length =
       seg.direction === "horizontal"
         ? Math.abs(seg.end.x - seg.start.x)
@@ -1314,8 +1314,8 @@ export function getMidpointHandlePositions(
         continue;
       }
 
-      if (emittedRuns.has(runIdOf[i])) continue;
-      emittedRuns.add(runIdOf[i]);
+      if (emittedRuns.has(runIdOf[i]!)) continue;
+      emittedRuns.add(runIdOf[i]!);
       const runMid = runMidpoint(i);
       handles.push({
         x: runMid.x,
@@ -1357,7 +1357,7 @@ export function getMidpointHandlePositions(
           handleType = segX < midX ? "left" : "right";
         }
       } else if (horizontalSegments.length >= 3) {
-        const centerHorzSegIdx = horizontalSegments[centerHorizontalIdx].idx;
+        const centerHorzSegIdx = horizontalSegments[centerHorizontalIdx]!.idx;
         handleType = i < centerHorzSegIdx ? "left" : "right";
       } else if (segments.length === 5) {
         handleType = i === 1 ? "left" : "right";
@@ -1490,8 +1490,8 @@ export function getMidpointHandlePositions(
         verticalTarget = midRightX !== undefined ? "midRight" : "rightCorner";
       }
 
-      if (emittedRuns.has(runIdOf[i])) continue;
-      emittedRuns.add(runIdOf[i]);
+      if (emittedRuns.has(runIdOf[i]!)) continue;
+      emittedRuns.add(runIdOf[i]!);
       const runMid = runMidpoint(i);
       handles.push({
         x: runMid.x,
@@ -1576,7 +1576,7 @@ export function getBaseSegments(start: Point, end: Point): Segment[] {
 export function getPointsFromFlat(flatPoints: number[]): Point[] {
   const points: Point[] = [];
   for (let i = 0; i < flatPoints.length - 1; i += 2) {
-    points.push({ x: flatPoints[i], y: flatPoints[i + 1] });
+    points.push({ x: flatPoints[i]!, y: flatPoints[i + 1]! });
   }
   return points;
 }
@@ -1740,17 +1740,17 @@ export function getPointOnPath(
   const segmentLengths: number[] = [];
 
   for (let i = 0; i < flatPoints.length - 2; i += 2) {
-    const x1 = flatPoints[i];
-    const y1 = flatPoints[i + 1];
-    const x2 = flatPoints[i + 2];
-    const y2 = flatPoints[i + 3];
+    const x1 = flatPoints[i]!;
+    const y1 = flatPoints[i + 1]!;
+    const x2 = flatPoints[i + 2]!;
+    const y2 = flatPoints[i + 3]!;
     const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
     segmentLengths.push(length);
     totalLength += length;
   }
 
   if (totalLength === 0) {
-    return { x: flatPoints[0], y: flatPoints[1], direction: "horizontal" };
+    return { x: flatPoints[0]!, y: flatPoints[1]!, direction: "horizontal" };
   }
 
   // t 값을 경로 상 거리로 변환
@@ -1758,17 +1758,17 @@ export function getPointOnPath(
   let accumulatedLength = 0;
 
   for (let i = 0; i < segmentLengths.length; i++) {
-    const segLength = segmentLengths[i];
+    const segLength = segmentLengths[i]!;
     const segStart = accumulatedLength;
     const segEnd = accumulatedLength + segLength;
 
     if (targetDistance <= segEnd || i === segmentLengths.length - 1) {
       // 이 세그먼트 내에서의 비율
       const segT = segLength > 0 ? (targetDistance - segStart) / segLength : 0;
-      const x1 = flatPoints[i * 2];
-      const y1 = flatPoints[i * 2 + 1];
-      const x2 = flatPoints[i * 2 + 2];
-      const y2 = flatPoints[i * 2 + 3];
+      const x1 = flatPoints[i * 2]!;
+      const y1 = flatPoints[i * 2 + 1]!;
+      const x2 = flatPoints[i * 2 + 2]!;
+      const y2 = flatPoints[i * 2 + 3]!;
 
       const direction: "horizontal" | "vertical" =
         Math.abs(y2 - y1) < 0.01 ? "horizontal" : "vertical";
@@ -1785,8 +1785,8 @@ export function getPointOnPath(
 
   // Fallback: 끝점 반환
   return {
-    x: flatPoints[flatPoints.length - 2],
-    y: flatPoints[flatPoints.length - 1],
+    x: flatPoints[flatPoints.length - 2]!,
+    y: flatPoints[flatPoints.length - 1]!,
     direction: "horizontal",
   };
 }
@@ -1815,18 +1815,18 @@ export function getClosestPointOnPath(
   const segmentLengths: number[] = [];
 
   for (let i = 0; i < flatPoints.length - 2; i += 2) {
-    const x1 = flatPoints[i];
-    const y1 = flatPoints[i + 1];
-    const x2 = flatPoints[i + 2];
-    const y2 = flatPoints[i + 3];
+    const x1 = flatPoints[i]!;
+    const y1 = flatPoints[i + 1]!;
+    const x2 = flatPoints[i + 2]!;
+    const y2 = flatPoints[i + 3]!;
     const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
     segmentLengths.push(length);
     totalLength += length;
   }
 
   if (totalLength === 0) {
-    const x = flatPoints[0];
-    const y = flatPoints[1];
+    const x = flatPoints[0]!;
+    const y = flatPoints[1]!;
     const dx = point.x - x;
     const dy = point.y - y;
     return { t: 0, distance: Math.sqrt(dx * dx + dy * dy), x, y };
@@ -1834,16 +1834,16 @@ export function getClosestPointOnPath(
 
   let closestT = 0;
   let closestDistance = Infinity;
-  let closestX = flatPoints[0];
-  let closestY = flatPoints[1];
+  let closestX = flatPoints[0]!;
+  let closestY = flatPoints[1]!;
   let accumulatedLength = 0;
 
   for (let i = 0; i < segmentLengths.length; i++) {
-    const x1 = flatPoints[i * 2];
-    const y1 = flatPoints[i * 2 + 1];
-    const x2 = flatPoints[i * 2 + 2];
-    const y2 = flatPoints[i * 2 + 3];
-    const segLength = segmentLengths[i];
+    const x1 = flatPoints[i * 2]!;
+    const y1 = flatPoints[i * 2 + 1]!;
+    const x2 = flatPoints[i * 2 + 2]!;
+    const y2 = flatPoints[i * 2 + 3]!;
+    const segLength = segmentLengths[i]!;
 
     // 세그먼트 상에서 가장 가까운 점 찾기
     const dx = x2 - x1;

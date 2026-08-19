@@ -80,7 +80,8 @@ function splitByNewlines(segments: TextSegment[]): TextSegment[][] {
     parts.forEach((part, i) => {
       if (i > 0) lines.push([]);
       if (part) {
-        lines[lines.length - 1].push({ ...seg, text: part });
+        const lastLine = lines[lines.length - 1];
+        if (lastLine) lastLine.push({ ...seg, text: part });
       }
     });
   });
@@ -101,7 +102,8 @@ export function tiptapToPlainText(content: JSONContent): string {
     if (node.type === "text" && node.text) {
       texts.push(node.text);
     } else if (node.type === "paragraph") {
-      if (texts.length > 0 && !texts[texts.length - 1].endsWith("\n")) {
+      const lastText = texts[texts.length - 1];
+      if (texts.length > 0 && lastText && !lastText.endsWith("\n")) {
         texts.push("\n");
       }
     } else if (node.type === "hardBreak") {

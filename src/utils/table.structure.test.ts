@@ -267,7 +267,12 @@ describe("복제", () => {
   it("깊은 복사라 원본이 오염되지 않는다", () => {
     const before = labeled(2, 2);
     const copy = cloneTableData(before);
-    const mutated = setCell(copy, 0, 0, { backgroundColor: "#zz" });
+    const cell = getCell(copy, 0, 0);
+    const mutated = setCell(copy, 0, 0, {
+      ...cell,
+      backgroundColor: "#zz",
+      id: cell?.id ?? "0-0",
+    });
 
     expect(getCell(before, 0, 0)?.backgroundColor).toBe("#00");
     expect(getCell(mutated, 0, 0)?.backgroundColor).toBe("#zz");

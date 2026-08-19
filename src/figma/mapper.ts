@@ -274,10 +274,10 @@ export function figmaToPigma(node: FigmaNode): PigmaShape | null {
     const hasTransform =
       imageTransform &&
       imageTransform.length >= 2 &&
-      (Math.abs(imageTransform[0][2] ?? 0) > 0.01 ||
-        Math.abs(imageTransform[1][2] ?? 0) > 0.01 ||
-        Math.abs((imageTransform[0][0] ?? 1) - 1) > 0.01 ||
-        Math.abs((imageTransform[1][1] ?? 1) - 1) > 0.01);
+      (Math.abs(imageTransform[0]![2] ?? 0) > 0.01 ||
+        Math.abs(imageTransform[1]![2] ?? 0) > 0.01 ||
+        Math.abs((imageTransform[0]![0] ?? 1) - 1) > 0.01 ||
+        Math.abs((imageTransform[1]![1] ?? 1) - 1) > 0.01);
 
     return {
       ...base,
@@ -645,7 +645,7 @@ export function svgPathToPoints(d: string): number[] {
   if (!tokens) return points;
 
   let i = 0;
-  const num = () => parseFloat(tokens[i++]);
+  const num = () => parseFloat(tokens[i++]!);
 
   while (i < tokens.length) {
     const cmd = tokens[i++];
@@ -658,7 +658,7 @@ export function svgPathToPoints(d: string): number[] {
         startY = cy;
         points.push(cx, cy);
         // Implicit L after M
-        while (i < tokens.length && !isNaN(parseFloat(tokens[i]))) {
+        while (i < tokens.length && !isNaN(parseFloat(tokens[i]!))) {
           cx = num();
           cy = num();
           points.push(cx, cy);
@@ -671,7 +671,7 @@ export function svgPathToPoints(d: string): number[] {
         startX = cx;
         startY = cy;
         points.push(cx, cy);
-        while (i < tokens.length && !isNaN(parseFloat(tokens[i]))) {
+        while (i < tokens.length && !isNaN(parseFloat(tokens[i]!))) {
           cx += num();
           cy += num();
           points.push(cx, cy);
@@ -679,7 +679,7 @@ export function svgPathToPoints(d: string): number[] {
         break;
 
       case "L":
-        while (i < tokens.length && !isNaN(parseFloat(tokens[i]))) {
+        while (i < tokens.length && !isNaN(parseFloat(tokens[i]!))) {
           cx = num();
           cy = num();
           points.push(cx, cy);
@@ -687,7 +687,7 @@ export function svgPathToPoints(d: string): number[] {
         break;
 
       case "l":
-        while (i < tokens.length && !isNaN(parseFloat(tokens[i]))) {
+        while (i < tokens.length && !isNaN(parseFloat(tokens[i]!))) {
           cx += num();
           cy += num();
           points.push(cx, cy);
@@ -695,7 +695,7 @@ export function svgPathToPoints(d: string): number[] {
         break;
 
       case "C":
-        while (i < tokens.length && !isNaN(parseFloat(tokens[i]))) {
+        while (i < tokens.length && !isNaN(parseFloat(tokens[i]!))) {
           const cp1x = num(),
             cp1y = num();
           const cp2x = num(),
@@ -709,7 +709,7 @@ export function svgPathToPoints(d: string): number[] {
         break;
 
       case "c":
-        while (i < tokens.length && !isNaN(parseFloat(tokens[i]))) {
+        while (i < tokens.length && !isNaN(parseFloat(tokens[i]!))) {
           const cp1x = cx + num(),
             cp1y = cy + num();
           const cp2x = cx + num(),
@@ -725,7 +725,7 @@ export function svgPathToPoints(d: string): number[] {
         break;
 
       case "Q":
-        while (i < tokens.length && !isNaN(parseFloat(tokens[i]))) {
+        while (i < tokens.length && !isNaN(parseFloat(tokens[i]!))) {
           const qcpx = num(),
             qcpy = num();
           const qex = num(),
@@ -737,7 +737,7 @@ export function svgPathToPoints(d: string): number[] {
         break;
 
       case "q":
-        while (i < tokens.length && !isNaN(parseFloat(tokens[i]))) {
+        while (i < tokens.length && !isNaN(parseFloat(tokens[i]!))) {
           const qcpx = cx + num(),
             qcpy = cy + num();
           const qdx = num(),

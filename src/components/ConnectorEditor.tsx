@@ -74,8 +74,8 @@ export function ConnectorEditor() {
       let maxX = -Infinity;
 
       for (let i = 0; i < pathPoints.length; i += 2) {
-        const x = pathPoints[i];
-        const y = pathPoints[i + 1];
+        const x = pathPoints[i]!;
+        const y = pathPoints[i + 1]!;
         minX = Math.min(minX, x);
         maxX = Math.max(maxX, x);
         minY = Math.min(minY, y);

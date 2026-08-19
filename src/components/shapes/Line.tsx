@@ -40,8 +40,8 @@ export const Line = memo(function Line({
       maxX = -Infinity,
       maxY = -Infinity;
     for (let i = 0; i < points.length; i += 2) {
-      const x = points[i];
-      const y = points[i + 1];
+      const x = points[i]!;
+      const y = points[i + 1]!;
       minX = Math.min(minX, x);
       minY = Math.min(minY, y);
       maxX = Math.max(maxX, x);

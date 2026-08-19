@@ -234,7 +234,7 @@ export function ChartOptionsBar({
   const handleUpdateItem = useCallback(
     (index: number, updates: Partial<ChartDataItem>) => {
       const newItems = [...chartData.items];
-      newItems[index] = { ...newItems[index], ...updates };
+      newItems[index] = { ...newItems[index]!, ...updates };
       onUpdate({
         chartData: {
           ...chartData,
@@ -246,13 +246,13 @@ export function ChartOptionsBar({
   );
 
   const handleAddItem = useCallback(() => {
-    const newItems = [
+    const newItems: ChartDataItem[] = [
       ...chartData.items,
       {
         label: String.fromCharCode(65 + chartData.items.length), // A, B, C, ...
         value: 25,
         color: CHART_COLORS[chartData.items.length % CHART_COLORS.length],
-      },
+      } as ChartDataItem,
     ];
 
     // Auto-expand width for bar charts when items increase
@@ -556,7 +556,7 @@ export function ChartOptionsBar({
   const handleUpdatePointLabel = useCallback(
     (pointIndex: number, label: string) => {
       const newItems = [...chartData.items];
-      newItems[pointIndex] = { ...newItems[pointIndex], label };
+      newItems[pointIndex] = { ...newItems[pointIndex]!, label };
       onUpdate({
         chartData: {
           ...chartData,
@@ -611,7 +611,7 @@ export function ChartOptionsBar({
                 min={0}
                 max={40}
                 value={[innerRadius]}
-                onValueChange={(v) => handleInnerRadiusChange(v[0])}
+                onValueChange={(v) => handleInnerRadiusChange(v[0]!)}
                 onKeyDown={stopKeyPropagation}
                 onPointerDown={stopMousePropagation}
                 className="w-16"
@@ -1162,7 +1162,7 @@ export function ChartOptionsBar({
                     </div>
                     {showCustomPicker === "fillColor" && (
                       <ColorPickerPopup
-                        currentColor={globalColor ?? CHART_COLORS[0]}
+                        currentColor={globalColor ?? CHART_COLORS[0]!}
                         onApply={(color) => {
                           handleGlobalColorChange(color);
                           addIfNotInPalette(color, CHART_COLORS);
@@ -1339,7 +1339,7 @@ export function ChartOptionsBar({
                         min={0}
                         max={16}
                         value={[cornerRadius]}
-                        onValueChange={(v) => handleCornerRadiusChange(v[0])}
+                        onValueChange={(v) => handleCornerRadiusChange(v[0]!)}
                         onKeyDown={stopKeyPropagation}
                         onPointerDown={stopMousePropagation}
                         className="flex-1"
@@ -1441,7 +1441,9 @@ export function ChartOptionsBar({
                             max={isLine ? 32 : 30}
                             step={isLine ? 16 : 1}
                             value={[xAxisMargin]}
-                            onValueChange={(v) => handleXAxisMarginChange(v[0])}
+                            onValueChange={(v) =>
+                              handleXAxisMarginChange(v[0]!)
+                            }
                             onKeyDown={stopKeyPropagation}
                             onPointerDown={stopMousePropagation}
                             className="flex-1"
@@ -1460,7 +1462,9 @@ export function ChartOptionsBar({
                             min={0}
                             max={30}
                             value={[yAxisMargin]}
-                            onValueChange={(v) => handleYAxisMarginChange(v[0])}
+                            onValueChange={(v) =>
+                              handleYAxisMarginChange(v[0]!)
+                            }
                             onKeyDown={stopKeyPropagation}
                             onPointerDown={stopMousePropagation}
                             className="flex-1"

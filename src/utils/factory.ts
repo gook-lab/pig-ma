@@ -458,9 +458,9 @@ export function createChart(
   variant: ChartVariant,
 ): CanvasObject {
   const baseItems = [
-    { label: "A", value: 30, color: CHART_COLORS[0] },
-    { label: "B", value: 50, color: CHART_COLORS[1] },
-    { label: "C", value: 20, color: CHART_COLORS[2] },
+    { label: "A", value: 30, color: CHART_COLORS[0]! },
+    { label: "B", value: 50, color: CHART_COLORS[1]! },
+    { label: "C", value: 20, color: CHART_COLORS[2]! },
   ];
 
   // Line chart: 멀티 시리즈 지원
@@ -472,7 +472,7 @@ export function createChart(
             name: "Series 1",
             values: [30, 50, 20],
             style: {
-              color: CHART_COLORS[0],
+              color: CHART_COLORS[0]!,
               strokeWidth: 2,
               lineStyle: "solid" as const,
               fillEnabled: false,

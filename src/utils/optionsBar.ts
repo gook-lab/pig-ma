@@ -329,8 +329,8 @@ export function calculateOptionsBarPositionForPoints({
     maxY = -Infinity;
 
   for (let i = 0; i < points.length; i += 2) {
-    const x = points[i];
-    const y = points[i + 1];
+    const x = points[i]!;
+    const y = points[i + 1]!;
     minX = Math.min(minX, x);
     maxX = Math.max(maxX, x);
     minY = Math.min(minY, y);

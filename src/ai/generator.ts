@@ -37,7 +37,7 @@ export function convertAIShapesToObjects(
   const idMap = new Map<number, string>(); // node index → CanvasObject ID
 
   for (let i = 0; i < positioned.length; i++) {
-    const shape = positioned[i];
+    const shape = positioned[i]!;
     const id = nanoid();
     idMap.set(i, id);
 
@@ -50,8 +50,8 @@ export function convertAIShapesToObjects(
     const sourceId = idMap.get(edge.source);
     const targetId = idMap.get(edge.target);
     if (sourceId && targetId) {
-      const sourceShape = positioned[edge.source];
-      const targetShape = positioned[edge.target];
+      const sourceShape = positioned[edge.source]!;
+      const targetShape = positioned[edge.target]!;
       const anchors = computeAnchors(sourceShape, targetShape);
       objects.push(
         createConnectorObject(

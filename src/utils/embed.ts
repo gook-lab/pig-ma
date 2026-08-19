@@ -42,7 +42,7 @@ export function parseYouTubeUrl(url: string): EmbedMetadata | null {
   for (const pattern of patterns) {
     const match = url.match(pattern);
     if (match) {
-      videoId = match[1];
+      videoId = match[1]!;
       break;
     }
   }
@@ -55,7 +55,7 @@ export function parseYouTubeUrl(url: string): EmbedMetadata | null {
   let startTime: number | undefined;
   const timeMatch = url.match(/[?&](?:t|start)=(\d+)/);
   if (timeMatch) {
-    startTime = parseInt(timeMatch[1], 10);
+    startTime = parseInt(timeMatch[1]!, 10);
   }
 
   // YouTube thumbnail URL (high quality default)
@@ -103,14 +103,14 @@ export function parseFigmaUrl(url: string): EmbedMetadata | null {
   let figmaType: FigmaType = "design";
 
   for (let i = 0; i < patterns.length; i++) {
-    const match = url.match(patterns[i]);
+    const match = url.match(patterns[i]!);
     if (match) {
-      fileKey = match[1];
+      fileKey = match[1]!;
       // Decode URL-encoded file name and replace hyphens with spaces
       fileName = match[2]
-        ? decodeURIComponent(match[2]).replace(/-/g, " ")
+        ? decodeURIComponent(match[2]!).replace(/-/g, " ")
         : undefined;
-      figmaType = typeMap[i];
+      figmaType = typeMap[i]!;
       break;
     }
   }
@@ -123,7 +123,7 @@ export function parseFigmaUrl(url: string): EmbedMetadata | null {
   let nodeId: string | undefined;
   const nodeMatch = url.match(/[?&]node-id=([^&#]+)/);
   if (nodeMatch) {
-    nodeId = decodeURIComponent(nodeMatch[1]);
+    nodeId = decodeURIComponent(nodeMatch[1]!);
   }
 
   return {
@@ -162,11 +162,11 @@ export function parseNotionUrl(url: string): EmbedMetadata | null {
   // Try to extract page ID
   const uuidMatch = url.match(uuidPattern);
   if (uuidMatch) {
-    pageId = uuidMatch[1].replace(/-/g, "");
+    pageId = uuidMatch[1]!.replace(/-/g, "");
   } else {
     const idMatch = url.match(pageIdPattern);
     if (idMatch) {
-      pageId = idMatch[1];
+      pageId = idMatch[1]!;
     }
   }
 
@@ -185,7 +185,7 @@ export function parseNotionUrl(url: string): EmbedMetadata | null {
         // Extract name before the ID
         const nameMatch = part.match(/^(.+?)-[a-f0-9]{32}$/i);
         if (nameMatch) {
-          pageName = decodeURIComponent(nameMatch[1]).replace(/-/g, " ");
+          pageName = decodeURIComponent(nameMatch[1]!).replace(/-/g, " ");
         }
         break;
       }

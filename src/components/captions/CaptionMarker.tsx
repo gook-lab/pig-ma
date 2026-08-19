@@ -151,8 +151,8 @@ export const CaptionMarker = memo(function CaptionMarker({
           />
           <Text
             text={
-              caption.messages[0]?.content?.slice(0, 20) +
-              (caption.messages[0]?.content?.length > 20 ? "..." : "")
+              (caption.messages[0]?.content?.slice(0, 20) ?? "") +
+              ((caption.messages[0]?.content?.length ?? 0) > 20 ? "..." : "")
             }
             fontSize={10 / zoom}
             fontFamily="system-ui, sans-serif"

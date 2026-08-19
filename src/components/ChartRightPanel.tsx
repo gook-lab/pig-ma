@@ -307,7 +307,7 @@ function IndividualOptionsContent({
     const handleUpdateItem = (updates: Partial<ChartDataItem>) => {
       const newItems = [...chartData.items];
       newItems[selectedItemIndex] = {
-        ...newItems[selectedItemIndex],
+        ...newItems[selectedItemIndex]!,
         ...updates,
       };
       onUpdate({ chartData: { ...chartData, items: newItems } });
@@ -779,7 +779,7 @@ function IndividualOptionsContent({
                 step={5}
                 value={[Math.round(fillOpacity * 100)]}
                 onValueChange={(v) =>
-                  handleStyleUpdate({ fillOpacity: v[0] / 100 })
+                  handleStyleUpdate({ fillOpacity: v[0]! / 100 })
                 }
                 onPointerDown={stopMousePropagation}
                 className="flex-1"
@@ -938,11 +938,11 @@ function IndividualOptionsContent({
   if (selectedLegendIndex !== undefined) {
     const isLineChart = chartData.variant === "line" && chartData.series;
     const currentLabel = isLineChart
-      ? chartData.series![selectedLegendIndex].name
-      : chartData.items[selectedLegendIndex].label;
+      ? chartData.series![selectedLegendIndex]!.name
+      : chartData.items[selectedLegendIndex]!.label;
     const currentColor = isLineChart
-      ? chartData.series![selectedLegendIndex].style.color
-      : chartData.items[selectedLegendIndex].color;
+      ? chartData.series![selectedLegendIndex]!.style.color
+      : chartData.items[selectedLegendIndex]!.color;
 
     return (
       <div className="space-y-4">
@@ -956,9 +956,9 @@ function IndividualOptionsContent({
               if (isLineChart) {
                 const newSeries = [...chartData.series!];
                 newSeries[selectedLegendIndex] = {
-                  ...newSeries[selectedLegendIndex],
+                  ...newSeries[selectedLegendIndex]!,
                   style: {
-                    ...newSeries[selectedLegendIndex].style,
+                    ...newSeries[selectedLegendIndex]!.style,
                     color: e.target.value,
                   },
                 };
@@ -966,7 +966,7 @@ function IndividualOptionsContent({
               } else {
                 const newItems = [...chartData.items];
                 newItems[selectedLegendIndex] = {
-                  ...newItems[selectedLegendIndex],
+                  ...newItems[selectedLegendIndex]!,
                   color: e.target.value,
                 };
                 onUpdate({ chartData: { ...chartData, items: newItems } });
@@ -987,14 +987,14 @@ function IndividualOptionsContent({
               if (isLineChart) {
                 const newSeries = [...chartData.series!];
                 newSeries[selectedLegendIndex] = {
-                  ...newSeries[selectedLegendIndex],
+                  ...newSeries[selectedLegendIndex]!,
                   name: e.target.value,
                 };
                 onUpdate({ chartData: { ...chartData, series: newSeries } });
               } else {
                 const newItems = [...chartData.items];
                 newItems[selectedLegendIndex] = {
-                  ...newItems[selectedLegendIndex],
+                  ...newItems[selectedLegendIndex]!,
                   label: e.target.value,
                 };
                 onUpdate({ chartData: { ...chartData, items: newItems } });
@@ -1263,7 +1263,7 @@ export function ChartRightPanel({
   const handleUpdateItem = useCallback(
     (index: number, updates: Partial<ChartDataItem>) => {
       const newItems = [...chartData.items];
-      newItems[index] = { ...newItems[index], ...updates };
+      newItems[index] = { ...newItems[index]!, ...updates };
       onUpdate({
         chartData: {
           ...chartData,
@@ -1275,13 +1275,13 @@ export function ChartRightPanel({
   );
 
   const handleAddItem = useCallback(() => {
-    const newItems = [
+    const newItems: ChartDataItem[] = [
       ...chartData.items,
       {
         label: String.fromCharCode(65 + chartData.items.length),
         value: 25,
         color: CHART_COLORS[chartData.items.length % CHART_COLORS.length],
-      },
+      } as ChartDataItem,
     ];
     onUpdate({
       chartData: {
@@ -1621,7 +1621,7 @@ export function ChartRightPanel({
   const handleUpdatePointLabel = useCallback(
     (pointIndex: number, label: string) => {
       const newItems = [...chartData.items];
-      newItems[pointIndex] = { ...newItems[pointIndex], label };
+      newItems[pointIndex] = { ...newItems[pointIndex]!, label };
       onUpdate({
         chartData: {
           ...chartData,
@@ -2246,7 +2246,7 @@ export function ChartRightPanel({
                   </div>
                   {showCustomPicker === "fillColor" && (
                     <ColorPickerPopup
-                      currentColor={globalColor ?? CHART_COLORS[0]}
+                      currentColor={globalColor ?? CHART_COLORS[0]!}
                       onApply={(color) => {
                         handleGlobalColorChange(color);
                         addIfNotInPalette(color, CHART_COLORS);
@@ -2503,7 +2503,7 @@ export function ChartRightPanel({
                       min={-80}
                       max={80}
                       value={[valueOffsetY]}
-                      onValueChange={(v) => handleValueOffsetYChange(v[0])}
+                      onValueChange={(v) => handleValueOffsetYChange(v[0]!)}
                       onKeyDown={stopKeyPropagation}
                       onPointerDown={stopMousePropagation}
                       className="flex-1"
@@ -2640,7 +2640,7 @@ export function ChartRightPanel({
                       min={0}
                       max={16}
                       value={[cornerRadius]}
-                      onValueChange={(v) => handleCornerRadiusChange(v[0])}
+                      onValueChange={(v) => handleCornerRadiusChange(v[0]!)}
                       onKeyDown={stopKeyPropagation}
                       onPointerDown={stopMousePropagation}
                       className="flex-1"
@@ -2742,7 +2742,7 @@ export function ChartRightPanel({
                           max={isLine ? 32 : 16}
                           step={isLine ? 16 : 1}
                           value={[xAxisMargin]}
-                          onValueChange={(v) => handleXAxisMarginChange(v[0])}
+                          onValueChange={(v) => handleXAxisMarginChange(v[0]!)}
                           onKeyDown={stopKeyPropagation}
                           onPointerDown={stopMousePropagation}
                           className="flex-1"
@@ -2772,7 +2772,7 @@ export function ChartRightPanel({
                           min={0}
                           max={16}
                           value={[yAxisMargin]}
-                          onValueChange={(v) => handleYAxisMarginChange(v[0])}
+                          onValueChange={(v) => handleYAxisMarginChange(v[0]!)}
                           onKeyDown={stopKeyPropagation}
                           onPointerDown={stopMousePropagation}
                           className="flex-1"

@@ -453,17 +453,17 @@ export const Connector = memo(function Connector({
     if (startMarkerRef.current) {
       // 화살표 시작점 조정이 적용된 좌표 사용
       startMarkerRef.current.position({
-        x: adjustedPoints[0],
-        y: adjustedPoints[1],
+        x: adjustedPoints[0]!,
+        y: adjustedPoints[1]!,
       });
       // 각도 계산 (화살표 방향)
       const startAngle =
         adjustedPoints.length >= 4
           ? calculateAngle(
-              adjustedPoints[0],
-              adjustedPoints[1],
-              adjustedPoints[2],
-              adjustedPoints[3],
+              adjustedPoints[0]!,
+              adjustedPoints[1]!,
+              adjustedPoints[2]!,
+              adjustedPoints[3]!,
             )
           : 0;
       startMarkerRef.current.rotation(startAngle + 180);
@@ -471,16 +471,16 @@ export const Connector = memo(function Connector({
     if (endMarkerRef.current) {
       // 화살표 끝점 조정이 적용된 좌표 사용
       const len = adjustedPoints.length;
-      const finalX = adjustedPoints[len - 2];
-      const finalY = adjustedPoints[len - 1];
+      const finalX = adjustedPoints[len - 2]!;
+      const finalY = adjustedPoints[len - 1]!;
       endMarkerRef.current.position({ x: finalX, y: finalY });
       const endAngle =
         len >= 4
           ? calculateAngle(
-              adjustedPoints[len - 4],
-              adjustedPoints[len - 3],
-              adjustedPoints[len - 2],
-              adjustedPoints[len - 1],
+              adjustedPoints[len - 4]!,
+              adjustedPoints[len - 3]!,
+              adjustedPoints[len - 2]!,
+              adjustedPoints[len - 1]!,
             )
           : 0;
       endMarkerRef.current.rotation(endAngle);
@@ -891,19 +891,19 @@ export const Connector = memo(function Connector({
   const startAngle = useMemo(() => {
     if (points.length >= 4) {
       // 첫 번째 세그먼트 계산
-      let x1 = points[0];
-      let y1 = points[1];
-      let x2 = points[2];
-      let y2 = points[3];
+      let x1 = points[0]!;
+      let y1 = points[1]!;
+      let x2 = points[2]!;
+      let y2 = points[3]!;
 
       // 첫 번째 세그먼트 길이가 너무 짧으면 다음 세그먼트 사용
       const segLen = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
       if (segLen < 1 && points.length >= 6) {
         // 다음 세그먼트 사용
-        x1 = points[2];
-        y1 = points[3];
-        x2 = points[4];
-        y2 = points[5];
+        x1 = points[2]!;
+        y1 = points[3]!;
+        x2 = points[4]!;
+        y2 = points[5]!;
       }
 
       return calculateAngle(x1, y1, x2, y2);
@@ -915,19 +915,19 @@ export const Connector = memo(function Connector({
     if (points.length >= 4) {
       const len = points.length;
       // 마지막 세그먼트 계산
-      let x1 = points[len - 4];
-      let y1 = points[len - 3];
-      let x2 = points[len - 2];
-      let y2 = points[len - 1];
+      let x1 = points[len - 4]!;
+      let y1 = points[len - 3]!;
+      let x2 = points[len - 2]!;
+      let y2 = points[len - 1]!;
 
       // 마지막 세그먼트 길이가 너무 짧으면 이전 세그먼트 사용
       const segLen = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
       if (segLen < 1 && len >= 6) {
         // 이전 세그먼트 사용
-        x1 = points[len - 6];
-        y1 = points[len - 5];
-        x2 = points[len - 4];
-        y2 = points[len - 3];
+        x1 = points[len - 6]!;
+        y1 = points[len - 5]!;
+        x2 = points[len - 4]!;
+        y2 = points[len - 3]!;
       }
 
       return calculateAngle(x1, y1, x2, y2);
@@ -939,8 +939,8 @@ export const Connector = memo(function Connector({
   const finalStartPoint = useMemo(() => {
     if (arrowPoints.length >= 2) {
       return {
-        x: arrowPoints[0],
-        y: arrowPoints[1],
+        x: arrowPoints[0]!,
+        y: arrowPoints[1]!,
       };
     }
     return { x: startX, y: startY };
@@ -950,8 +950,8 @@ export const Connector = memo(function Connector({
   const finalEndPoint = useMemo(() => {
     if (arrowPoints.length >= 2) {
       return {
-        x: arrowPoints[arrowPoints.length - 2],
-        y: arrowPoints[arrowPoints.length - 1],
+        x: arrowPoints[arrowPoints.length - 2]!,
+        y: arrowPoints[arrowPoints.length - 1]!,
       };
     }
     return { x: endX, y: endY };
@@ -2095,16 +2095,16 @@ export const Connector = memo(function Connector({
 
                 const radius = connectorElbowCornerRadius;
                 context.beginPath();
-                context.moveTo(currentPoints[0], currentPoints[1]);
+                context.moveTo(currentPoints[0]!, currentPoints[1]!);
 
                 // Process each corner point
                 for (let i = 2; i < currentPoints.length - 2; i += 2) {
-                  const prevX = currentPoints[i - 2];
-                  const prevY = currentPoints[i - 1];
-                  const currX = currentPoints[i];
-                  const currY = currentPoints[i + 1];
-                  const nextX = currentPoints[i + 2];
-                  const nextY = currentPoints[i + 3];
+                  const prevX = currentPoints[i - 2]!;
+                  const prevY = currentPoints[i - 1]!;
+                  const currX = currentPoints[i]!;
+                  const currY = currentPoints[i + 1]!;
+                  const nextX = currentPoints[i + 2]!;
+                  const nextY = currentPoints[i + 3]!;
 
                   // Calculate direction vectors
                   const dx1 = currX - prevX;
@@ -2140,8 +2140,8 @@ export const Connector = memo(function Connector({
 
                 // Draw final segment
                 context.lineTo(
-                  currentPoints[currentPoints.length - 2],
-                  currentPoints[currentPoints.length - 1],
+                  currentPoints[currentPoints.length - 2]!,
+                  currentPoints[currentPoints.length - 1]!,
                 );
 
                 context.strokeShape(shape);
@@ -2153,16 +2153,16 @@ export const Connector = memo(function Connector({
 
                 const radius = connectorElbowCornerRadius;
                 context.beginPath();
-                context.moveTo(currentPoints[0], currentPoints[1]);
+                context.moveTo(currentPoints[0]!, currentPoints[1]!);
 
                 // Process each corner point (same logic as sceneFunc)
                 for (let i = 2; i < currentPoints.length - 2; i += 2) {
-                  const prevX = currentPoints[i - 2];
-                  const prevY = currentPoints[i - 1];
-                  const currX = currentPoints[i];
-                  const currY = currentPoints[i + 1];
-                  const nextX = currentPoints[i + 2];
-                  const nextY = currentPoints[i + 3];
+                  const prevX = currentPoints[i - 2]!;
+                  const prevY = currentPoints[i - 1]!;
+                  const currX = currentPoints[i]!;
+                  const currY = currentPoints[i + 1]!;
+                  const nextX = currentPoints[i + 2]!;
+                  const nextY = currentPoints[i + 3]!;
 
                   const dx1 = currX - prevX;
                   const dy1 = currY - prevY;
@@ -2192,8 +2192,8 @@ export const Connector = memo(function Connector({
                 }
 
                 context.lineTo(
-                  currentPoints[currentPoints.length - 2],
-                  currentPoints[currentPoints.length - 1],
+                  currentPoints[currentPoints.length - 2]!,
+                  currentPoints[currentPoints.length - 1]!,
                 );
 
                 // Use strokeShape for hit detection along the path

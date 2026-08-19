@@ -322,8 +322,8 @@ export function Canvas() {
         // Find indices of points within eraser radius
         const erasedIndices = new Set<number>();
         for (let i = 0; i < obj.points.length; i += 2) {
-          const px = obj.x + obj.points[i];
-          const py = obj.y + obj.points[i + 1];
+          const px = obj.x + obj.points[i]!;
+          const py = obj.y + obj.points[i + 1]!;
           const dist = Math.sqrt((x - px) ** 2 + (y - py) ** 2);
           if (dist < radius) {
             erasedIndices.add(i);
@@ -341,7 +341,7 @@ export function Canvas() {
 
         for (let i = 0; i < obj.points.length; i += 2) {
           if (!erasedIndices.has(i)) {
-            currentSegment.push(obj.points[i], obj.points[i + 1]);
+            currentSegment.push(obj.points[i]!, obj.points[i + 1]!);
           } else {
             // When we hit an erased point, save current segment if valid
             if (currentSegment.length >= 4) {
@@ -407,8 +407,8 @@ export function Canvas() {
 
         // Check if any point of the line is within the eraser radius
         for (let i = 0; i < obj.points.length; i += 2) {
-          const px = obj.x + obj.points[i];
-          const py = obj.y + obj.points[i + 1];
+          const px = obj.x + obj.points[i]!;
+          const py = obj.y + obj.points[i + 1]!;
           const dist = Math.sqrt((x - px) ** 2 + (y - py) ** 2);
           if (dist < radius) {
             lineIds.push(obj.id);
@@ -573,8 +573,8 @@ export function Canvas() {
         const newY = viewport.y - e.evt.deltaY * adjustedSpeed;
 
         // 10% 줌 기준 기본 bounds + 캐시된 객체 bounds
-        const maxViewportWidth = stage.width() / MIN_ZOOM;
-        const maxViewportHeight = stage.height() / MIN_ZOOM;
+        const maxViewportWidth = stage.width() / MIN_ZOOM!;
+        const maxViewportHeight = stage.height() / MIN_ZOOM!;
         const cached = objectBoundsRef.current;
         const boundsMinX = Math.min(-maxViewportWidth / 2, cached.minX);
         const boundsMaxX = Math.max(maxViewportWidth / 2, cached.maxX);
@@ -1060,8 +1060,8 @@ export function Canvas() {
       const newY = panStart.viewportY + dy;
 
       // 10% 줌 기준 고정 bounds (화면 비율 유지, 중심 0,0 기준)
-      const maxViewportWidth = stage.width() / MIN_ZOOM;
-      const maxViewportHeight = stage.height() / MIN_ZOOM;
+      const maxViewportWidth = stage.width() / MIN_ZOOM!;
+      const maxViewportHeight = stage.height() / MIN_ZOOM!;
       const boundsMinX = -maxViewportWidth / 2;
       const boundsMaxX = maxViewportWidth / 2;
       const boundsMinY = -maxViewportHeight / 2;
@@ -2576,7 +2576,7 @@ export function Canvas() {
                     if (nodes.length === 0) return;
 
                     // 첫 번째 노드를 기준으로 정렬 가이드 계산
-                    const firstNode = nodes[0];
+                    const firstNode = nodes[0]!;
                     const firstObj = objects.find(
                       (o) => o.id === firstNode.id(),
                     );
@@ -2706,9 +2706,10 @@ export function Canvas() {
               !isLocked &&
               (() => {
                 let selectedObj: CanvasObject | undefined;
+                const selectedId = selectedIds[0]!;
 
                 // Check for __group: virtual selection — create virtual shape from group bounds
-                const groupMatch = selectedIds[0]?.match(/^__group:(.+)$/);
+                const groupMatch = selectedId.match(/^__group:(.+)$/);
                 if (groupMatch) {
                   const group = groups.find((g) => g.id === groupMatch[1]);
                   if (group) {
@@ -2738,7 +2739,7 @@ export function Canvas() {
                     }
                     if (b) {
                       selectedObj = {
-                        id: selectedIds[0],
+                        id: selectedId,
                         type: "shape",
                         shapeVariant: "rectangle",
                         x: b.x,

@@ -183,7 +183,7 @@ export const createClipboardSlice: SliceCreator<ClipboardSlice> = (set) => ({
         state.groups.forEach((g) => {
           if (g.name === baseName) maxNum = Math.max(maxNum, 0);
           const match = g.name?.match(copyPattern);
-          if (match) maxNum = Math.max(maxNum, parseInt(match[1], 10));
+          if (match) maxNum = Math.max(maxNum, parseInt(match[1]!, 10));
         });
         return {
           ...group,
@@ -294,7 +294,8 @@ export const createClipboardSlice: SliceCreator<ClipboardSlice> = (set) => ({
         state.groups.forEach((g) => {
           if (g.name === baseName) maxNum = Math.max(maxNum, 0);
           const match = g.name?.match(copyPattern);
-          if (match) maxNum = Math.max(maxNum, parseInt(match[1], 10));
+          if (match && match[1])
+            maxNum = Math.max(maxNum, parseInt(match[1], 10));
         });
         return {
           ...group,

@@ -269,7 +269,10 @@ export function TiptapEditor({
             // 4. 새 리스트 아이템 sink (들여쓰기)
             // 약간의 지연 후 sink 실행 (트랜잭션 완료 후)
             setTimeout(() => {
-              sinkListItem(listItem)(view.state, view.dispatch);
+              if (listItem) {
+                const cmd = sinkListItem(listItem);
+                if (cmd) cmd(view.state, view.dispatch);
+              }
             }, 0);
 
             return true;

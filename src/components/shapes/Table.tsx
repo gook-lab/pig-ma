@@ -394,8 +394,8 @@ export const Table = memo(function Table({
       {Object.entries(tableData.cells).map(([key, cell]) => {
         if (!cell.backgroundColor) return null;
         const [rowStr, colStr] = key.split("-");
-        const row = parseInt(rowStr, 10);
-        const col = parseInt(colStr, 10);
+        const row = parseInt(rowStr!, 10);
+        const col = parseInt(colStr!, 10);
         const bounds = getCellBounds(tableData, row, col);
 
         // Apply drag offset
@@ -433,8 +433,8 @@ export const Table = memo(function Table({
         if (!text) return null;
 
         const [rowStr, colStr] = key.split("-");
-        const row = parseInt(rowStr, 10);
-        const col = parseInt(colStr, 10);
+        const row = parseInt(rowStr!, 10);
+        const col = parseInt(colStr!, 10);
         const bounds = getCellBounds(tableData, row, col);
 
         // Apply drag offset
