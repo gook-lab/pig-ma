@@ -1,0 +1,73 @@
+# Shape Components
+
+Konva 기반 캔버스 도형 컴포넌트.
+
+## 파일 목록
+
+| 파일 | 설명 | ObjectType |
+|------|------|------------|
+| `Rectangle.tsx` | 사각형 | `rectangle` |
+| `Circle.tsx` | 원 | `circle` |
+| `Shape.tsx` | 확장 도형 (triangle, diamond 등) | `shape` |
+| `StickyNote.tsx` | 메모지 | `stickyNote` |
+| `TextBox.tsx` | 자유 텍스트 | `textBox` |
+| `Line.tsx` | 펜슬 드로잉 | `line` |
+| `Connector.tsx` | 연결선/화살표 | `connector` |
+| `ConnectorLabel.tsx` | 커넥터 텍스트 라벨 | `connectorLabel` |
+| `CanvasImage.tsx` | 이미지 | `image` |
+| `Chart.tsx` | 차트 (bar/line/pie) | `chart` |
+| `Embed.tsx` | 외부 콘텐츠 임베드 (YouTube/Figma/Notion) | `embed` |
+| `ConnectionHandles.tsx` | 연결 포인트 (4방향) | - |
+
+## Shape.tsx 지원 Variants
+
+**Basic:** rectangle, roundedRect, circle, ellipse, triangle, diamond, pentagon, hexagon, octagon, star, star4, cross, arrows, chevrons, speechBubble
+
+**Flowchart:** process, decision, terminal, data, document, database, predefined, manualInput, preparation, delay, or, summing
+
+## Connector 특이사항
+
+### 모드 구분
+
+| 모드 | 조건 | 특징 |
+|------|------|------|
+| **Attached** | `sourceId` 또는 `targetId` 존재 | shape와 연결, shape 드래그 시 자동 추적 |
+| **Standalone** | `sourceId`, `targetId` 모두 없음 | 독립적인 선 객체, 직접 드래그 가능 |
+
+### 핵심 Refs
+
+| Ref | 용도 |
+|-----|------|
+| `lineRef` | Arrow/Line Konva 노드. `points()`로 드래그 중 직접 업데이트 |
+| `startHandleRef` | 시작 핸들 Circle. 드래그 중 `.position()` 직접 업데이트 |
+| `endHandleRef` | 끝 핸들 Circle. 드래그 중 `.position()` 직접 업데이트 |
+| `dragStartPosRef` | Standalone 드래그 시작 시점 스냅샷 (x, y, endX, endY, lineX, lineY) |
+
+## Chart.tsx 특이사항
+
+### 차트 종류
+
+| 종류 | 설명 |
+|------|------|
+| `bar` | 막대 차트 |
+| `line` | 꺾은선 차트 (다중 시리즈 지원) |
+| `pie` | 원형 차트 (도넛 변환 가능) |
+
+### Pie Chart 스타일
+
+`pieStyle` 필드로 5가지 스타일 제어:
+
+| 스타일 | 설명 | innerRadius |
+|--------|------|-------------|
+| `default` | 기본 파이 | 0 |
+| `donut` | 도넛형 | 40 |
+| `3d` | 3D 입체 효과 (그림자) | 0 |
+| `rounded` | Arc + 갭 + 둥근 끝 | 50 |
+| `gradient` | 방사형 그라디언트 | 30 |
+
+### 동적 크기 조절
+
+차트 리사이즈 시 폰트/간격이 자동 스케일링됨:
+- `dynamicFontScale`: barWidth 기반 폰트 크기 조절 (0.6~1.0)
+- `minTextWidth`: 라벨 최소 너비 20px 보장
+- 동적 gap 계산으로 막대 오버플로 방지
