@@ -1,0 +1,128 @@
+{
+  "name": "pig-ma",
+  "version": "0.1.0",
+  "description": "FigJam-style infinite canvas library for React with rich text editing, shapes, connectors, and comments",
+  "type": "module",
+  "main": "./dist/pig-ma.cjs",
+  "module": "./dist/pig-ma.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/pig-ma.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/pig-ma.cjs"
+      }
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && npm run build:types",
+    "build:lib": "vite build --mode lib && npm run build:types",
+    "build:types": "tsc -p tsconfig.lib.json",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "prepublishOnly": "npm run build:lib",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "@google/genai": "^1.48.0",
+    "@tiptap/extension-code-block-lowlight": "^3.19.0",
+    "@tiptap/extension-color": "^3.19.0",
+    "@tiptap/extension-font-family": "^3.19.0",
+    "@tiptap/extension-image": "^3.19.0",
+    "@tiptap/extension-link": "^3.19.0",
+    "@tiptap/extension-mention": "^3.22.1",
+    "@tiptap/extension-table": "^3.19.0",
+    "@tiptap/extension-table-cell": "^3.19.0",
+    "@tiptap/extension-table-header": "^3.19.0",
+    "@tiptap/extension-table-row": "^3.19.0",
+    "@tiptap/extension-text-align": "^3.19.0",
+    "@tiptap/extension-text-style": "^3.19.0",
+    "@tiptap/react": "^3.19.0",
+    "@tiptap/starter-kit": "^3.19.0",
+    "@types/dompurify": "^3.0.5",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "dompurify": "^3.3.3",
+    "konva": "^10.2.0",
+    "lowlight": "^3.3.0",
+    "lucide-react": "^0.563.0",
+    "nanoid": "^5.1.6",
+    "radix-ui": "^1.4.3",
+    "react-konva": "^19.2.2",
+    "tailwind-merge": "^3.5.0",
+    "tippy.js": "^6.3.7",
+    "zod": "^4.3.6",
+    "zundo": "^2.3.0",
+    "zustand": "^5.0.11"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@playwright/test": "^1.58.2",
+    "@tailwindcss/vite": "^4.1.18",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "agentation": "^2.2.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-hot-toast": "^2.6.0",
+    "shadcn": "^3.8.5",
+    "tailwindcss": "^4.1.18",
+    "tw-animate-css": "^1.4.0",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.48.0",
+    "vite": "^7.3.1",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^4.1.10"
+  },
+  "keywords": [
+    "react",
+    "canvas",
+    "infinite-canvas",
+    "whiteboard",
+    "figjam",
+    "figma",
+    "konva",
+    "drawing",
+    "shapes",
+    "connectors",
+    "rich-text",
+    "comments",
+    "collaboration"
+  ],
+  "author": "seongguk.yoon <319692094+gook-lab@users.noreply.github.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "homepage": "",
+  "bugs": {
+    "url": ""
+  }
+}
