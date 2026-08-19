@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The library build now uses `preserveModules`: dist ships one file per
+  source module (entries moved to `dist/index.js` / `dist/index.cjs`; the
+  `pig-ma` import path and `pig-ma/styles.css` are unchanged). Consumers
+  that import only a subset now bundle only that subset — e.g.
+  `import { createShape }` drops from 1.65 MB to ~1.4 KB minified.
 - **BREAKING**: `konva`, `react-konva`, and all `@tiptap/*` packages are now
   peer dependencies instead of being bundled. npm 7+ installs them
   automatically; pnpm/yarn users must install them alongside `pig-ma`. Apps

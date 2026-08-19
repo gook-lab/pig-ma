@@ -3,18 +3,18 @@
   "version": "0.1.0",
   "description": "FigJam-style infinite canvas library for React with rich text editing, shapes, connectors, and comments",
   "type": "module",
-  "main": "./dist/pig-ma.cjs",
-  "module": "./dist/pig-ma.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/pig-ma.js"
+        "default": "./dist/index.js"
       },
       "require": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/pig-ma.cjs"
+        "default": "./dist/index.cjs"
       }
     },
     "./styles.css": "./dist/styles.css"

@@ -105,6 +105,7 @@ Excalidraw 파일은 로컬 JSON이라 API 인증이 필요 없어 Figma보다 �
   - 신선한 소비자 검증: npm 7+ peer 16개 자동 설치 ✓, CJS require ✓, ESM 번들 ✓
   - 실측: pig-ma 자체 몫 1.44MB/378KB(gz) — konva/tiptap 을 이미 쓰는 앱은 중복 0. 팩토리-only 소비자 번들은 단일 파일 엔트리 특성상 여전히 전체 로드 — 추가 개선은 preserveModules (후속 결정)
   - README peer 안내 + CHANGELOG BREAKING 기록
+- [x] preserveModules 빌드 — 사용자 승인 후 실행 (2026-08-20). dist를 모듈별 파일로 분리(엔트리 dist/index.js·index.cjs, import 경로 비파괴), 번들 의존성의 node_modules 경로는 vendor/ 리네임(툴링 특별취급 회피). 실측: `import { createShape }` 1.65MB → **1.4KB**(0.6KB gz), 전체 import 2.27MB 동일, npm pack 3.7MB/2111파일. CJS interop·styles.css·d.ts 경로 유지 확인
 
 ### Figma 연동 품질
 
