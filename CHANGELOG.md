@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **BREAKING**: `konva`, `react-konva`, and all `@tiptap/*` packages are now
+  peer dependencies instead of being bundled. npm 7+ installs them
+  automatically; pnpm/yarn users must install them alongside `pig-ma`. Apps
+  that already use Konva or Tiptap now share a single copy with pig-ma.
 - Selection UI (transformer handles) now renders on a dedicated layer above all objects and HTML viewer overlays
 - Pasted connectors keep their authored elbow shape (rigid translation instead of reset)
 - Figma import: `clipsContent` frames are rasterized via the render API so cropped content survives

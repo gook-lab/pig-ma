@@ -97,7 +97,11 @@ Excalidraw 파일은 로컬 JSON이라 API 인증이 필요 없어 Figma보다 �
 - [ ] .pigma 열기 시 현재 프로젝트 자동 백업
 - [ ] E2E 테스트 — 파일 열기/저장, Excalidraw/Mermaid import, 정렬/분배
 - [ ] tsc pre-existing 에러 점진 청산 (~520줄, "신규 에러 0" 규칙은 유지 중)
-- [ ] 번들 사이즈 개선 결정 — konva/tiptap 외부화 or preserveModules (breaking, 사용자 결정 필요)
+- [x] 번들 사이즈 개선 — 사용자 결정에 따라 **konva/react-konva/@tiptap/* 외부화(peerDependencies)** 실행 (2026-08-19)
+  - vite lib external 정규식(konva 서브패스 포함) + `output.interop: 'auto'` (기본 interop 이 @tiptap CJS require 를 깨뜨림 — "configure is not a function")
+  - 신선한 소비자 검증: npm 7+ peer 16개 자동 설치 ✓, CJS require ✓, ESM 번들 ✓
+  - 실측: pig-ma 자체 몫 1.44MB/378KB(gz) — konva/tiptap 을 이미 쓰는 앱은 중복 0. 팩토리-only 소비자 번들은 단일 파일 엔트리 특성상 여전히 전체 로드 — 추가 개선은 preserveModules (후속 결정)
+  - README peer 안내 + CHANGELOG BREAKING 기록
 
 ### Figma 연동 품질
 
