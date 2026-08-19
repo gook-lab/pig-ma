@@ -12,7 +12,7 @@ src/figma/
 ├── export.ts     # pig-ma → Figma 내보내기 (SVG, JSON, clipboard)
 ├── index.ts      # barrel export
 └── __tests__/
-    └── mapper.test.ts  # vitest 유닛 테스트 (50개)
+    └── mapper.test.ts  # vitest 유닛 테스트 (63개)
 ```
 
 ## 매핑 규칙
@@ -41,12 +41,28 @@ connectorLineType === "ELBOWED" → pathStyle: "elbowed"
 default                         → pathStyle: "straight"
 ```
 
-### 폰트 width 버퍼
+### FRAME (clipsContent)
 
-Figma 폰트(특히 Figma Hand)는 pig-ma 기본 폰트보다 좁음:
-- `textAutoResize: "WIDTH_AND_HEIGHT"` → 50% 버퍼
-- Figma 전용 폰트 → 50% 버퍼
-- 기타 → 20% 버퍼
+자식이 있는 FRAME은 빈 사각형으로 만들지 않는다 — 크롭된 콘텐츠가
+사라진다. `node:nodeId` render API 래스터화로 변환 (크롭이 서버 렌더링에
+반영됨). 자식 없는 FRAME만 rectangle.
+
+### 폰트 매핑 / TEXT 폭 (2026-08 개편)
+
+- `mapFigmaFontFamily`: pig-ma FontFamily 유니온에 있는 폰트만 통과
+  (대소문자 정규화), 손글씨 계열(Figma Hand/Virgil 등) → Nanum Gothic,
+  그 외 → undefined(기본 폰트). **임의 폰트명 캐스팅 금지.**
+- TEXT 폭: 상수 버퍼(1.2/1.5×) 대신 pig-ma 렌더 폰트로 가장 긴 줄을
+  `measureTextWidth`로 실측 (DOM 없으면 추정 폴백).
+  고정 박스(`textAutoResize: "NONE"`)는 bbox 폭 그대로 존중.
+
+### 리치텍스트 (characterStyleOverrides ↔ Tiptap)
+
+- import: 오버라이드 id 런 → TextSegment → `textSegmentsToTiptap`
+  (bold/strike/fontSize/색). 오버라이드가 전부 0이면 tiptapContent 생성 안 함.
+- export: `tiptapToFigmaOverrides` — 동일 스타일은 dedupe 된 id 테이블 재사용.
+- **인덱싱은 코드포인트 단위** (`[...characters]`, `for..of`) — UTF-16
+  코드유닛으로 세면 이모지/서로게이트 페어에서 스타일 경계가 어긋난다.
 
 ## Import 흐름
 

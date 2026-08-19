@@ -43,6 +43,14 @@ Konva 기반 캔버스 도형 컴포넌트.
 | `endHandleRef` | 끝 핸들 Circle. 드래그 중 `.position()` 직접 업데이트 |
 | `dragStartPosRef` | Standalone 드래그 시작 시점 스냅샷 (x, y, endX, endY, lineX, lineY) |
 
+### 리렌더 격리 (2026-08 수리)
+
+- Connector는 `objectsById` prop을 받지 않는다 — 스냅 대상 목록은 드래그
+  이벤트 시점에 `useCanvasStore.getState().objects`로 읽는다 (reactive 구독
+  금지: 아무 객체가 바뀌어도 모든 커넥터가 리렌더되던 누수의 원인)
+- ConnectorShapeRenderer는 끝점 도형만 좁게 구독 (`objects.find` — 대상
+  불변이면 같은 참조라 리렌더 없음), `__group:` 연결은 customBounds만 구독
+
 ## Chart.tsx 특이사항
 
 ### 차트 종류
@@ -71,3 +79,14 @@ Konva 기반 캔버스 도형 컴포넌트.
 - `dynamicFontScale`: barWidth 기반 폰트 크기 조절 (0.6~1.0)
 - `minTextWidth`: 라벨 최소 너비 20px 보장
 - 동적 gap 계산으로 막대 오버플로 방지
+
+## CanvasImage 디코드 캐시
+
+- 모듈 레벨 LRU 캐시(100개, src → HTMLImageElement) — 뷰포트 가상화로
+  언마운트됐다 재진입해도 재디코드/깜빡임 없음 (캐시 히트면 첫 렌더에 표시)
+- 디코드 중에는 회색 플레이스홀더 Rect를 그려 자리 유지 (선택·드래그 가능)
+
+## Chart 더블클릭
+
+- 본문 더블클릭 = 제목 편집 (헤더 더블클릭과 동일, `chart-edit-title`
+  커스텀 이벤트). 헤더 숨김(`chartShowHeader === false`) 시엔 무동작.

@@ -6,11 +6,18 @@
 
 | 파일 | 설명 |
 |------|------|
-| `factory.ts` | CanvasObject 생성 함수 |
-| `geometry.ts` | 기하학 계산 (바운딩 박스, 교차 검사) |
+| `factory.ts` | CanvasObject 생성 함수 (createRectangle/createCircle/createShape 등) |
+| `geometry.ts` | 기하학 계산 (바운딩 박스, 교차 검사, 스냅/정렬 가이드) |
 | `optionsBar.ts` | 옵션바 위치 계산 |
-| `elbowPath.ts` | 엘보우 커넥터 경로 계산 |
-| `richText.ts` | 리치 텍스트 파싱/렌더링 |
+| `elbowPath.ts` | 엘보우 커넥터 경로 계산 + 핸들 분류 (Y/X-정체 + 공선 런 병합) |
+| `elbowHandlers.ts` | 엘보우 드래그 조정 헬퍼 — 미리보기/커밋이 반드시 공유 |
+| `connectorPath.ts` | 커넥터 경로 소비자 단일 소스 (endpoints/path points) |
+| `translateElbowBends.ts` | bend 절대좌표 강체 이동 — 델타 이동 경로 전부가 사용 |
+| `align.ts` | 정렬/분배 순수 계산 (커넥터는 elbowBends 도 강체 이동) |
+| `pigmaFile.ts` | .pigma 프로젝트 파일 저장/열기/검증/백업 |
+| `chart.ts` | 차트 데이터/포맷 헬퍼 (formatChartValue, getLabelStep 등) |
+| `richText.ts` | 리치 텍스트 파싱/렌더링 (measureTextWidth 는 DOM 없으면 추정 폴백) |
+| `toast.ts` | react-hot-toast 래퍼 — alert 대신 공용 진입점 |
 | `embed.ts` | 임베드 URL 파싱 (YouTube, Figma, Notion) |
 
 ## 주요 상수

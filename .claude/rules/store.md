@@ -41,6 +41,13 @@ export const createMySlice: StateCreator<
 });
 ```
 
+## Core Slice 주요 액션
+
+| 액션 | 설명 |
+|------|------|
+| `setObjectsLocked(ids, locked)` | 잠금 일괄 변경 — 단일 set(undo 한 단계), 잠금 시 해당 선택 자동 해제, 무변경이면 상태 참조 유지 |
+| `deleteObjects(ids)` | 삭제 + 연결 커넥터 분리(마지막 앵커 좌표에 끝점 고정) + 라벨 연쇄 삭제 |
+
 ## Editing Slice
 
 `editing.ts` 슬라이스의 주요 상태:

@@ -51,6 +51,8 @@ export const ShapeRenderer = memo(function ShapeRenderer({ obj, isSelected }) {
 - `zoom`, `tool`, `isLocked`는 prop이 아닌 **내부 store 셀렉터**로 구독
 - `objectsById`, `groupSiblingsMap` 같은 Map도 prop 전달 금지 (참조 변경 시 전체 memo 무효화)
 - ShapeRenderer는 **순수 React 래퍼** — Konva `<Group>` 래핑 없음 (react-konva reconciler에 투명)
+- **타입 무관 상태는 상수 null 셀렉터로 좁힌다** — 예: `obj.type === "table" ? s.editingTableCell : null`. 전 타입이 구독하면 셀 선택 드래그 중 캔버스 전체가 리렌더된다 (2026-08 수리)
+- **objects 배열 전체 구독 금지** — 커넥터는 끝점 도형만 `s.objects.find(...)`로 좁게 구독 (대상 불변이면 같은 참조 → 리렌더 없음). 이벤트 시점에만 필요한 목록(스냅 대상 등)은 핸들러 안에서 `getState()` (2026-08 수리)
 
 #### getState() 기반 이벤트 핸들러
 

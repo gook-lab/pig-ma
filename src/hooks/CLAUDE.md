@@ -10,6 +10,7 @@
 | `useShortcuts.ts` | 단축키 설정 저장소 (Zustand) |
 | `useAutoSave.ts` | 자동 저장 히스토리 관리 |
 | `useDragCoordinator.ts` | 드래그 성능 최적화 (React state 우회) |
+| `useImageDrop.ts` | 윈도우 파일 드롭 — 확장자 분기: `.pigma` 열기(교체 confirm), `.excalidraw` import(캔버스에 추가), 그 외 이미지. 성공/실패는 `utils/toast` |
 
 ## 특징
 
