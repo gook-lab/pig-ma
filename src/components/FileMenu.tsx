@@ -333,7 +333,7 @@ export function FileMenu() {
             <MenuItem
               icon={Image}
               label="Download image"
-              description="PNG, JPEG, PDF"
+              description="PNG, JPEG, SVG"
               isLocked={isLocked}
               onClick={() => {
                 setShowMenu(false);
