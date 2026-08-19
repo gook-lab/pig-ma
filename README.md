@@ -46,8 +46,12 @@ function App() {
 - **Comments** - FigJam-style caption/comment system with threads
 - **Keyboard Shortcuts** - Full shortcut support with customization
 - **Undo/Redo** - Built-in history management
-- **Auto-save** - localStorage persistence
-- **Figma Import** - Import shapes from Figma files via REST API
+- **Auto-save** - localStorage persistence with backup-on-open safety net
+- **Align & Distribute** - Multi-select alignment bar (edges/centers, even spacing)
+- **Project Files** - Save/open whole projects as `.pigma` (all pages, drag & drop)
+- **Excalidraw Interop** - Import and export `.excalidraw` files (charts/tables rasterized on export)
+- **Mermaid Import** - Paste a flowchart definition, get shapes + connectors (zero extra dependencies)
+- **Figma Import/Export** - REST API import (rich text, fonts) and SVG/JSON export
 
 ## Components
 

@@ -429,6 +429,55 @@ const lineHeight = fontSize * LINE_HEIGHT  // 1.5
 
 ---
 
+## File I/O Modules (2026-08)
+
+### utils/pigmaFile
+
+```typescript
+// 순수 변환
+buildPigmaFile(input): PigmaFile          // 프로젝트 → .pigma (현재 페이지 라이브 상태 동기화)
+parsePigmaFile(json: string): PigmaFile   // 검증 포함, 실패 시 PigmaFileError
+
+// store 연동
+exportCurrentProject(): PigmaFile
+applyPigmaFile(file): { backedUp: boolean }  // 프로젝트 교체 + 자동 백업 + undo 초기화
+getBackupInfo(): PigmaBackupInfo | null
+restoreBackup(): PigmaFile                // 현재 ↔ 백업 스왑 (재복원 가능)
+downloadPigmaFile(file, filename?)
+readPigmaFile(blob: File): Promise<PigmaFile>
+```
+
+### src/excalidraw
+
+```typescript
+parseExcalidrawFile(json: string): ExcalidrawData     // 실패 시 ExcalidrawImportError
+convertExcalidraw(data): { objects, groups, skippedCount }      // → pig-ma (순수)
+convertToExcalidraw(objects, groups, options?): ExcalidrawExportResult  // ← pig-ma (순수)
+//   options.rasterize?: (obj) => string | null — chart/codeBlock/table/embed PNG 캡처 주입
+importExcalidrawToCanvas(json): ExcalidrawImportSummary  // 뷰포트 중앙 배치 + store 추가
+exportCanvasToExcalidraw(): ExcalidrawExportResult        // Konva.stages[0] 래스터라이저 사용
+downloadExcalidrawFile(data, filename?)
+extractPlainText(tiptapContent): string
+```
+
+### src/mermaid
+
+```typescript
+parseMermaid(source: string): MermaidGraph   // flowchart 서브셋, 실패 시 MermaidImportError
+layoutGraph(graph): Map<string, NodeLayout>  // Kahn 위상정렬 레이어드 배치
+convertMermaid(graph): { objects }           // flow variant shape + attached connector
+importMermaidToCanvas(source): { nodeCount, edgeCount }
+```
+
+### utils/align
+
+```typescript
+alignObjects(objects, direction): ObjectUpdate[]       // "left"|"centerX"|"right"|"top"|"centerY"|"bottom"
+distributeObjects(objects, direction): ObjectUpdate[]  // "horizontal"|"vertical", 3개 미만이면 []
+isAlignable(obj): boolean  // 잠긴 객체·attached 커넥터 제외
+// 커넥터는 endX/endY + elbowBends(절대좌표)까지 강체 이동
+```
+
 ## Types
 
 ### CanvasObject

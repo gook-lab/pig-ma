@@ -252,6 +252,24 @@ useKeyboardShortcuts hook
   → 이동 단축키 (Arrow keys)
 ```
 
+## File I/O & 포맷 변환 모듈 (2026-08)
+
+캔버스 상태와 외부 포맷 사이의 변환은 전부 **순수 변환 함수 + 얇은 store 적용부**로
+분리되어 있다. 새 포맷을 추가할 때 이 구조를 따른다.
+
+| 모듈 | 방향 | 핵심 함수 | 비고 |
+|------|------|----------|------|
+| `utils/pigmaFile.ts` | 저장/열기 | `buildPigmaFile` / `parsePigmaFile` (순수) + `applyPigmaFile` (store) | 프로젝트 전체(pages[]) 직렬화. 열기 시 localStorage 자동 백업 → `restoreBackup()` 스왑 복원 |
+| `src/excalidraw/` | 양방향 | `convertExcalidraw` / `convertToExcalidraw` (순수) + `importExcalidrawToCanvas` | 바인딩↔sourceId, frame↔customBounds 그룹. export 시 chart/codeBlock/table/embed 는 `Konva.stages[0]` 래스터화 |
+| `src/mermaid/` | import | `parseMermaid` → `layoutGraph` → `convertMermaid` | flowchart 서브셋 자체 파서 + Kahn 위상정렬 레이아웃. 외부 의존성 없음 |
+| `src/figma/` | 양방향 | `figmaToPigma` / `pigmaToFigma` | REST API(PAT). characterStyleOverrides ↔ Tiptap, 폰트 실측 매핑 |
+
+공통 규칙:
+- 변환 함수는 순수(store 접근 금지) — 유닛 테스트는 변환 함수 대상
+- import 는 **기존 캔버스에 추가** + 뷰포트 중앙 배치, 열기(.pigma)만 **교체**(confirm + 자동 백업)
+- UI 진입점은 `FileMenu.tsx` (숨김 input) + `useImageDrop.ts` (드래그&드롭 확장자 분기)
+- 사용자 피드백은 `utils/toast` (성공 시 개수 포함, alert 금지)
+
 ## Extension Points
 
 ### 새 도형 타입 추가

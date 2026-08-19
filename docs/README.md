@@ -11,8 +11,10 @@ FigJam 스타일의 무한 캔버스 라이브러리. React + TypeScript + Konva
 - **커넥터**: 도형 간 연결선, 자동 스냅
 - **댓글 시스템**: FigJam 스타일 캡션/코멘트
 - **컨텍스트 메뉴**: 우클릭 메뉴 (복사, 붙여넣기, Z-order 등)
+- **정렬/분배**: 다중 선택 시 정렬 옵션바 (등간격 분배 포함)
 - **Undo/Redo**: 히스토리 관리
-- **로컬 저장**: localStorage 자동 저장
+- **로컬 저장**: localStorage 자동 저장 + 열기 전 자동 백업
+- **파일 I/O**: `.pigma` 프로젝트 저장/열기, Excalidraw 양방향, Mermaid import, Figma 연동
 
 ## Quick Start
 

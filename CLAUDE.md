@@ -30,7 +30,7 @@ npm run dev -- --port 5000
 
 **포트 규칙:**
 - **개발 서버**: 3874 (vite.config.ts)
-- **테스트 서버**: 5000 (Playwright 테스트 전용)
+- **테스트 서버**: 5006 (playwright.config.ts `webServer`가 자동 기동 — 수동으로 띄울 필요 없음)
 
 ---
 
@@ -43,31 +43,50 @@ src/
 │   ├── ShapeRenderer.tsx     # Shape 렌더링 래퍼 (memo 격리)
 │   ├── Toolbar.tsx           # 하단 도구 모음 (원형 메뉴 포함)
 │   ├── Header.tsx            # 상단 헤더 (File 드롭다운, Templates, Share)
+│   ├── FileMenu.tsx          # File 드롭다운 (.pigma 저장/열기/백업복원, Excalidraw/Mermaid/Figma)
 │   ├── FigmaImportModal.tsx  # Figma Import 모달
 │   ├── FigmaExportModal.tsx  # Figma Export 모달 (SVG/JSON)
+│   ├── MermaidImportModal.tsx # Mermaid flowchart 붙여넣기 모달
 │   ├── ExportPanel.tsx       # 이미지 다운로드 (PNG/JPEG/SVG, 배율 선택)
+│   ├── MultiSelectEditor.tsx # 다중 선택(2+) 정렬/분배 옵션바
+│   ├── AlignOptionsBar.tsx   # 정렬/분배 버튼 UI
+│   ├── LockedObjectsPanel.tsx # 잠금 객체 칩/패널 (좌하단)
 │   ├── MentionPanel.tsx      # @멘션 추적 패널
 │   ├── shapes/               # 개별 도형 컴포넌트
 │   ├── captions/             # 캡션/댓글 시스템 (멘션 지원)
 │   └── tiptap/               # 리치 텍스트 에디터 (멘션 확장 포함)
 ├── figma/                    # Figma 연동 모듈
 │   ├── types.ts              # Figma API 타입, PigmaShape, 에러 클래스
-│   ├── mapper.ts             # figmaToPigma(), pigmaToFigma(), extractLeafNodes()
+│   ├── mapper.ts             # figmaToPigma(), pigmaToFigma(), 리치텍스트 오버라이드 매핑
 │   ├── client.ts             # REST API 클라이언트 (fetchFile, fetchNodes)
 │   ├── export.ts             # pig-ma → Figma (SVG/JSON export)
 │   ├── index.ts              # barrel export
-│   └── __tests__/
-│       └── mapper.test.ts    # 매퍼 테스트 (37개)
+│   └── __tests__/            # 매퍼 테스트 (70+개)
+├── excalidraw/               # Excalidraw 양방향 변환 모듈 (로컬 JSON — 인증 불필요)
+│   ├── types.ts              # ExcalidrawElement/Data 타입, 에러 클래스
+│   ├── mapper.ts             # convertExcalidraw(), parseExcalidrawFile()
+│   ├── import.ts             # importExcalidrawToCanvas() — 뷰포트 중앙 배치
+│   ├── export.ts             # convertToExcalidraw() — chart 등은 Konva 래스터화
+│   └── __tests__/            # 43개 (라운드트립 포함)
+├── mermaid/                  # Mermaid flowchart import (라이브러리 의존성 없음)
+│   ├── parser.ts             # flowchart 서브셋 자체 파서
+│   ├── layout.ts             # Kahn 위상정렬 레이어드 레이아웃
+│   ├── import.ts             # convertMermaid(), importMermaidToCanvas()
+│   └── __tests__/            # 21개
 ├── hooks/
 │   ├── useKeyboardShortcuts.ts
 │   ├── useShortcuts.ts
 │   ├── useMention.ts         # textarea @멘션 훅
+│   ├── useImageDrop.ts       # 드래그&드롭 (.pigma/.excalidraw/이미지 분기)
 │   └── useAutoSave.ts
 ├── utils/
 │   ├── factory.ts        # 객체 생성 함수
 │   ├── geometry.ts       # 기하학 유틸리티
+│   ├── pigmaFile.ts      # .pigma 파일 직렬화/파싱/자동백업
+│   ├── align.ts          # 정렬/분배 순수 계산
 │   ├── optionsBar.ts     # 옵션 바 위치 계산
 │   ├── elbowPath.ts      # 엘보우 커넥터 경로
+│   ├── translateElbowBends.ts # 커넥터 강체 이동 (elbowBends 절대좌표)
 │   └── richText.ts       # 리치 텍스트 유틸리티
 ├── constants/
 │   └── zIndex.ts         # z-index 상수 관리
@@ -103,10 +122,18 @@ src/
 - Undo/Redo, localStorage 저장
 - 화면 잠금 (Cmd+L)
 - **Search** (Cmd+F): 캔버스 내 텍스트/객체 검색
-- **Export**: PNG/JPEG/SVG (배율 0.5x~4x, 선택 영역/전체, 미리보기)
-- **Figma Import**: Figma 파일에서 도형 가져오기 (REST API, PAT 인증)
-- **Figma Export**: SVG 클립보드 복사 + JSON 다운로드 + FigJam 플러그인
+- **정렬/분배**: 다중 선택(2+) 시 옵션바 — 좌/중/우·상/중/하 정렬, 3+ 등간격 분배
+- **잠금 관리**: 잠금 배지(Selection UI 레이어) + LockedObjectsPanel 일괄 해제
 - **이미지 붙여넣기**: Cmd+V로 시스템 클립보드 이미지 → 캔버스 (최대 800px, canvas 리사이징 압축)
+
+### File I/O (File 메뉴 + 드래그&드롭)
+- **.pigma 저장/열기**: 프로젝트 전체(모든 페이지) 직렬화. 열기 시 자동 백업 → "Restore last backup"으로 스왑 복원 (`utils/pigmaFile.ts`)
+- **Excalidraw Import/Export**: `.excalidraw` 양방향 변환. export 시 chart/codeBlock/table/embed 는 Konva 래스터화(PNG) — 뷰포트 밖 객체는 스킵(알려진 한계) (`src/excalidraw/`)
+- **Mermaid Import**: flowchart 텍스트 붙여넣기 → 도형+attached 커넥터 자동 배치 (`src/mermaid/`, 의존성 없음)
+- **이미지 Export**: PNG/JPEG/SVG (배율 0.5x~4x, 선택 영역/전체, 미리보기)
+- **Figma Import**: Figma 파일에서 도형 가져오기 (REST API, PAT 인증, 리치텍스트 오버라이드 매핑)
+- **Figma Export**: SVG 클립보드 복사 + JSON 다운로드 + FigJam 플러그인
+- 성공/실패 피드백은 전부 `utils/toast` (alert 금지)
 
 ### Text Editing
 - **TextOptionsBar**: 플로팅 서식 도구
@@ -197,15 +224,13 @@ src/
 ```bash
 # 개발
 npm run dev                    # 개발 서버 (포트 3874)
-npm run build:lib              # 라이브러리 빌드
+npx vite build --mode lib      # 라이브러리 빌드 (preserveModules, konva/tiptap peer 외부화)
 
-# 포매팅 (코드 작성 후 필수)
-./scripts/convert-format-code.sh
-
-# 테스트
-npm run dev -- --port 5000     # 테스트 서버
-npx playwright test            # Playwright 테스트 실행
-npx vitest run src/figma/      # Figma 매퍼 유닛 테스트
+# 검증 (커밋 전 필수)
+./scripts/convert-format-code.sh  # 포매팅
+npm run typecheck              # tsc 0건 유지 (전량 청산됨 — 신규 에러 금지)
+npx vitest run                 # 유닛 테스트 전체
+npx playwright test            # E2E (포트 5006 자동 기동)
 ```
 
 ## Figma Integration
@@ -282,10 +307,18 @@ npx vitest run src/figma/      # Figma 매퍼 유닛 테스트
 
 ## Pending Tasks
 
-- [x] 키보드 단축키 커스터마이징 패널
-- [x] 이미지 붙여넣기 개선
-- [x] @멘션 기능
-- [ ] Figma Export 플러그인 디버깅 (FigJam에서 노드 생성 안 됨 — `figma-plugin/` 폴더, createShapeWithText 확인 필요)
+> 상세 현황은 `docs/plans/2026-08-19-roadmap-checklist.md` (2세션 협업 작업 로그) 참조
+
+- [ ] Figma Export 플러그인 디버깅 (FigJam에서 노드 생성 안 됨 — `figma-plugin/` 폴더, createShapeWithText 확인 필요. FigJam 실기 테스트 필요)
+- [ ] Figma OAuth2 인증 (앱 등록 필요 — 사용자 결정 대기)
+- [ ] CSV/TSV 붙여넣기 → 테이블/차트 변환
+- [ ] PDF export (jsPDF — dynamic import 권장)
+- [ ] WebGL 전환 검토 (PixiJS, 대형 보드 벤치마크 후)
+
+## 라이브러리 배포 주의
+
+- konva/react-konva/@tiptap/* 는 **peerDependencies** (devDeps에도 유지). vite lib external 은 서브패스까지 정규식 매칭, `output.interop: 'auto'` 필수 (기본값이면 @tiptap CJS require 깨짐)
+- **preserveModules** 빌드 — 모듈별 dist 파일. 팩토리-only 소비자 번들 ~1.4KB. 번들 의존성은 `dist/vendor/` (node_modules 경로 금지)
 
 ## Skill routing
 
