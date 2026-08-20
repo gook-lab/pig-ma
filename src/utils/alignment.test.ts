@@ -152,3 +152,60 @@ describe("가이드 선의 범위", () => {
     expect(v!.end).toBeGreaterThanOrEqual(400);
   });
 });
+
+describe("getObjectBounds 는 손상된 데이터에도 절대 던지지 않는다", () => {
+  // 뷰포트 가상화가 모든 객체에 대해 호출하는 경로 — 여기서 던지면
+  // 도형 단위 ErrorBoundary 보다 상위라 캔버스 전체가 죽는다.
+  it("chartData.items 가 배열이 아니어도 기본 bounds 를 돌려준다", () => {
+    const broken = {
+      id: "c1",
+      type: "chart",
+      x: 10,
+      y: 20,
+      width: 300,
+      height: 200,
+      chartData: { variant: "bar", items: "not-an-array" },
+    } as unknown as CanvasObject;
+
+    const bounds = getObjectBounds(broken);
+    expect(bounds.x).toBe(10);
+    expect(bounds.y).toBe(20);
+    expect(Number.isFinite(bounds.width)).toBe(true);
+    expect(Number.isFinite(bounds.height)).toBe(true);
+  });
+
+  it("tableData.colWidths 가 배열이 아니어도 던지지 않는다", () => {
+    const broken = {
+      id: "t1",
+      type: "table",
+      x: 0,
+      y: 0,
+      width: 240,
+      height: 80,
+      tableData: { colWidths: "nope", rowHeights: [30] },
+    } as unknown as CanvasObject;
+
+    expect(() => getObjectBounds(broken)).not.toThrow();
+    expect(getObjectBounds(broken).width).toBe(240);
+  });
+
+  it("정상 차트의 범례 bounds 계산은 그대로다", () => {
+    const ok = {
+      id: "c2",
+      type: "chart",
+      x: 0,
+      y: 0,
+      width: 300,
+      height: 200,
+      chartData: {
+        variant: "bar",
+        items: [{ label: "aaa" }, { label: "bbb" }],
+        showLegend: true,
+        legendPosition: "bottom",
+      },
+    } as unknown as CanvasObject;
+
+    // 범례가 아래에 붙으므로 높이가 base(200) 보다 커야 한다
+    expect(getObjectBounds(ok).height).toBeGreaterThan(200);
+  });
+});

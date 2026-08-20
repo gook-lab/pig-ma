@@ -97,8 +97,13 @@ export function getObjectBounds(obj: CanvasObject): Bounds {
         };
       }
 
-      const tableWidth = tableData.colWidths.reduce((sum, w) => sum + w, 0);
-      const tableHeight = tableData.rowHeights.reduce((sum, h) => sum + h, 0);
+      // 같은 이유로 배열임을 확인한 뒤 합산한다
+      const tableWidth = Array.isArray(tableData.colWidths)
+        ? tableData.colWidths.reduce((sum, w) => sum + w, 0)
+        : (obj.width ?? 240);
+      const tableHeight = Array.isArray(tableData.rowHeights)
+        ? tableData.rowHeights.reduce((sum, h) => sum + h, 0)
+        : (obj.height ?? 80);
 
       return {
         x: obj.x,
@@ -135,7 +140,11 @@ export function getObjectBounds(obj: CanvasObject): Bounds {
             ? chartData.series
             : chartData.items;
 
-        if (legendItems && legendItems.length > 0) {
+        // Array.isArray 로 검사한다 — 손상된 데이터(예: items 가 문자열)는
+        // length > 0 을 통과한 뒤 .map/.forEach 에서 터진다. 이 함수는 뷰포트
+        // 가상화가 **모든 객체**에 대해 호출하므로, 한 객체의 손상이 캔버스
+        // 전체 렌더를 무너뜨린다 (도형 단위 ErrorBoundary 보다 상위 경로).
+        if (Array.isArray(legendItems) && legendItems.length > 0) {
           const isVertical =
             legendPosition === "left" || legendPosition === "right";
 
