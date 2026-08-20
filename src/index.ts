@@ -19,6 +19,7 @@ export { Canvas } from "./components/Canvas";
 // ============================================================================
 export { Toolbar } from "./components/Toolbar";
 export { Header } from "./components/Header";
+export { ErrorBoundary } from "./components/ErrorBoundary";
 export { PageDropdown } from "./components/PageDropdown";
 export { ProjectNameEditor } from "./components/ProjectNameEditor";
 export { ViewMenu } from "./components/ViewMenu";
