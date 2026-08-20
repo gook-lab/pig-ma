@@ -89,6 +89,7 @@ import {
 } from "@/constants/zoom";
 import type { AlignmentGuide, CanvasObject } from "@/types";
 import { ConnectionHandles } from "./ConnectionHandles";
+import { ShapeErrorBoundary } from "./ShapeErrorBoundary";
 import { CaptionMarker } from "./captions/CaptionMarker";
 import { TextViewerOverlay } from "./tiptap/TextViewerOverlay";
 import { hasMixedStyles } from "@/utils/tiptapMigration";
@@ -2096,22 +2097,33 @@ export function Canvas() {
           <Layer listening={tool !== "pencil" && tool !== "connector"}>
             {/* 섹션 배경 뒤에 렌더링할 객체 (zIndex < 0) */}
             {objectsBehindGroups.map((obj) => (
-              <ShapeRenderer
+              <ShapeErrorBoundary
                 key={obj.id}
-                obj={obj}
-                renderMode="simplified"
-                isSelected={selectedIdsSet.has(obj.id)}
-                isMultiSelected={
-                  selectedIdsSet.has(obj.id) && selectedIds.length > 1
-                }
-                isObjectLocked={
-                  obj.locked === true ||
-                  (obj.groupId
-                    ? groupsMap.get(obj.groupId)?.locked === true
-                    : false)
-                }
-                skipSelectionBorder={selectedIds.length > 30}
-              />
+                objectId={obj.id}
+                resetKey={obj}
+                bounds={{
+                  x: obj.x,
+                  y: obj.y,
+                  width: obj.width ?? 100,
+                  height: obj.height ?? 100,
+                }}
+              >
+                <ShapeRenderer
+                  obj={obj}
+                  renderMode="simplified"
+                  isSelected={selectedIdsSet.has(obj.id)}
+                  isMultiSelected={
+                    selectedIdsSet.has(obj.id) && selectedIds.length > 1
+                  }
+                  isObjectLocked={
+                    obj.locked === true ||
+                    (obj.groupId
+                      ? groupsMap.get(obj.groupId)?.locked === true
+                      : false)
+                  }
+                  skipSelectionBorder={selectedIds.length > 30}
+                />
+              </ShapeErrorBoundary>
             ))}
 
             {/* 그룹 경계선 (섹션 배경) */}
@@ -2379,22 +2391,33 @@ export function Canvas() {
 
             {/* 섹션 배경 앞에 렌더링할 객체 (zIndex >= 0) */}
             {objectsInFrontOfGroups.map((obj) => (
-              <ShapeRenderer
+              <ShapeErrorBoundary
                 key={obj.id}
-                obj={obj}
-                renderMode="full"
-                isSelected={selectedIdsSet.has(obj.id)}
-                isMultiSelected={
-                  selectedIdsSet.has(obj.id) && selectedIds.length > 1
-                }
-                isObjectLocked={
-                  obj.locked === true ||
-                  (obj.groupId
-                    ? groupsMap.get(obj.groupId)?.locked === true
-                    : false)
-                }
-                skipSelectionBorder={selectedIds.length > 30}
-              />
+                objectId={obj.id}
+                resetKey={obj}
+                bounds={{
+                  x: obj.x,
+                  y: obj.y,
+                  width: obj.width ?? 100,
+                  height: obj.height ?? 100,
+                }}
+              >
+                <ShapeRenderer
+                  obj={obj}
+                  renderMode="full"
+                  isSelected={selectedIdsSet.has(obj.id)}
+                  isMultiSelected={
+                    selectedIdsSet.has(obj.id) && selectedIds.length > 1
+                  }
+                  isObjectLocked={
+                    obj.locked === true ||
+                    (obj.groupId
+                      ? groupsMap.get(obj.groupId)?.locked === true
+                      : false)
+                  }
+                  skipSelectionBorder={selectedIds.length > 30}
+                />
+              </ShapeErrorBoundary>
             ))}
           </Layer>
 
