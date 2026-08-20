@@ -1,7 +1,8 @@
-import type { PageData } from "@/types";
+import type { CanvasObject, PageData } from "@/types";
 import { useCanvasStore } from "@/store";
 import { generateUUID } from "@/utils/uuid";
 import { getInitialCanvasBounds } from "@/store/slices/core";
+import { validateCanvasObject } from "@/schemas";
 
 // ============================================================================
 // .pigma 파일 포맷
@@ -23,6 +24,11 @@ export interface PigmaFile {
   projectName: string;
   pages: PageData[];
   currentPageId: string;
+  /**
+   * 파싱 중 스키마 검증에 걸려 제외된 객체 수 (런타임 전용 — 저장 시 제외).
+   * 사용자에게 "N개를 건너뛰었다"고 알리는 용도.
+   */
+  droppedObjects?: number;
 }
 
 export class PigmaFileError extends Error {
@@ -84,8 +90,31 @@ function isCanvasBounds(value: unknown): value is PageData["canvasBounds"] {
   );
 }
 
+/**
+ * 스키마에 맞지 않는 객체를 걸러낸다.
+ *
+ * 파일은 손으로 편집되거나 다른 버전에서 왔을 수 있는데, 손상된 객체 하나가
+ * 렌더 경로에서 캔버스 전체를 죽인 전례가 있다(2026-08). **파일 전체를 거부하지는
+ * 않는다** — 나머지가 멀쩡하면 최대한 살려서 열고, 제외한 개수만 보고한다.
+ */
+function sanitizeObjects(raw: unknown[], report: { dropped: number }) {
+  const kept: CanvasObject[] = [];
+  for (const obj of raw) {
+    if (validateCanvasObject(obj).success) {
+      kept.push(obj as CanvasObject);
+    } else {
+      report.dropped++;
+    }
+  }
+  return kept;
+}
+
 /** 페이지 필수 필드를 검증하고, 누락된 부가 필드는 기본값으로 채운다 */
-function normalizePage(raw: unknown, index: number): PageData {
+function normalizePage(
+  raw: unknown,
+  index: number,
+  report: { dropped: number },
+): PageData {
   if (!isRecord(raw)) {
     throw new PigmaFileError(`Invalid page at index ${index}`);
   }
@@ -102,7 +131,7 @@ function normalizePage(raw: unknown, index: number): PageData {
   return {
     id: raw.id,
     name: typeof raw.name === "string" ? raw.name : `페이지 ${index + 1}`,
-    objects: raw.objects as PageData["objects"],
+    objects: sanitizeObjects(raw.objects, report),
     groups: Array.isArray(raw.groups) ? (raw.groups as PageData["groups"]) : [],
     captions: Array.isArray(raw.captions)
       ? (raw.captions as PageData["captions"])
@@ -139,7 +168,10 @@ export function parsePigmaFile(json: string): PigmaFile {
     throw new PigmaFileError("File contains no pages");
   }
 
-  const pages = data.pages.map(normalizePage);
+  const report = { dropped: 0 };
+  const pages = data.pages.map((page, index) =>
+    normalizePage(page, index, report),
+  );
   const firstPage = pages[0];
   if (!firstPage) {
     throw new PigmaFileError("File contains no pages");
@@ -160,6 +192,7 @@ export function parsePigmaFile(json: string): PigmaFile {
         : "새 프로젝트",
     pages,
     currentPageId,
+    ...(report.dropped > 0 ? { droppedObjects: report.dropped } : {}),
   };
 }
 

@@ -151,6 +151,23 @@ export const TableDataSchema = z
   .passthrough();
 
 // Main CanvasObject schema
+/**
+ * Chart data — 얕은 검증.
+ *
+ * 렌더 경로가 items/series 를 배열로 가정하고 순회하므로, **배열성만은
+ * 반드시 지킨다**. 문자열도 `.length` 를 가져서 `items && items.length > 0`
+ * 류의 가드를 통과한 뒤 `.map`/`.forEach` 에서 터진 전례가 있다
+ * (2026-08, 손상 .pigma 를 열면 캔버스 전체가 죽었다).
+ * 항목 내부 필드는 렌더가 폴백을 갖고 있어 passthrough 로 둔다.
+ */
+export const ChartDataSchema = z
+  .object({
+    variant: z.string(),
+    items: z.array(z.unknown()),
+    series: z.array(z.unknown()).optional(),
+  })
+  .passthrough();
+
 export const CanvasObjectSchema = z
   .object({
     id: z.string(),
@@ -257,6 +274,9 @@ export const CanvasObjectSchema = z
 
     // Table-specific
     tableData: TableDataSchema.optional(),
+
+    // Chart-specific
+    chartData: ChartDataSchema.optional(),
   })
   .passthrough(); // Allow unknown fields for backwards compatibility
 

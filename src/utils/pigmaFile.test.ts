@@ -165,6 +165,92 @@ describe("exportCurrentProject / applyPigmaFile", () => {
   });
 });
 
+describe("손상 객체 검증 (import 입구)", () => {
+  function fileWith(objects: unknown[]) {
+    return JSON.stringify({
+      type: "pigma",
+      version: 1,
+      projectName: "damaged",
+      currentPageId: "p1",
+      pages: [
+        {
+          id: "p1",
+          name: "p",
+          objects,
+          groups: [],
+          captions: [],
+          viewport: { x: 0, y: 0, zoom: 1 },
+        },
+      ],
+    });
+  }
+
+  const healthy = {
+    id: "ok",
+    type: "shape",
+    x: 0,
+    y: 0,
+    rotation: 0,
+    opacity: 1,
+    width: 100,
+    height: 60,
+  };
+
+  it("배열이어야 할 필드가 문자열이면 그 객체만 제외한다", () => {
+    // points 가 문자열 — 렌더 경로에서 캔버스를 죽이던 실제 페이로드
+    const parsed = parsePigmaFile(
+      fileWith([
+        healthy,
+        { ...healthy, id: "bad-line", type: "line", points: "not-an-array" },
+      ]),
+    );
+
+    expect(parsed.pages[0]!.objects.map((o) => o.id)).toEqual(["ok"]);
+    expect(parsed.droppedObjects).toBe(1);
+  });
+
+  it("chartData.items 가 배열이 아니면 제외한다", () => {
+    const parsed = parsePigmaFile(
+      fileWith([
+        {
+          ...healthy,
+          id: "bad-chart",
+          type: "chart",
+          chartData: { variant: "bar", items: "not-an-array" },
+        },
+      ]),
+    );
+
+    expect(parsed.pages[0]!.objects).toHaveLength(0);
+    expect(parsed.droppedObjects).toBe(1);
+  });
+
+  it("필수 필드가 없는 객체를 제외한다", () => {
+    const parsed = parsePigmaFile(
+      fileWith([healthy, { id: "no-type", x: 0, y: 0 }]),
+    );
+    expect(parsed.pages[0]!.objects.map((o) => o.id)).toEqual(["ok"]);
+    expect(parsed.droppedObjects).toBe(1);
+  });
+
+  it("정상 파일은 제외 없이 그대로 통과한다", () => {
+    const parsed = parsePigmaFile(
+      fileWith([healthy, { ...healthy, id: "ok2" }]),
+    );
+    expect(parsed.pages[0]!.objects).toHaveLength(2);
+    expect(parsed.droppedObjects).toBeUndefined();
+  });
+
+  it("손상 객체가 있어도 파일 전체를 거부하지는 않는다", () => {
+    const parsed = parsePigmaFile(
+      fileWith([{ id: "bad", type: "line", points: "x" }]),
+    );
+    // 페이지는 살아남고, 사용자는 빈 보드로라도 파일을 연다
+    expect(parsed.pages).toHaveLength(1);
+    expect(parsed.projectName).toBe("damaged");
+  });
+});
+
 describe("자동 백업 / 복원", () => {
   // setup.ts 의 MemoryStorage 폴리필을 그대로 사용 (defineProperty 라
   // stubGlobal 은 불가, writable 이라 직접 대입은 가능)

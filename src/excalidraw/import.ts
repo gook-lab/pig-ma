@@ -1,5 +1,6 @@
 import type { CanvasObject } from "@/types";
 import { useCanvasStore } from "@/store";
+import { validateCanvasObject } from "@/schemas";
 import { convertExcalidraw, parseExcalidrawFile } from "./mapper";
 import { ExcalidrawImportError } from "./types";
 
@@ -65,7 +66,16 @@ export function importExcalidrawToCanvas(
   json: string,
 ): ExcalidrawImportSummary {
   const data = parseExcalidrawFile(json);
-  const { objects, groups, skippedCount } = convertExcalidraw(data);
+  const converted = convertExcalidraw(data);
+  const { groups } = converted;
+
+  // 매퍼 출력이라 대부분 정상이지만, 손상된 입력이 그대로 통과해 store 로
+  // 들어가면 렌더 경로에서 캔버스 전체가 죽을 수 있다 — 입구에서 거른다.
+  const objects = converted.objects.filter(
+    (obj) => validateCanvasObject(obj).success,
+  );
+  const skippedCount =
+    converted.skippedCount + (converted.objects.length - objects.length);
 
   if (objects.length === 0) {
     throw new ExcalidrawImportError("No importable elements found");

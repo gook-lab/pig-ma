@@ -1,17 +1,21 @@
 import { test, expect, type Page } from "@playwright/test";
 
 /**
- * 렌더 에러 복구 E2E.
+ * 손상 데이터 내성 E2E.
  *
- * 손상된 객체(chartData.items 가 배열이 아님)는 실제로 렌더 에러를 던진다 —
- * 바운더리가 없으면 캔버스 전체가 백색이 된다.
+ * 배경: 손상된 객체 하나(`chartData.items` 가 문자열)가 뷰포트 가상화 경로에서
+ * 예외를 던져 캔버스 전체를 죽인 사건이 있었다. 방어는 세 겹이다 —
+ *   ① import 입구에서 스키마 검증(손상 객체만 제외)
+ *   ② 렌더 경로 하드닝(geometry 는 어떤 입력에도 던지지 않는다)
+ *   ③ 앱 레벨 ErrorBoundary(그래도 새면 복구 UI)
+ * 이 스펙은 ①②의 결과 계약을 잠근다: **열려야 하고, 죽지 않아야 하고,
+ * 멀쩡한 객체는 보존되어야 한다.**
  *
- * 측정으로 확인한 사실: persist 재수화에는 zod 검증이 있어 새로고침하면
- * 손상 객체가 걸러진다. 즉 독성 상태가 영구화되지는 않으며, 취약한 쪽은
- * **검증 없이 store 에 밀어 넣는 import 경로**다.
+ * ③ 의 복구 UI 는 영구적인 E2E 트리거가 없다 — 크래시를 발견할 때마다 ①②로
+ * 고치기 때문이다. 의도된 상태이며, 폴백 UI 자체는 수동 확인했다.
  */
 
-/** chartData.items 가 문자열 — Chart 렌더의 legendItems 순회에서 throw */
+/** 렌더 경로를 죽였던 실제 페이로드 */
 const BROKEN_CHART = {
   id: "broken-1",
   type: "chart",
@@ -22,6 +26,19 @@ const BROKEN_CHART = {
   rotation: 0,
   opacity: 1,
   chartData: { variant: "bar", items: "not-an-array" },
+};
+
+/** 배열이어야 할 points 가 문자열 — 같은 버그 클래스 */
+const BROKEN_LINE = {
+  id: "broken-2",
+  type: "line",
+  x: 100,
+  y: 400,
+  rotation: 0,
+  opacity: 1,
+  points: "not-an-array",
+  stroke: "#000000",
+  strokeWidth: 2,
 };
 
 const HEALTHY_SHAPE = {
@@ -75,72 +92,86 @@ async function openBoard(page: Page, objects: unknown[]) {
   await page.waitForTimeout(1500);
 }
 
-test.describe("렌더 에러 복구", () => {
+/** 현재 캔버스를 .pigma 로 저장해 현재 페이지 objects 를 얻는다 */
+async function saveAndGetObjects(page: Page) {
+  await page.getByRole("button", { name: "File" }).click();
+  await page.waitForTimeout(150);
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByText("Save as file").click();
+  const download = await downloadPromise;
+  const fs = await import("fs");
+  const json = JSON.parse(fs.readFileSync((await download.path())!, "utf-8"));
+  return json.pages.find((p: { id: string }) => p.id === json.currentPageId)
+    .objects as { id: string }[];
+}
+
+test.describe("손상 데이터 내성", () => {
   test.beforeEach(async ({ page }) => {
-    await page.addInitScript(() => localStorage.clear());
+    // ⚠️ addInitScript 는 **새로고침을 포함한 모든 네비게이션**에서 실행된다.
+    // 무조건 localStorage.clear() 를 넣으면 reload 검증이 "데이터 손실"처럼
+    // 보이는 가짜 실패를 낸다 — 세션 첫 로드에서만 비운다.
+    await page.addInitScript(() => {
+      if (!sessionStorage.getItem("__test_cleared")) {
+        localStorage.clear();
+        sessionStorage.setItem("__test_cleared", "1");
+      }
+    });
     await page.goto("/");
     await page.waitForLoadState("networkidle");
   });
 
-  test("렌더 에러를 잡아 복구 UI를 띄운다 (백색 화면 방지)", async ({
+  test("손상 객체가 섞여 있어도 캔버스가 죽지 않고 열린다", async ({
     page,
   }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (e) => errors.push(e.message));
+
+    await openBoard(page, [BROKEN_CHART, BROKEN_LINE, HEALTHY_SHAPE]);
+
+    await expect(page.getByText("Something went wrong")).toHaveCount(0);
+    await expect(page.locator("canvas").first()).toBeVisible();
+    expect(errors).toEqual([]);
+  });
+
+  test("손상 객체는 제외하고 멀쩡한 객체는 보존한다", async ({ page }) => {
+    await openBoard(page, [BROKEN_CHART, BROKEN_LINE, HEALTHY_SHAPE]);
+
+    // 사용자에게 제외 사실을 알린다
+    await expect(page.getByText(/damaged object\(s\) skipped/)).toBeVisible();
+
+    const objects = await saveAndGetObjects(page);
+    expect(objects.map((o) => o.id)).toEqual(["ok-1"]);
+  });
+
+  test("손상 객체를 연 뒤에도 보드는 계속 편집 가능하다", async ({ page }) => {
     await openBoard(page, [BROKEN_CHART, HEALTHY_SHAPE]);
 
-    await expect(page.getByText("Something went wrong")).toBeVisible();
-    await expect(page.getByText("Save a backup (.pigma)")).toBeVisible();
-    await expect(page.getByText("Reset saved board and reload")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await page.keyboard.press("r");
+    await page.waitForTimeout(150);
+    await page.mouse.click(500, 500);
+    await page.waitForTimeout(300);
+    await page.keyboard.press("Escape");
+
+    const objects = await saveAndGetObjects(page);
+    expect(objects.length).toBe(2); // 기존 정상 1개 + 새로 만든 1개
   });
 
-  test("복구 UI에서 백업을 내려받을 수 있다 (초기화 전 데이터 보존)", async ({
-    page,
-  }) => {
-    await openBoard(page, [BROKEN_CHART]);
-    await expect(page.getByText("Something went wrong")).toBeVisible();
+  test("손상 객체를 연 뒤 새로고침해도 데이터가 남는다", async ({ page }) => {
+    await openBoard(page, [BROKEN_CHART, HEALTHY_SHAPE]);
 
-    const downloadPromise = page.waitForEvent("download");
-    await page.getByText("Save a backup (.pigma)").click();
-    const download = await downloadPromise;
-    expect(download.suggestedFilename().endsWith(".pigma")).toBe(true);
-  });
-
-  test("새로고침하면 persist 검증(zod)이 손상 상태를 걸러 정상 복귀한다", async ({
-    page,
-  }) => {
-    await openBoard(page, [BROKEN_CHART]);
-    await expect(page.getByText("Something went wrong")).toBeVisible();
-
-    // persist 경로에는 validatePersistedState(zod) 가 있어 재수화 시 손상
-    // 객체가 걸러진다 — import 경로에만 검증이 없다는 비대칭의 반증이기도 하다
     await page.reload();
     await page.waitForLoadState("networkidle");
-    await expect(page.getByText("Something went wrong")).toHaveCount(0);
+    await page.waitForTimeout(1000);
+
     await expect(page.locator("canvas").first()).toBeVisible();
+    const objects = await saveAndGetObjects(page);
+    expect(objects.map((o) => o.id)).toEqual(["ok-1"]);
   });
 
-  test("초기화 버튼은 저장 상태를 버리고 정상 캔버스로 돌아온다", async ({
-    page,
-  }) => {
-    await openBoard(page, [BROKEN_CHART]);
-    await expect(page.getByText("Something went wrong")).toBeVisible();
-
-    await page.getByText("Reset saved board and reload").click();
-    await page.waitForLoadState("networkidle");
-    await page.waitForTimeout(500);
-
-    await expect(page.getByText("Something went wrong")).toHaveCount(0);
-    await expect(page.locator("canvas").first()).toBeVisible();
-    await expect(page.getByRole("button", { name: "File" })).toBeVisible();
-    // 저장 키가 비워졌다
-    const persisted = await page.evaluate(() =>
-      localStorage.getItem("canvas-app"),
-    );
-    expect(persisted === null || !persisted.includes("broken-1")).toBe(true);
-  });
-
-  test("정상 보드에서는 복구 UI가 뜨지 않는다", async ({ page }) => {
+  test("정상 보드는 경고 없이 열린다", async ({ page }) => {
     await openBoard(page, [HEALTHY_SHAPE]);
-    await expect(page.getByText("Something went wrong")).toHaveCount(0);
-    await expect(page.locator("canvas").first()).toBeVisible();
+    await expect(page.getByText("Project opened")).toBeVisible();
+    await expect(page.getByText(/damaged/)).toHaveCount(0);
   });
 });

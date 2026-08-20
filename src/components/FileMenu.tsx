@@ -142,10 +142,19 @@ export function FileMenu() {
         (sum, p) => sum + p.objects.length,
         0,
       );
-      toast.success({
-        title: "Project opened",
-        message: `"${file.projectName}" — ${file.pages.length} page(s), ${objectCount} object(s)${backedUp ? ". Previous project backed up" : ""}`,
-        duration: 3000,
+      const dropped = file.droppedObjects ?? 0;
+      const detail = [
+        `${file.pages.length} page(s), ${objectCount} object(s)`,
+        dropped > 0 ? `${dropped} damaged object(s) skipped` : null,
+        backedUp ? "previous project backed up" : null,
+      ]
+        .filter(Boolean)
+        .join(". ");
+      const notify = dropped > 0 ? toast.warning : toast.success;
+      notify({
+        title: dropped > 0 ? "Project opened with warnings" : "Project opened",
+        message: `"${file.projectName}" — ${detail}`,
+        duration: 3500,
       });
     } catch (err) {
       toast.error({
