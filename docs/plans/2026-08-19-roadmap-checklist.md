@@ -123,6 +123,7 @@ Excalidraw 파일은 로컬 JSON이라 API 인증이 필요 없어 Figma보다 �
   - **줌 LOD**: 화면상 텍스트 높이 6px 미만이면 Konva Text 렌더 생략 (`isTextReadable`, boolean 구독이라 임계값 통과 시에만 리렌더). TextBox/Rectangle/Shape/StickyNote/Table 적용
   - 5k 노드 실측(중앙값, 각 3~5회): **줌 36 → 106fps, 드래그 113 → 436fps**. 팬은 91fps 로 변화 없음(가상화가 이미 처리). 벤치가 줌 인/아웃을 왕복해 LOD 임계값 통과 여부에 따라 값이 이봉분포를 보이므로 단일 실행값이 아닌 중앙값 기준
 - [ ] WebGL 전환 검토 (PixiJS) — 1차 수리 후 재평가 (팬 91fps 가 다음 병목 후보)
+- [ ] Table.tsx rules-of-hooks 11건 정리 — `if (!tableData) return null`(71행)이 useMemo/useCallback 들보다 앞에 있어 훅 순서가 조건부다. tableData 가 있다→없다로 바뀌는 순간 React 가 훅 개수 불일치로 크래시할 수 있는 잠복 버그(생성 시 항상 채워지므로 현재 발현 사례 없음). 수리하려면 각 훅이 undefined tableData 를 견디게 바꿔야 해서 기계적 이동만으로는 불가 — 별도 작업으로 분리 (2026-08-20 확인, 기존 부채)
 
 ---
 
