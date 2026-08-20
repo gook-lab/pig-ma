@@ -304,6 +304,27 @@ export function TiptapEditor({
     };
   }, [editor]);
 
+  // 조기 반환은 훅을 모두 호출한 뒤에 한다
+  // handleViewerClick useCallback도 여기 위로 옮김 (아래 early return 참조)
+  const handleViewerClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (editable) return; // 편집 모드에서는 무시
+      if (!editor) return;
+
+      const target = e.target as HTMLElement;
+      const link = target.closest("a");
+      if (link) {
+        e.preventDefault();
+        e.stopPropagation();
+        const href = link.getAttribute("href");
+        if (href) {
+          window.open(href, "_blank", "noopener,noreferrer");
+        }
+      }
+    },
+    [editable, editor],
+  );
+
   if (!editor) {
     return null;
   }
@@ -447,25 +468,6 @@ export function TiptapEditor({
       cursor: pointer;
     }
   `;
-
-  // 뷰어 모드에서 링크 클릭 처리
-  const handleViewerClick = useCallback(
-    (e: React.MouseEvent) => {
-      if (editable) return; // 편집 모드에서는 무시
-
-      const target = e.target as HTMLElement;
-      const link = target.closest("a");
-      if (link) {
-        e.preventDefault();
-        e.stopPropagation();
-        const href = link.getAttribute("href");
-        if (href) {
-          window.open(href, "_blank", "noopener,noreferrer");
-        }
-      }
-    },
-    [editable],
-  );
 
   return (
     <>

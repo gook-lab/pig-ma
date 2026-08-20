@@ -36,40 +36,21 @@ export function LegendOptionsBar({
 }: LegendOptionsBarProps) {
   const chartData = shape.chartData;
 
-  if (!chartData) {
-    return null;
-  }
-
-  const isLineChart = chartData.variant === "line" && chartData.series;
-  const isValidIndex = isLineChart
-    ? selectedLegendIndex >= 0 &&
-      selectedLegendIndex < (chartData.series?.length ?? 0)
-    : selectedLegendIndex >= 0 && selectedLegendIndex < chartData.items.length;
-
-  if (!isValidIndex) {
-    return null;
-  }
-
-  // 현재 선택된 범례 항목
-  const currentLabel = isLineChart
-    ? chartData.series![selectedLegendIndex]!.name
-    : chartData.items[selectedLegendIndex]!.label;
-
-  const globalColor = chartData.globalColor;
-
-  // 실제 적용되는 색상: colorOverride가 true면 개별 색상, 아니면 globalColor 적용
-  const currentColor = isLineChart
-    ? chartData.series![selectedLegendIndex]!.style.colorOverride
-      ? chartData.series![selectedLegendIndex]!.style.color
-      : (globalColor ?? chartData.series![selectedLegendIndex]!.style.color)
-    : chartData.items[selectedLegendIndex]!.colorOverride
-      ? chartData.items[selectedLegendIndex]!.color
-      : (globalColor ?? chartData.items[selectedLegendIndex]!.color);
+  // 조기 반환은 훅을 모두 호출한 뒤에 한다 (아래 early return).
+  // 훅 위에서 반환하면 chartData 유무에 따라 훅 개수가 달라진다.
+  const isLineChart =
+    !!chartData && chartData.variant === "line" && !!chartData.series;
+  const isValidIndex = chartData
+    ? isLineChart
+      ? selectedLegendIndex >= 0 &&
+        selectedLegendIndex < (chartData.series?.length ?? 0)
+      : selectedLegendIndex >= 0 && selectedLegendIndex < chartData.items.length
+    : false;
 
   // Line chart 시리즈 업데이트
   const handleUpdateSeries = useCallback(
     (updates: Partial<ChartSeries>) => {
-      if (!chartData.series) return;
+      if (!chartData?.series) return;
       const newSeries = [...chartData.series];
       newSeries[selectedLegendIndex] = {
         ...newSeries[selectedLegendIndex]!,
@@ -92,6 +73,7 @@ export function LegendOptionsBar({
   // Bar/Pie 아이템 업데이트
   const handleUpdateItem = useCallback(
     (updates: Partial<ChartDataItem>) => {
+      if (!chartData) return;
       const newItems = [...chartData.items];
       newItems[selectedLegendIndex] = {
         ...newItems[selectedLegendIndex]!,
@@ -130,6 +112,26 @@ export function LegendOptionsBar({
     },
     [isLineChart, handleUpdateSeries, handleUpdateItem],
   );
+
+  if (!chartData || !isValidIndex) {
+    return null;
+  }
+
+  // 현재 선택된 범례 항목
+  const currentLabel = isLineChart
+    ? chartData.series![selectedLegendIndex]!.name
+    : chartData.items[selectedLegendIndex]!.label;
+
+  const globalColor = chartData.globalColor;
+
+  // 실제 적용되는 색상: colorOverride가 true면 개별 색상, 아니면 globalColor 적용
+  const currentColor = isLineChart
+    ? chartData.series![selectedLegendIndex]!.style.colorOverride
+      ? chartData.series![selectedLegendIndex]!.style.color
+      : (globalColor ?? chartData.series![selectedLegendIndex]!.style.color)
+    : chartData.items[selectedLegendIndex]!.colorOverride
+      ? chartData.items[selectedLegendIndex]!.color
+      : (globalColor ?? chartData.items[selectedLegendIndex]!.color);
 
   return (
     <div

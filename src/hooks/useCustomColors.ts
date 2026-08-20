@@ -9,23 +9,22 @@ const MAX_COLORS = 8;
  * - 최대 8개까지 저장
  * - 중복 색상은 맨 앞으로 이동
  */
-export function useCustomColors() {
-  const [customColors, setCustomColors] = useState<string[]>([]);
+/** localStorage 에 저장된 색상 목록 (없거나 손상되면 빈 배열) */
+function readStoredColors(): string[] {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return [];
+    const parsed: unknown = JSON.parse(stored);
+    return Array.isArray(parsed) ? (parsed as string[]) : [];
+  } catch {
+    return [];
+  }
+}
 
-  // 초기 로드
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          setCustomColors(parsed);
-        }
-      }
-    } catch {
-      // 파싱 실패 시 빈 배열 유지
-    }
-  }, []);
+export function useCustomColors() {
+  // 이펙트에서 setState 로 초기값을 채우면 첫 렌더가 항상 빈 목록으로 한 번
+  // 낭비된다 — lazy initializer 로 첫 렌더부터 저장된 값을 쓴다.
+  const [customColors, setCustomColors] = useState<string[]>(readStoredColors);
 
   // 색상 추가
   const addCustomColor = useCallback((color: string) => {
@@ -68,7 +67,7 @@ export function useCustomColors() {
 
 // 전역 인스턴스 (컴포넌트 간 공유)
 let globalCustomColors: string[] = [];
-let listeners: Set<(colors: string[]) => void> = new Set();
+const listeners: Set<(colors: string[]) => void> = new Set();
 
 function loadFromStorage(): string[] {
   try {
@@ -132,14 +131,13 @@ export const customColorManager = {
  * 전역 커스텀 색상을 사용하는 훅
  */
 export function useGlobalCustomColors() {
-  const [colors, setColors] = useState<string[]>(globalCustomColors);
+  // 구독 전 초기값도 매니저에서 직접 읽는다 (이펙트 setState 로 한 번 더
+  // 렌더하지 않도록).
+  const [colors, setColors] = useState<string[]>(() =>
+    customColorManager.getColors(),
+  );
 
-  useEffect(() => {
-    // 초기값 동기화
-    setColors(customColorManager.getColors());
-    // 변경 구독
-    return customColorManager.subscribe(setColors);
-  }, []);
+  useEffect(() => customColorManager.subscribe(setColors), []);
 
   return {
     customColors: colors,

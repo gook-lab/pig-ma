@@ -2037,7 +2037,7 @@ export function enhanceHighlighting(html: string, language: string): string {
   // Replace untagged words that match builtins
   // Match words that are not already inside a span tag
   result = result.replace(
-    /(?<=>)([a-zA-Z_$][a-zA-Z0-9_$]*)(?=<|[.\s()\[\]{},;:]|$)/g,
+    /(?<=>)([a-zA-Z_$][a-zA-Z0-9_$]*)(?=<|[.\s()[\]{},;:]|$)/g,
     (match, word) => {
       if (globalsSet.has(word)) {
         return `<span class="hljs-built_in">${word}</span>`;
@@ -2051,7 +2051,7 @@ export function enhanceHighlighting(html: string, language: string): string {
 
   // Also match at the start of the string
   result = result.replace(
-    /^([a-zA-Z_$][a-zA-Z0-9_$]*)(?=<|[.\s()\[\]{},;:])/,
+    /^([a-zA-Z_$][a-zA-Z0-9_$]*)(?=<|[.\s()[\]{},;:])/,
     (match, word) => {
       if (globalsSet.has(word)) {
         return `<span class="hljs-built_in">${word}</span>`;

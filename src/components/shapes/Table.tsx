@@ -68,17 +68,16 @@ export const Table = memo(function Table({
     isTextReadable(TABLE_CELL.fontSize, s.viewport.zoom),
   );
 
-  if (!tableData) {
-    return null;
-  }
-
-  const tableWidth = getTableWidth(tableData);
-  const tableHeight = getTableHeight(tableData);
+  // 조기 반환은 훅을 모두 호출한 뒤에 한다 (아래 early return) — 훅 위에서
+  // 반환하면 tableData 유무에 따라 훅 개수가 달라진다.
+  const tableWidth = tableData ? getTableWidth(tableData) : 0;
+  const tableHeight = tableData ? getTableHeight(tableData) : 0;
   const isLocked = shape.locked === true;
 
   // Calculate drag offset for a row (swap effect)
   const getRowDragOffset = useMemo(() => {
     return (rowIndex: number): number => {
+      if (!tableData) return 0;
       if (
         !tableDragState ||
         tableDragState.tableId !== shape.id ||
@@ -108,6 +107,7 @@ export const Table = memo(function Table({
   // Calculate drag offset for a column (swap effect)
   const getColDragOffset = useMemo(() => {
     return (colIndex: number): number => {
+      if (!tableData) return 0;
       if (
         !tableDragState ||
         tableDragState.tableId !== shape.id ||
@@ -351,6 +351,10 @@ export const Table = memo(function Table({
     },
     [onSelect, handleCellClick],
   );
+
+  if (!tableData) {
+    return null;
+  }
 
   return (
     <Group

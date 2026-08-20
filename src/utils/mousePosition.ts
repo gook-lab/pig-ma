@@ -8,7 +8,7 @@
  */
 
 // 캔버스 좌표 기준 마우스 위치
-let lastMousePosition = { x: 0, y: 0 };
+const lastMousePosition = { x: 0, y: 0 };
 
 /**
  * 마우스 위치 업데이트 (Canvas의 onMouseMove에서 호출)

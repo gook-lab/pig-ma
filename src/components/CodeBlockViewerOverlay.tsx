@@ -107,8 +107,9 @@ export const CodeBlockViewerOverlay = memo(function CodeBlockViewerOverlay({
   isEditing = false,
   isDragging = false,
 }: CodeBlockViewerOverlayProps) {
-  // Don't render when editing (CodeBlockEditor handles it)
-  if (isEditing) return null;
+  // 편집 중 렌더 생략은 훅을 모두 호출한 뒤에 한다 (아래 early return).
+  // 훅 위에서 반환하면 isEditing 토글마다 훅 개수가 달라져 rules-of-hooks
+  // 위반이 된다 — 지금은 부모가 언마운트해줘서 드러나지 않을 뿐이다.
 
   // 드래그 중일 때 실시간 위치 추적
   const [dragPosition, setDragPosition] = useState<{
@@ -182,6 +183,9 @@ export const CodeBlockViewerOverlay = memo(function CodeBlockViewerOverlay({
         .replace(/>/g, "&gt;");
     }
   }, [code, language]);
+
+  // Don't render when editing (CodeBlockEditor handles it)
+  if (isEditing) return null;
 
   return (
     <>

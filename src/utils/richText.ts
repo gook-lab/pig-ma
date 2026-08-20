@@ -138,7 +138,8 @@ export function toggleStyleInRange(
   inactiveValue?: "normal" | "none",
 ): TextSegment[] {
   // Smart default for inactiveValue based on activeValue
-  const inactive = inactiveValue ?? (activeValue === "bold" ? "normal" : "none");
+  const inactive =
+    inactiveValue ?? (activeValue === "bold" ? "normal" : "none");
 
   // Check if all characters in range have the style
   let currentIndex = 0;
@@ -226,7 +227,6 @@ export function calculateLineBreaks(
   let currentLine: LineData = { segments: [], indent: lineIndents[0] ?? 0 };
   let currentLineWidth = currentLine.indent * 20; // 20px per indent level
 
-  let charIndex = 0;
   let lineIndex = 0;
 
   for (let segIdx = 0; segIdx < segments.length; segIdx++) {
@@ -259,7 +259,6 @@ export function calculateLineBreaks(
         };
         currentLineWidth = currentLine.indent * 20;
         segStartChar = i + 1;
-        charIndex++;
         continue;
       }
 
@@ -312,7 +311,6 @@ export function calculateLineBreaks(
       }
 
       currentLineWidth += charWidth;
-      charIndex++;
     }
 
     // Add remaining text from this segment

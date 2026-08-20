@@ -49,19 +49,17 @@ export function PointOptionsBar({
 }: PointOptionsBarProps) {
   const chartData = shape.chartData;
 
-  if (!chartData) return null;
-
-  const seriesData = getSeriesData(chartData);
+  // 조기 반환은 훅을 모두 호출한 뒤에 한다 (아래 early return) — 훅 위에서
+  // 반환하면 chartData/series 유무에 따라 훅 개수가 달라진다.
+  const seriesData = chartData ? getSeriesData(chartData) : [];
   const series = seriesData[selectedPoint.seriesIndex];
-  const xLabel = chartData.items[selectedPoint.pointIndex]?.label ?? "";
+  const xLabel = chartData?.items[selectedPoint.pointIndex]?.label ?? "";
 
-  if (!series) return null;
-
-  const value = series.values[selectedPoint.pointIndex] ?? 0;
+  const value = series?.values[selectedPoint.pointIndex] ?? 0;
   const pointColor =
-    series.pointColors?.[selectedPoint.pointIndex] ?? series.style.color;
-  const showLabel = series.pointShowLabels?.[selectedPoint.pointIndex] ?? true;
-  const showValue = series.pointShowValues?.[selectedPoint.pointIndex] ?? true;
+    series?.pointColors?.[selectedPoint.pointIndex] ?? series?.style.color;
+  const showLabel = series?.pointShowLabels?.[selectedPoint.pointIndex] ?? true;
+  const showValue = series?.pointShowValues?.[selectedPoint.pointIndex] ?? true;
 
   // 로컬 value 입력 상태
   const [localValue, setLocalValue] = useState(String(value));
@@ -84,7 +82,7 @@ export function PointOptionsBar({
       if (regex.test(inputValue)) {
         setLocalValue(inputValue);
         const numValue = parseFloat(inputValue);
-        if (!isNaN(numValue)) {
+        if (!isNaN(numValue) && chartData) {
           const newChartData = updateSeriesPointValue(
             chartData,
             selectedPoint.seriesIndex,
@@ -99,6 +97,7 @@ export function PointOptionsBar({
   );
 
   const handleValueBlur = useCallback(() => {
+    if (!chartData) return;
     if (localValue === "" || isNaN(parseFloat(localValue))) {
       setLocalValue("0");
       const newChartData = updateSeriesPointValue(
@@ -113,6 +112,7 @@ export function PointOptionsBar({
 
   const handleColorChange = useCallback(
     (color: string) => {
+      if (!chartData) return;
       const newChartData = updateSeriesPointColor(
         chartData,
         selectedPoint.seriesIndex,
@@ -125,6 +125,7 @@ export function PointOptionsBar({
   );
 
   const handleToggleShowLabel = useCallback(() => {
+    if (!chartData) return;
     const newChartData = updateSeriesPointShowLabel(
       chartData,
       selectedPoint.seriesIndex,
@@ -135,6 +136,7 @@ export function PointOptionsBar({
   }, [chartData, selectedPoint, showLabel, onUpdate]);
 
   const handleToggleShowValue = useCallback(() => {
+    if (!chartData) return;
     const newChartData = updateSeriesPointShowValue(
       chartData,
       selectedPoint.seriesIndex,
@@ -143,6 +145,8 @@ export function PointOptionsBar({
     );
     onUpdate({ chartData: newChartData });
   }, [chartData, selectedPoint, showValue, onUpdate]);
+
+  if (!chartData || !series) return null;
 
   return (
     <div

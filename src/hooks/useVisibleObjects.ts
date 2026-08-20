@@ -53,13 +53,15 @@ export function useVisibleObjects(
   }, []);
 
   // 디바운스된 뷰포트 (빠른 패닝 시 필터링 지연)
+  //
+  // debounceMs === 0 이면 디바운스 자체가 없는 것이므로 **상태를 거치지 않고
+  // viewport 를 그대로 쓴다**. 예전에는 이 경우에도 이펙트에서 setState 를
+  // 호출했는데, 팬/줌은 매 프레임 viewport 를 바꾸므로 프레임마다 렌더가
+  // 한 번 더 얹히는 낭비였다 (react-hooks/set-state-in-effect 가 잡은 패턴).
   const [debouncedViewport, setDebouncedViewport] = useState(viewport);
 
   useEffect(() => {
-    if (debounceMs === 0) {
-      setDebouncedViewport(viewport);
-      return;
-    }
+    if (debounceMs === 0) return;
 
     const timer = setTimeout(() => {
       setDebouncedViewport(viewport);
@@ -68,11 +70,13 @@ export function useVisibleObjects(
     return () => clearTimeout(timer);
   }, [viewport, debounceMs]);
 
+  const effectiveViewport = debounceMs === 0 ? viewport : debouncedViewport;
+
   // 가시적인 객체 필터링
   const visibleObjects = useMemo(() => {
     return filterVisibleObjects(
       objects,
-      debouncedViewport,
+      effectiveViewport,
       windowSize.width,
       windowSize.height,
       selectedIds,
@@ -80,7 +84,7 @@ export function useVisibleObjects(
     );
   }, [
     objects,
-    debouncedViewport,
+    effectiveViewport,
     windowSize.width,
     windowSize.height,
     selectedIds,

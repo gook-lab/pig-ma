@@ -245,7 +245,7 @@ export const createGroupsSlice: SliceCreator<GroupsSlice> = (set) => ({
     }),
 
   selectGroup: (groupId) =>
-    set((_state) => {
+    set(() => {
       // Use virtual selection marker for all groups.
       // This prevents cluttered selection indicators on every child object.
       // Objects inside the section can still be individually selected by clicking them directly.

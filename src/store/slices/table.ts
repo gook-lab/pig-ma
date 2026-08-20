@@ -63,7 +63,7 @@ export const tableInitialState: TableState = {
 // Slice Creator
 // ============================================================================
 
-export const createTableSlice: SliceCreator<TableSlice> = (set, _get) => ({
+export const createTableSlice: SliceCreator<TableSlice> = (set) => ({
   ...tableInitialState,
 
   setEditingTableCell: (state) => set({ editingTableCell: state }),

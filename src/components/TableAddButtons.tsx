@@ -60,13 +60,11 @@ export const TableAddButtons = memo(function TableAddButtons({
   );
 
   const tableData = table.tableData;
-  if (!tableData) return null;
 
-  // 잠금 상태면 모든 편집 UI 숨김
-  if (table.locked === true) return null;
-
-  const tableWidth = getTableWidth(tableData);
-  const tableHeight = getTableHeight(tableData);
+  // 조기 반환은 훅을 모두 호출한 뒤에 한다.
+  // 모든 useCallback 호출 뒤로 옮김 (아래 early returns 참조)
+  const tableWidth = tableData ? getTableWidth(tableData) : 0;
+  const tableHeight = tableData ? getTableHeight(tableData) : 0;
 
   // Calculate screen positions
   const tableScreenX = table.x * viewport.zoom + viewport.x;
@@ -82,7 +80,7 @@ export const TableAddButtons = memo(function TableAddButtons({
   const getRowY = (rowIndex: number): number => {
     let y = 0;
     for (let i = 0; i < rowIndex; i++) {
-      y += tableData.rowHeights[i] ?? tableData.defaultRowHeight;
+      y += tableData!.rowHeights[i] ?? tableData!.defaultRowHeight;
     }
     return y * viewport.zoom;
   };
@@ -91,7 +89,7 @@ export const TableAddButtons = memo(function TableAddButtons({
   const getColX = (colIndex: number): number => {
     let x = 0;
     for (let i = 0; i < colIndex; i++) {
-      x += tableData.colWidths[i] ?? tableData.defaultColWidth;
+      x += tableData!.colWidths[i] ?? tableData!.defaultColWidth;
     }
     return x * viewport.zoom;
   };
@@ -99,7 +97,7 @@ export const TableAddButtons = memo(function TableAddButtons({
   // Get row height
   const getRowHeight = (rowIndex: number): number => {
     return (
-      (tableData.rowHeights[rowIndex] ?? tableData.defaultRowHeight) *
+      (tableData!.rowHeights[rowIndex] ?? tableData!.defaultRowHeight) *
       viewport.zoom
     );
   };
@@ -107,6 +105,7 @@ export const TableAddButtons = memo(function TableAddButtons({
   // Double-click handler - trigger cell editing
   const handleDoubleClick = useCallback(
     (e: React.MouseEvent) => {
+      if (!tableData) return;
       e.stopPropagation();
       e.preventDefault();
 
@@ -138,6 +137,7 @@ export const TableAddButtons = memo(function TableAddButtons({
   // Row drag handlers
   const handleRowDragStart = useCallback(
     (e: React.MouseEvent, rowIndex: number) => {
+      if (!tableData) return;
       e.preventDefault();
       e.stopPropagation();
 
@@ -221,6 +221,7 @@ export const TableAddButtons = memo(function TableAddButtons({
   // Column drag handlers
   const handleColDragStart = useCallback(
     (e: React.MouseEvent, colIndex: number) => {
+      if (!tableData) return;
       e.preventDefault();
       e.stopPropagation();
 
@@ -318,7 +319,7 @@ export const TableAddButtons = memo(function TableAddButtons({
   // Get column width
   const getColWidth = (colIndex: number): number => {
     return (
-      (tableData.colWidths[colIndex] ?? tableData.defaultColWidth) *
+      (tableData!.colWidths[colIndex] ?? tableData!.defaultColWidth) *
       viewport.zoom
     );
   };
@@ -342,6 +343,7 @@ export const TableAddButtons = memo(function TableAddButtons({
   // Row resize handler (drag row border to resize)
   const handleRowResizeStart = useCallback(
     (e: React.MouseEvent, rowIndex: number) => {
+      if (!tableData) return;
       e.preventDefault();
       e.stopPropagation();
 
@@ -372,6 +374,7 @@ export const TableAddButtons = memo(function TableAddButtons({
   // Column resize handler (drag column border to resize)
   const handleColResizeStart = useCallback(
     (e: React.MouseEvent, colIndex: number) => {
+      if (!tableData) return;
       e.preventDefault();
       e.stopPropagation();
 
@@ -398,6 +401,10 @@ export const TableAddButtons = memo(function TableAddButtons({
     },
     [table.id, tableData, viewport.zoom, resizeTableColumn],
   );
+
+  // 조기 반환: 훅을 모두 호출한 뒤에 한다
+  if (!tableData) return null;
+  if (table.locked === true) return null;
 
   return (
     <div>
@@ -440,59 +447,60 @@ export const TableAddButtons = memo(function TableAddButtons({
       )}
 
       {/* Column drag handles (top side) */}
-      {Array.from({ length: tableData.colCount }).map((_, colIndex) => {
-        const colX = getColX(colIndex);
-        const colWidth = getColWidth(colIndex);
-        const isDragging = dragColIndex === colIndex;
-        const isTarget =
-          dragOverColIndex === colIndex && dragColIndex !== dragOverColIndex;
-        const offset = getColDragOffset(colIndex);
+      {tableData &&
+        Array.from({ length: tableData.colCount }).map((_, colIndex) => {
+          const colX = getColX(colIndex);
+          const colWidth = getColWidth(colIndex);
+          const isDragging = dragColIndex === colIndex;
+          const isTarget =
+            dragOverColIndex === colIndex && dragColIndex !== dragOverColIndex;
+          const offset = getColDragOffset(colIndex);
 
-        // Calculate where the dragged handle should move to
-        const draggedOffset =
-          isDragging && dragOverColIndex !== null
-            ? getColX(dragOverColIndex) - getColX(dragColIndex)
-            : 0;
+          // Calculate where the dragged handle should move to
+          const draggedOffset =
+            isDragging && dragOverColIndex !== null
+              ? getColX(dragOverColIndex) - getColX(dragColIndex)
+              : 0;
 
-        return (
-          <div
-            key={`col-handle-${colIndex}`}
-            className={`absolute flex items-center justify-center ${
-              isDragging
-                ? "opacity-100"
-                : isTarget
+          return (
+            <div
+              key={`col-handle-${colIndex}`}
+              className={`absolute flex items-center justify-center ${
+                isDragging
                   ? "opacity-100"
-                  : "opacity-0 hover:opacity-100"
-            }`}
-            style={{
-              left: tableScreenX + colX,
-              top: tableScreenY - handleHeight - 4,
-              width: colWidth,
-              height: handleHeight,
-              zIndex: isDragging ? 71 : isTarget ? 66 : 61,
-              backgroundColor: isDragging
-                ? "rgba(59, 130, 246, 0.3)"
-                : isTarget
-                  ? "rgba(99, 102, 241, 0.2)"
-                  : "transparent",
-              borderRadius: 4,
-              transform: isDragging
-                ? `translateX(${draggedOffset}px)`
-                : `translateX(${offset}px)`,
-              transition: isDragging
-                ? "none"
-                : "transform 200ms cubic-bezier(0.4, 0, 0.2, 1), opacity 150ms",
-              cursor: isDragging ? "grabbing" : "grab",
-            }}
-            onMouseDown={(e) => handleColDragStart(e, colIndex)}
-            onContextMenu={handleContextMenu}
-          >
-            <GripHorizontal
-              className={`w-5 h-5 ${isDragging ? "text-blue-600" : isTarget ? "text-indigo-500" : "text-gray-500"}`}
-            />
-          </div>
-        );
-      })}
+                  : isTarget
+                    ? "opacity-100"
+                    : "opacity-0 hover:opacity-100"
+              }`}
+              style={{
+                left: tableScreenX + colX,
+                top: tableScreenY - handleHeight - 4,
+                width: colWidth,
+                height: handleHeight,
+                zIndex: isDragging ? 71 : isTarget ? 66 : 61,
+                backgroundColor: isDragging
+                  ? "rgba(59, 130, 246, 0.3)"
+                  : isTarget
+                    ? "rgba(99, 102, 241, 0.2)"
+                    : "transparent",
+                borderRadius: 4,
+                transform: isDragging
+                  ? `translateX(${draggedOffset}px)`
+                  : `translateX(${offset}px)`,
+                transition: isDragging
+                  ? "none"
+                  : "transform 200ms cubic-bezier(0.4, 0, 0.2, 1), opacity 150ms",
+                cursor: isDragging ? "grabbing" : "grab",
+              }}
+              onMouseDown={(e) => handleColDragStart(e, colIndex)}
+              onContextMenu={handleContextMenu}
+            >
+              <GripHorizontal
+                className={`w-5 h-5 ${isDragging ? "text-blue-600" : isTarget ? "text-indigo-500" : "text-gray-500"}`}
+              />
+            </div>
+          );
+        })}
 
       {/* Column drop indicator line - removed for swap effect */}
 
@@ -535,211 +543,216 @@ export const TableAddButtons = memo(function TableAddButtons({
       )}
 
       {/* Row drag handles (left side) */}
-      {Array.from({ length: tableData.rowCount }).map((_, rowIndex) => {
-        const rowY = getRowY(rowIndex);
-        const rowHeight = getRowHeight(rowIndex);
-        const isDragging = dragRowIndex === rowIndex;
-        const isTarget =
-          dragOverRowIndex === rowIndex && dragRowIndex !== dragOverRowIndex;
-        const offset = getRowDragOffset(rowIndex);
+      {tableData &&
+        Array.from({ length: tableData.rowCount }).map((_, rowIndex) => {
+          const rowY = getRowY(rowIndex);
+          const rowHeight = getRowHeight(rowIndex);
+          const isDragging = dragRowIndex === rowIndex;
+          const isTarget =
+            dragOverRowIndex === rowIndex && dragRowIndex !== dragOverRowIndex;
+          const offset = getRowDragOffset(rowIndex);
 
-        // Calculate where the dragged handle should move to
-        const draggedOffset =
-          isDragging && dragOverRowIndex !== null
-            ? getRowY(dragOverRowIndex) - getRowY(dragRowIndex)
-            : 0;
+          // Calculate where the dragged handle should move to
+          const draggedOffset =
+            isDragging && dragOverRowIndex !== null
+              ? getRowY(dragOverRowIndex) - getRowY(dragRowIndex)
+              : 0;
 
-        return (
-          <div
-            key={`row-handle-${rowIndex}`}
-            className={`absolute flex items-center justify-center ${
-              isDragging
-                ? "opacity-100"
-                : isTarget
+          return (
+            <div
+              key={`row-handle-${rowIndex}`}
+              className={`absolute flex items-center justify-center ${
+                isDragging
                   ? "opacity-100"
-                  : "opacity-0 hover:opacity-100"
-            }`}
-            style={{
-              left: tableScreenX - handleWidth - 4,
-              top: tableScreenY + rowY,
-              width: handleWidth,
-              height: rowHeight,
-              zIndex: isDragging ? 71 : isTarget ? 66 : 61,
-              backgroundColor: isDragging
-                ? "rgba(59, 130, 246, 0.3)"
-                : isTarget
-                  ? "rgba(99, 102, 241, 0.2)"
-                  : "transparent",
-              borderRadius: 4,
-              transform: isDragging
-                ? `translateY(${draggedOffset}px)`
-                : `translateY(${offset}px)`,
-              transition: isDragging
-                ? "none"
-                : "transform 200ms cubic-bezier(0.4, 0, 0.2, 1), opacity 150ms",
-              cursor: isDragging ? "grabbing" : "grab",
-            }}
-            onMouseDown={(e) => handleRowDragStart(e, rowIndex)}
-            onContextMenu={handleContextMenu}
-          >
-            <GripVertical
-              className={`w-5 h-5 ${isDragging ? "text-blue-600" : isTarget ? "text-indigo-500" : "text-gray-500"}`}
-            />
-          </div>
-        );
-      })}
+                  : isTarget
+                    ? "opacity-100"
+                    : "opacity-0 hover:opacity-100"
+              }`}
+              style={{
+                left: tableScreenX - handleWidth - 4,
+                top: tableScreenY + rowY,
+                width: handleWidth,
+                height: rowHeight,
+                zIndex: isDragging ? 71 : isTarget ? 66 : 61,
+                backgroundColor: isDragging
+                  ? "rgba(59, 130, 246, 0.3)"
+                  : isTarget
+                    ? "rgba(99, 102, 241, 0.2)"
+                    : "transparent",
+                borderRadius: 4,
+                transform: isDragging
+                  ? `translateY(${draggedOffset}px)`
+                  : `translateY(${offset}px)`,
+                transition: isDragging
+                  ? "none"
+                  : "transform 200ms cubic-bezier(0.4, 0, 0.2, 1), opacity 150ms",
+                cursor: isDragging ? "grabbing" : "grab",
+              }}
+              onMouseDown={(e) => handleRowDragStart(e, rowIndex)}
+              onContextMenu={handleContextMenu}
+            >
+              <GripVertical
+                className={`w-5 h-5 ${isDragging ? "text-blue-600" : isTarget ? "text-indigo-500" : "text-gray-500"}`}
+              />
+            </div>
+          );
+        })}
 
       {/* Drop indicator line removed - swap effect shows elements exchanging positions */}
 
       {/* Row resize handles (horizontal borders between rows) */}
-      {Array.from({ length: tableData.rowCount - 1 }).map((_, index) => {
-        const borderY = getRowY(index + 1);
-        const isResizing = resizingRowIndex === index;
+      {tableData &&
+        Array.from({ length: tableData.rowCount - 1 }).map((_, index) => {
+          const borderY = getRowY(index + 1);
+          const isResizing = resizingRowIndex === index;
 
-        return (
-          <div
-            key={`row-resize-${index}`}
-            className={`absolute cursor-row-resize ${
-              isResizing ? "bg-blue-400" : "hover:bg-blue-300"
-            }`}
-            style={{
-              left: tableScreenX,
-              top: tableScreenY + borderY - 3,
-              width: scaledWidth,
-              height: 6,
-              zIndex: 68,
-              opacity: isResizing ? 1 : 0,
-              transition: "opacity 150ms",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-            onMouseLeave={(e) => {
-              if (!isResizing) e.currentTarget.style.opacity = "0";
-            }}
-            onMouseDown={(e) => handleRowResizeStart(e, index)}
-            onContextMenu={handleContextMenu}
-          />
-        );
-      })}
+          return (
+            <div
+              key={`row-resize-${index}`}
+              className={`absolute cursor-row-resize ${
+                isResizing ? "bg-blue-400" : "hover:bg-blue-300"
+              }`}
+              style={{
+                left: tableScreenX,
+                top: tableScreenY + borderY - 3,
+                width: scaledWidth,
+                height: 6,
+                zIndex: 68,
+                opacity: isResizing ? 1 : 0,
+                transition: "opacity 150ms",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+              onMouseLeave={(e) => {
+                if (!isResizing) e.currentTarget.style.opacity = "0";
+              }}
+              onMouseDown={(e) => handleRowResizeStart(e, index)}
+              onContextMenu={handleContextMenu}
+            />
+          );
+        })}
 
       {/* Column resize handles (vertical borders between columns) */}
-      {Array.from({ length: tableData.colCount - 1 }).map((_, index) => {
-        const borderX = getColX(index + 1);
-        const isResizing = resizingColIndex === index;
+      {tableData &&
+        Array.from({ length: tableData.colCount - 1 }).map((_, index) => {
+          const borderX = getColX(index + 1);
+          const isResizing = resizingColIndex === index;
 
-        return (
-          <div
-            key={`col-resize-${index}`}
-            className={`absolute cursor-col-resize ${
-              isResizing ? "bg-blue-400" : "hover:bg-blue-300"
-            }`}
-            style={{
-              left: tableScreenX + borderX - 3,
-              top: tableScreenY,
-              width: 6,
-              height: scaledHeight,
-              zIndex: 68,
-              opacity: isResizing ? 1 : 0,
-              transition: "opacity 150ms",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-            onMouseLeave={(e) => {
-              if (!isResizing) e.currentTarget.style.opacity = "0";
-            }}
-            onMouseDown={(e) => handleColResizeStart(e, index)}
-            onContextMenu={handleContextMenu}
-          />
-        );
-      })}
+          return (
+            <div
+              key={`col-resize-${index}`}
+              className={`absolute cursor-col-resize ${
+                isResizing ? "bg-blue-400" : "hover:bg-blue-300"
+              }`}
+              style={{
+                left: tableScreenX + borderX - 3,
+                top: tableScreenY,
+                width: 6,
+                height: scaledHeight,
+                zIndex: 68,
+                opacity: isResizing ? 1 : 0,
+                transition: "opacity 150ms",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+              onMouseLeave={(e) => {
+                if (!isResizing) e.currentTarget.style.opacity = "0";
+              }}
+              onMouseDown={(e) => handleColResizeStart(e, index)}
+              onContextMenu={handleContextMenu}
+            />
+          );
+        })}
 
       {/* Row border insert buttons (between rows - on the LEFT side) */}
-      {Array.from({ length: tableData.rowCount - 1 }).map((_, index) => {
-        const borderY = getRowY(index + 1);
-        const isHovered = hoveredRowBorder === index;
+      {tableData &&
+        Array.from({ length: tableData.rowCount - 1 }).map((_, index) => {
+          const borderY = getRowY(index + 1);
+          const isHovered = hoveredRowBorder === index;
 
-        return (
-          <div
-            key={`row-border-${index}`}
-            className="absolute"
-            style={{
-              left: tableScreenX - 30,
-              top: tableScreenY + borderY - 15,
-              width: 30,
-              height: 30,
-              zIndex: 63,
-              cursor: "none",
-            }}
-            onMouseEnter={() => setHoveredRowBorder(index)}
-            onMouseLeave={() => setHoveredRowBorder(null)}
-            onContextMenu={handleContextMenu}
-          >
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                addTableRow(table.id, index);
-              }}
-              onContextMenu={handleContextMenu}
-              className={`absolute flex items-center justify-center rounded-full bg-blue-500 text-white shadow-md hover:bg-blue-600 transition-all ${
-                isHovered ? "opacity-100 scale-100" : "opacity-0 scale-50"
-              }`}
+          return (
+            <div
+              key={`row-border-${index}`}
+              className="absolute"
               style={{
-                left: 6,
-                top: 6,
-                width: buttonSize,
-                height: buttonSize,
-                cursor: "pointer",
+                left: tableScreenX - 30,
+                top: tableScreenY + borderY - 15,
+                width: 30,
+                height: 30,
+                zIndex: 63,
+                cursor: "none",
               }}
-              title="행 삽입"
+              onMouseEnter={() => setHoveredRowBorder(index)}
+              onMouseLeave={() => setHoveredRowBorder(null)}
+              onContextMenu={handleContextMenu}
             >
-              <Plus className="w-3 h-3" />
-            </button>
-          </div>
-        );
-      })}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addTableRow(table.id, index);
+                }}
+                onContextMenu={handleContextMenu}
+                className={`absolute flex items-center justify-center rounded-full bg-blue-500 text-white shadow-md hover:bg-blue-600 transition-all ${
+                  isHovered ? "opacity-100 scale-100" : "opacity-0 scale-50"
+                }`}
+                style={{
+                  left: 6,
+                  top: 6,
+                  width: buttonSize,
+                  height: buttonSize,
+                  cursor: "pointer",
+                }}
+                title="행 삽입"
+              >
+                <Plus className="w-3 h-3" />
+              </button>
+            </div>
+          );
+        })}
 
       {/* Column border insert buttons (between columns - on the TOP) */}
-      {Array.from({ length: tableData.colCount - 1 }).map((_, index) => {
-        const borderX = getColX(index + 1);
-        const isHovered = hoveredColBorder === index;
+      {tableData &&
+        Array.from({ length: tableData.colCount - 1 }).map((_, index) => {
+          const borderX = getColX(index + 1);
+          const isHovered = hoveredColBorder === index;
 
-        return (
-          <div
-            key={`col-border-${index}`}
-            className="absolute"
-            style={{
-              left: tableScreenX + borderX - 15,
-              top: tableScreenY - 30,
-              width: 30,
-              height: 30,
-              zIndex: 63,
-              cursor: "none",
-            }}
-            onMouseEnter={() => setHoveredColBorder(index)}
-            onMouseLeave={() => setHoveredColBorder(null)}
-            onContextMenu={handleContextMenu}
-          >
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                addTableColumn(table.id, index);
-              }}
-              onContextMenu={handleContextMenu}
-              className={`absolute flex items-center justify-center rounded-full bg-blue-500 text-white shadow-md hover:bg-blue-600 transition-all ${
-                isHovered ? "opacity-100 scale-100" : "opacity-0 scale-50"
-              }`}
+          return (
+            <div
+              key={`col-border-${index}`}
+              className="absolute"
               style={{
-                left: 6,
-                top: 6,
-                width: buttonSize,
-                height: buttonSize,
-                cursor: "pointer",
+                left: tableScreenX + borderX - 15,
+                top: tableScreenY - 30,
+                width: 30,
+                height: 30,
+                zIndex: 63,
+                cursor: "none",
               }}
-              title="열 삽입"
+              onMouseEnter={() => setHoveredColBorder(index)}
+              onMouseLeave={() => setHoveredColBorder(null)}
+              onContextMenu={handleContextMenu}
             >
-              <Plus className="w-3 h-3" />
-            </button>
-          </div>
-        );
-      })}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addTableColumn(table.id, index);
+                }}
+                onContextMenu={handleContextMenu}
+                className={`absolute flex items-center justify-center rounded-full bg-blue-500 text-white shadow-md hover:bg-blue-600 transition-all ${
+                  isHovered ? "opacity-100 scale-100" : "opacity-0 scale-50"
+                }`}
+                style={{
+                  left: 6,
+                  top: 6,
+                  width: buttonSize,
+                  height: buttonSize,
+                  cursor: "pointer",
+                }}
+                title="열 삽입"
+              >
+                <Plus className="w-3 h-3" />
+              </button>
+            </div>
+          );
+        })}
 
       {/* Last column hover zone - right half of last column cells + outside area */}
       {/* Right half of last column (excluding corner row) */}
@@ -748,11 +761,11 @@ export const TableAddButtons = memo(function TableAddButtons({
         style={{
           left:
             tableScreenX +
-            getColX(tableData.colCount - 1) +
-            getColWidth(tableData.colCount - 1) / 2,
+            getColX(tableData!.colCount - 1) +
+            getColWidth(tableData!.colCount - 1) / 2,
           top: tableScreenY,
-          width: getColWidth(tableData.colCount - 1) / 2,
-          height: scaledHeight - getRowHeight(tableData.rowCount - 1),
+          width: getColWidth(tableData!.colCount - 1) / 2,
+          height: scaledHeight - getRowHeight(tableData!.rowCount - 1),
           zIndex: 59,
         }}
         onMouseEnter={() => setIsHoveringLastCol(true)}
@@ -783,10 +796,10 @@ export const TableAddButtons = memo(function TableAddButtons({
           left: tableScreenX,
           top:
             tableScreenY +
-            getRowY(tableData.rowCount - 1) +
-            getRowHeight(tableData.rowCount - 1) / 2,
-          width: scaledWidth - getColWidth(tableData.colCount - 1),
-          height: getRowHeight(tableData.rowCount - 1) / 2,
+            getRowY(tableData!.rowCount - 1) +
+            getRowHeight(tableData!.rowCount - 1) / 2,
+          width: scaledWidth - getColWidth(tableData!.colCount - 1),
+          height: getRowHeight(tableData!.rowCount - 1) / 2,
           zIndex: 59,
         }}
         onMouseEnter={() => setIsHoveringLastRow(true)}
@@ -816,14 +829,14 @@ export const TableAddButtons = memo(function TableAddButtons({
         style={{
           left:
             tableScreenX +
-            getColX(tableData.colCount - 1) +
-            getColWidth(tableData.colCount - 1) / 2,
+            getColX(tableData!.colCount - 1) +
+            getColWidth(tableData!.colCount - 1) / 2,
           top:
             tableScreenY +
-            getRowY(tableData.rowCount - 1) +
-            getRowHeight(tableData.rowCount - 1) / 2,
-          width: getColWidth(tableData.colCount - 1) / 2 - 12,
-          height: getRowHeight(tableData.rowCount - 1) / 2,
+            getRowY(tableData!.rowCount - 1) +
+            getRowHeight(tableData!.rowCount - 1) / 2,
+          width: getColWidth(tableData!.colCount - 1) / 2 - 12,
+          height: getRowHeight(tableData!.rowCount - 1) / 2,
           zIndex: 59,
         }}
         onMouseEnter={() => {
@@ -841,13 +854,13 @@ export const TableAddButtons = memo(function TableAddButtons({
       <div
         className="absolute"
         style={{
-          left: tableScreenX + getColX(tableData.colCount - 1),
+          left: tableScreenX + getColX(tableData!.colCount - 1),
           top:
             tableScreenY +
-            getRowY(tableData.rowCount - 1) +
-            getRowHeight(tableData.rowCount - 1) / 2,
-          width: getColWidth(tableData.colCount - 1) / 2,
-          height: getRowHeight(tableData.rowCount - 1) / 2,
+            getRowY(tableData!.rowCount - 1) +
+            getRowHeight(tableData!.rowCount - 1) / 2,
+          width: getColWidth(tableData!.colCount - 1) / 2,
+          height: getRowHeight(tableData!.rowCount - 1) / 2,
           zIndex: 59,
         }}
         onMouseEnter={() => setIsHoveringLastRow(true)}
@@ -861,11 +874,11 @@ export const TableAddButtons = memo(function TableAddButtons({
         style={{
           left:
             tableScreenX +
-            getColX(tableData.colCount - 1) +
-            getColWidth(tableData.colCount - 1) / 2,
-          top: tableScreenY + getRowY(tableData.rowCount - 1),
-          width: getColWidth(tableData.colCount - 1) / 2,
-          height: getRowHeight(tableData.rowCount - 1) / 2,
+            getColX(tableData!.colCount - 1) +
+            getColWidth(tableData!.colCount - 1) / 2,
+          top: tableScreenY + getRowY(tableData!.rowCount - 1),
+          width: getColWidth(tableData!.colCount - 1) / 2,
+          height: getRowHeight(tableData!.rowCount - 1) / 2,
           zIndex: 59,
         }}
         onMouseEnter={() => setIsHoveringLastCol(true)}

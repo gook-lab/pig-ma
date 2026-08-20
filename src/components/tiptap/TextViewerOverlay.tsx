@@ -41,11 +41,6 @@ export const TextViewerOverlay = memo(function TextViewerOverlay({
   isDragging = false,
   isObscured = false,
 }: TextViewerOverlayProps) {
-  // 다른 객체에 가려진 경우 렌더링하지 않음 (z-order 반영)
-  // 단, 선택된 상태에서는 항상 표시 (선택한 객체는 보여야 함)
-  if (isObscured && !isSelected) {
-    return null;
-  }
   // 드래그 중일 때 실시간 위치 추적
   const [dragPosition, setDragPosition] = useState<{
     x: number;
@@ -135,6 +130,12 @@ export const TextViewerOverlay = memo(function TextViewerOverlay({
     overflowY: "visible" as const,
     wordBreak: "break-word",
   };
+
+  // 조기 반환은 훅을 모두 호출한 뒤에 한다 (z-order 반영을 위해)
+  // 다른 객체에 가려진 경우 렌더링하지 않음. 단, 선택된 상태에서는 항상 표시
+  if (isObscured && !isSelected) {
+    return null;
+  }
 
   // StickyNote 배경은 항상 Konva에서만 렌더링 (z-order 반영을 위해)
   // HTML에서는 텍스트만 렌더링
