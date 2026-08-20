@@ -3,6 +3,7 @@ import { Stage, Layer, Rect, Line, Circle } from "react-konva";
 import { Plus, Minus, RotateCcw } from "lucide-react";
 import type Konva from "konva";
 import type { CanvasObject } from "@/types";
+import { toPointArray } from "@/utils/geometry";
 import {
   zoomIn as getNextZoom,
   zoomOut as getPrevZoom,
@@ -264,7 +265,7 @@ export const Minimap = memo(function Minimap({
       }
 
       if (obj.type === "line") {
-        const points = (obj.points ?? []).map((p, i) =>
+        const points = toPointArray(obj.points).map((p, i) =>
           i % 2 === 0
             ? toMinimapX(obj.x + p) - x + x
             : toMinimapY(obj.y + p) - y + y,

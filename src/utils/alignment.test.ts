@@ -6,6 +6,7 @@ import {
   CONNECTOR_SNAP_THRESHOLD,
   CONNECTOR_DEAD_ZONE,
   getObjectBounds,
+  toPointArray,
 } from "./geometry";
 import type { CanvasObject } from "@/types";
 
@@ -207,5 +208,41 @@ describe("getObjectBounds 는 손상된 데이터에도 절대 던지지 않는�
 
     // 범례가 아래에 붙으므로 높이가 base(200) 보다 커야 한다
     expect(getObjectBounds(ok).height).toBeGreaterThan(200);
+  });
+});
+
+describe("toPointArray (손상된 points 정규화)", () => {
+  it("문자열은 빈 배열로 — .length 가 있어 배열 가드를 통과하던 패턴", () => {
+    expect(toPointArray("nope")).toEqual([]);
+  });
+
+  it("정상 배열은 그대로", () => {
+    expect(toPointArray([0, 1, 2, 3])).toEqual([0, 1, 2, 3]);
+  });
+
+  it("숫자 아닌 원소는 걸러낸다 (NaN bounds 방지)", () => {
+    expect(toPointArray([0, "x", 2, null, 4] as unknown)).toEqual([0, 2, 4]);
+  });
+
+  it("null/undefined 도 안전", () => {
+    expect(toPointArray(null)).toEqual([]);
+    expect(toPointArray(undefined)).toEqual([]);
+  });
+
+  it("points 가 문자열인 line 의 bounds 는 던지지 않는다", () => {
+    const broken = {
+      id: "l1",
+      type: "line",
+      x: 5,
+      y: 7,
+      points: "nope",
+    } as unknown as CanvasObject;
+    expect(() => getObjectBounds(broken)).not.toThrow();
+    expect(getObjectBounds(broken)).toEqual({
+      x: 5,
+      y: 7,
+      width: 10,
+      height: 10,
+    });
   });
 });

@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { useCanvasStore } from "@/store";
+import { toPointArray } from "@/utils/geometry";
 import { LineOptionsBar } from "./LineOptionsBar";
 import { calculateOptionsBarPositionForPoints } from "@/utils/optionsBar";
 import type { CanvasObject } from "@/types";
@@ -18,7 +19,7 @@ export function LineEditor() {
   const getBarPosition = useCallback(() => {
     if (!selectedLine) return { x: 0, y: 0, above: false };
 
-    const points = selectedLine.points ?? [];
+    const points = toPointArray(selectedLine.points);
     if (points.length < 2) return { x: 0, y: 0, above: false };
 
     return calculateOptionsBarPositionForPoints({

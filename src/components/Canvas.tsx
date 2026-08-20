@@ -81,6 +81,7 @@ import {
   type AnchorPosition,
   type Point,
   getOffsetRatioSafe,
+  toPointArray,
 } from "@/utils/geometry";
 import {
   zoomIn as zoomInLevel,
@@ -112,7 +113,6 @@ import {
   getConnectorPathPoints,
   toElbowSize,
 } from "@/utils/connectorPath";
-import {} from "@/utils/geometry";
 import { isShape } from "@/utils/typeGuards";
 
 interface MarqueeState {
@@ -1700,7 +1700,7 @@ export function Canvas() {
 
       if (obj.type === "line") {
         // For line, scale all points
-        const scaledPoints = (obj.points ?? []).map((p, i) =>
+        const scaledPoints = toPointArray(obj.points).map((p, i) =>
           i % 2 === 0 ? p * scaleX : p * scaleY,
         );
         useCanvasStore.getState().updateObject(node.id(), {

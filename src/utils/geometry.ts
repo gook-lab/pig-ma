@@ -9,19 +9,33 @@ export interface Bounds {
   height: number;
 }
 
+/**
+ * 객체의 points 를 안전한 숫자 배열로 정규화한다.
+ *
+ * 손상된 데이터(문자열 등)는 `.length` 가 있어서 배열 가드를 통과한 뒤
+ * `.map`/인덱싱에서 터진다. 미니맵·정렬·지우개처럼 **도형 단위 ErrorBoundary
+ * 바깥**(HTML 트리나 Canvas 자체 렌더)에서 points 를 순회하는 경로가 여럿이라,
+ * 한 객체의 손상이 앱 전체를 죽일 수 있다. 그 길목들은 이 헬퍼를 쓴다.
+ */
+export function toPointArray(points: unknown): number[] {
+  if (!Array.isArray(points)) return [];
+  return points.filter((p): p is number => typeof p === "number");
+}
+
 export function getObjectBounds(obj: CanvasObject): Bounds {
   switch (obj.type) {
     case "line": {
-      if (!obj.points || obj.points.length < 2) {
+      const linePoints = toPointArray(obj.points);
+      if (linePoints.length < 2) {
         return { x: obj.x, y: obj.y, width: 10, height: 10 };
       }
       let minX = Infinity,
         minY = Infinity,
         maxX = -Infinity,
         maxY = -Infinity;
-      for (let i = 0; i < obj.points.length; i += 2) {
-        const px = obj.points[i]!;
-        const py = obj.points[i + 1]!;
+      for (let i = 0; i + 1 < linePoints.length; i += 2) {
+        const px = linePoints[i]!;
+        const py = linePoints[i + 1]!;
         minX = Math.min(minX, px);
         minY = Math.min(minY, py);
         maxX = Math.max(maxX, px);
