@@ -25,8 +25,6 @@ function handlesFor(bend: ElbowBend) {
     START,
     END,
     [bend],
-    "sharp",
-    8,
     "right",
     "left",
   );
@@ -256,7 +254,7 @@ describe("수평 핸들도 각자 자기 저장값을 가리킨다 (X반전 리�
   function centerHandles() {
     const flat = (
       calculateElbowPath as unknown as (...a: unknown[]) => number[]
-    )(start, end, [bend], "sharp", 8, "right", "left");
+    )(start, end, [bend], "right", "left");
     const segs = getSegments(flat);
     return getMidpointHandlePositions(segs, [bend], start.y, end.y).filter(
       (h) => h.handleType === "center",
@@ -291,15 +289,7 @@ describe("수평 핸들도 각자 자기 저장값을 가리킨다 (X반전 리�
     const plain = base({ elbowY: 300, leftCornerX: 400, rightCornerX: 700 });
     const flat = (
       calculateElbowPath as unknown as (...a: unknown[]) => number[]
-    )(
-      { x: 100, y: 200 },
-      { x: 900, y: 400 },
-      [plain],
-      "sharp",
-      8,
-      "right",
-      "left",
-    );
+    )({ x: 100, y: 200 }, { x: 900, y: 400 }, [plain], "right", "left");
     const hs = getMidpointHandlePositions(
       getSegments(flat),
       [plain],
@@ -353,7 +343,7 @@ describe("반전 배치에서 새 층이 실제로 그려진다 (종단간)", ()
   function draw(b: ElbowBend): { xs: number[]; ys: number[] } {
     const flat = (
       calculateElbowPath as unknown as (...a: unknown[]) => number[]
-    )(start, end, [b], "sharp", 8, "right", "left");
+    )(start, end, [b], "right", "left");
     const xs: number[] = [];
     const ys: number[] = [];
     for (let i = 0; i < flat.length; i += 2) {
@@ -397,7 +387,7 @@ describe("반전 배치에서 새 층이 실제로 그려진다 (종단간)", ()
     const dragged = addStairStep(authored, "right", 728, 385, "end");
     const flat = (
       calculateElbowPath as unknown as (...a: unknown[]) => number[]
-    )(start, end, [dragged], "sharp", 8, "right", "left");
+    )(start, end, [dragged], "right", "left");
 
     for (let i = 0; i + 3 < flat.length; i += 2) {
       const sameX = Math.abs(flat[i]! - flat[i + 2]!) < 1e-6;
@@ -434,7 +424,7 @@ describe("코너가 어디에 있든 수평 핸들은 Y-정체로 배정된다",
   function centers() {
     const flat = (
       calculateElbowPath as unknown as (...a: unknown[]) => number[]
-    )(start, end, [bend], "sharp", 8, "right", "top");
+    )(start, end, [bend], "right", "top");
     return getMidpointHandlePositions(
       getSegments(flat),
       [bend],

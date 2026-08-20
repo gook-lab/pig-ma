@@ -242,23 +242,13 @@ describe("변환 전후 렌더 동작 비교", () => {
 
     const before = (
       calculateElbowPath as unknown as (...a: unknown[]) => number[]
-    )(
-      { x: 300, y: 150 },
-      { x: 900, y: 500 },
-      [legacy],
-      "sharp",
-      8,
-      "right",
-      "left",
-    );
+    )({ x: 300, y: 150 }, { x: 900, y: 500 }, [legacy], "right", "left");
     const afterMove = (
       calculateElbowPath as unknown as (...a: unknown[]) => number[]
     )(
       { x: 300, y: 450 }, // 소스가 아래로 300 이동
       { x: 900, y: 500 },
       [legacy],
-      "sharp",
-      8,
       "right",
       "left",
     );
@@ -281,8 +271,6 @@ describe("변환 전후 렌더 동작 비교", () => {
         { x: 300, y: startY },
         { x: 900, y: 500 },
         [migrated],
-        "sharp",
-        8,
         "right",
         "left",
       );

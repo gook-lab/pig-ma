@@ -7,7 +7,7 @@
  * - Segment-based bend management
  */
 
-import type { ElbowBend, ElbowCornerStyle } from "@/types";
+import type { ElbowBend } from "@/types";
 
 export interface Point {
   x: number;
@@ -932,14 +932,14 @@ function applyBends(
 
 /**
  * Elbow 경로 계산 (메인 함수)
- * Note: Rounded corners are now handled directly in Connector.tsx sceneFunc
+ * Note: 둥근 모서리는 Connector.tsx 의 sceneFunc 이 그린다. 예전엔 여기로
+ * cornerStyle/cornerRadius 를 넘겼는데 무시되기만 해서 (넘긴 값이 먹는 줄
+ * 아는 함정) 파라미터를 제거했다.
  */
 export function calculateElbowPath(
   start: Point,
   end: Point,
   bends: ElbowBend[] = [],
-  _cornerStyle: ElbowCornerStyle = "sharp",
-  _cornerRadius: number = 8,
   sourceAnchor?: string,
   targetAnchor?: string,
   options?: ElbowPathOptions,

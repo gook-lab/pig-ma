@@ -103,8 +103,6 @@ describe("경로 계산 (getConnectorPathPoints)", () => {
       { x: 300, y: 200 },
       { x: 1000, y: 700 },
       c.elbowBends!,
-      "sharp",
-      8,
     );
 
     expect(unified).not.toEqual(legacy); // 리드인 스텁만큼 달라야 한다

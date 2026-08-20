@@ -611,8 +611,6 @@ function LineChartRenderer({
   width,
   height,
   legendHeight = 0,
-  selectedItemIndex: _selectedItemIndex,
-  onItemSelect: _onItemSelect,
   isChartSelected,
   onChartSelect,
   selectedSeriesIndex,
@@ -652,19 +650,16 @@ function LineChartRenderer({
     sortBy = "none",
     globalColor,
     labelColor = "#374151",
-    valueColor: _valueColor = "#374151",
     labelBold = false,
     valueBold = false,
     valueOffsetY = 0,
     showAxis = true,
-    showYAxis: _showYAxis = true,
     showGridX = false,
     showGridY = true,
     showGrid = false, // 레거시 호환
     xAxisMargin = 16,
     yAxisMargin = 0,
     curveType = "linear",
-    orientation: _orientation = "horizontal",
   } = data;
 
   // 레거시 showGrid 호환: showGrid가 true면 showGridY로 적용
@@ -1302,17 +1297,16 @@ function PieChartRenderer({
   }, [items, sortBy]);
 
   const slices = useMemo(() => {
+    // 누적각은 map 콜백 안에서 증가시키지 않는다 — 순회하며 바깥 변수를
+    // 수정하는 형태라 컴파일러가 렌더 후 재대입으로 오인한다. 동작은 동일.
     let currentAngle = -90; // Start from top
-    return sortedItems.map((item) => {
+    const out = [];
+    for (const item of sortedItems) {
       const angle = (item.value / total) * 360;
-      const slice = {
-        ...item,
-        startAngle: currentAngle,
-        angle,
-      };
+      out.push({ ...item, startAngle: currentAngle, angle });
       currentAngle += angle;
-      return slice;
-    });
+    }
+    return out;
   }, [sortedItems, total]);
 
   // 모든 값이 0(또는 항목 없음)이면 슬라이스가 전부 0도가 되어 아무것도
@@ -1547,7 +1541,6 @@ function ChartLegend({
   x,
   y,
   maxWidth,
-  maxHeight: _maxHeight,
   position = "bottom",
   align = "start",
 }: {
@@ -1676,7 +1669,14 @@ function ChartLegend({
 // Header height for chart (with lock icon)
 const CHART_HEADER_HEIGHT = 28;
 
-export const Chart = memo(function Chart({
+/** 가드 전용 래퍼 — 훅은 전부 Inner 가 무조건 호출한다 (훅 순서 고정) */
+export const Chart = memo(function Chart(props: ChartProps) {
+  const chartData = props.shape.chartData;
+  if (!chartData) return null;
+  return <ChartInner {...props} chartData={chartData} />;
+});
+
+function ChartInner({
   shape,
   isSelected,
   isMultiSelected = false,
@@ -1690,8 +1690,8 @@ export const Chart = memo(function Chart({
   onHeaderDoubleClick,
   onUpdate,
   isEditingTitle = false,
-}: ChartProps) {
-  const chartData = shape.chartData;
+  chartData,
+}: ChartProps & { chartData: NonNullable<CanvasObject["chartData"]> }) {
   const width = shape.width ?? 200;
   const height = shape.height ?? 150;
   const isLocked = shape.locked === true;
@@ -1700,10 +1700,6 @@ export const Chart = memo(function Chart({
 
   // 호버 툴팁 상태
   const hoverXIndexRef = useRef<number | null>(null);
-
-  if (!chartData) {
-    return null;
-  }
 
   const selectedItemIndex = chartData.selectedItemIndex;
   const selectedSeriesIndex = chartData.selectedSeriesIndex;
@@ -2145,4 +2141,4 @@ export const Chart = memo(function Chart({
       )}
     </Group>
   );
-});
+}

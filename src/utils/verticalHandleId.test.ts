@@ -22,8 +22,6 @@ function verticalHandles(bend: ElbowBend) {
     START,
     END,
     [bend],
-    "sharp",
-    8,
     "right",
     "left",
   );
@@ -157,7 +155,7 @@ describe("X축 반전에서도 수직 핸들이 자기 세그먼트를 가리킨
   function handles() {
     const flat = (
       calculateElbowPath as unknown as (...a: unknown[]) => number[]
-    )(start, end, [bend], "sharp", 8, "right", "left");
+    )(start, end, [bend], "right", "left");
     const segs = getSegments(flat);
     return getMidpointHandlePositions(segs, [bend], start.y, end.y).filter(
       (h) => h.handleType !== "center",

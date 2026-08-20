@@ -235,7 +235,6 @@ export function Canvas() {
     isLocked,
     eraserSize,
     connectorPathStyle,
-    connectorElbowCornerStyle,
     stickyNoteColor,
     captions,
     hideCaptions,
@@ -3513,8 +3512,6 @@ export function Canvas() {
                     { x: arrowDrawing.startX, y: arrowDrawing.startY },
                     { x: arrowDrawing.endX, y: arrowDrawing.endY },
                     [],
-                    connectorElbowCornerStyle,
-                    8,
                     arrowDrawing.sourceAnchor,
                     arrowDrawing.targetAnchor,
                     {

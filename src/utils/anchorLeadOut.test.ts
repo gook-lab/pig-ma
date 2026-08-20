@@ -26,8 +26,6 @@ function path(
     start,
     end,
     bends,
-    "sharp",
-    8,
     sourceAnchor,
     targetAnchor,
   );
