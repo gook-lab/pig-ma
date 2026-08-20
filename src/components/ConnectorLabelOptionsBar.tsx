@@ -58,7 +58,6 @@ export const ConnectorLabelOptionsBar = memo(function ConnectorLabelOptionsBar({
   label,
   position,
   onUpdate,
-  onStartEdit: _onStartEdit,
 }: ConnectorLabelOptionsBarProps) {
   const [activePanel, setActivePanel] = useState<
     "textColor" | "fontFamily" | "fontSize" | null

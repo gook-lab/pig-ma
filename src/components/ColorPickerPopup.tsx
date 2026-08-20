@@ -24,13 +24,6 @@ export function ColorPickerPopup({
   const [rgbInput, setRgbInput] = useState("");
   const colorInputRef = useRef<HTMLInputElement>(null);
 
-  // 초기값 설정
-  useEffect(() => {
-    setColor(currentColor);
-    setHexInput(currentColor.replace("#", ""));
-    setRgbInput(hexToRgbString(currentColor));
-  }, [currentColor]);
-
   // Hex to RGB string
   function hexToRgbString(hex: string): string {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -39,6 +32,13 @@ export function ColorPickerPopup({
     }
     return "";
   }
+
+  // 초기값 설정
+  useEffect(() => {
+    setColor(currentColor);
+    setHexInput(currentColor.replace("#", ""));
+    setRgbInput(hexToRgbString(currentColor));
+  }, [currentColor]);
 
   // RGB string to Hex
   function rgbStringToHex(rgb: string): string | null {
