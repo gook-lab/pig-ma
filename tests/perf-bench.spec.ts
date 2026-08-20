@@ -205,7 +205,14 @@ async function panAction(page: Page, durationMs: number) {
   await page.keyboard.press("v");
 }
 
-/** 줌: Cmd+휠 반복 (인/아웃 왕복) */
+/**
+ * 줌: Cmd+휠 왕복.
+ *
+ * ⚠️ 측정 창이 LOD 임계값(fontSize × zoom < 6px) 위/아래 중 어디에
+ * 머무느냐에 따라 결과가 이봉분포로 갈린다. 프레임이 빠를수록 왕복을
+ * 더 돌아 저비용 구간에 오래 머무는 자기강화 피드백까지 있어서,
+ * 단일 실행 비교는 의미가 없다 — 반드시 median() 으로 본다.
+ */
 async function zoomAction(page: Page, durationMs: number) {
   await page.mouse.move(640, 400);
   await page.keyboard.down("ControlOrMeta");
@@ -243,33 +250,53 @@ async function dragAction(page: Page, durationMs: number) {
 
 const SIZES = [1000, 5000];
 const MEASURE_MS = 3000;
+/** 시나리오별 반복 횟수 — 이봉분포/머신 노이즈를 중앙값으로 흡수 */
+const REPEATS = Number(process.env.BENCH_REPEATS ?? 3);
+
+function median(values: number[]): number {
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2
+    ? sorted[mid]!
+    : Math.round((sorted[mid - 1]! + sorted[mid]!) / 2);
+}
+
+/** 같은 시나리오를 REPEATS 회 측정해 중앙값과 원시값을 함께 반환 */
+async function sample(
+  page: Page,
+  action: (ms: number) => Promise<void>,
+): Promise<{ med: number; raw: number[] }> {
+  const raw: number[] = [];
+  for (let i = 0; i < REPEATS; i++) {
+    raw.push(await measureFps(page, MEASURE_MS, () => action(MEASURE_MS)));
+  }
+  return { med: median(raw), raw };
+}
 
 for (const n of SIZES) {
   test(`bench: ${n} nodes`, async ({ page }) => {
-    test.setTimeout(180000);
+    test.setTimeout(60000 + SIZES.length * REPEATS * MEASURE_MS * 6);
     await page.addInitScript(() => localStorage.clear());
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
     const loadMs = await loadBoard(page, n);
 
-    const idle = await measureFps(page, MEASURE_MS, async () => {});
-    const pan = await measureFps(page, MEASURE_MS, () =>
-      panAction(page, MEASURE_MS),
-    );
-    const zoom = await measureFps(page, MEASURE_MS, () =>
-      zoomAction(page, MEASURE_MS),
-    );
-    const drag = await measureFps(page, MEASURE_MS, () =>
-      dragAction(page, MEASURE_MS),
-    );
+    const idle = await sample(page, async () => {});
+    const pan = await sample(page, (ms) => panAction(page, ms));
+    const zoom = await sample(page, (ms) => zoomAction(page, ms));
+    const drag = await sample(page, (ms) => dragAction(page, ms));
 
+    const fmt = (s: { med: number; raw: number[] }) =>
+      `${s.med}fps [${s.raw.join(",")}]`;
     console.log(
-      `[bench:${n}] load=${loadMs}ms idle=${idle}fps pan=${pan}fps zoom=${zoom}fps drag=${drag}fps`,
+      `[bench:${n}] load=${loadMs}ms\n` +
+        `  idle=${fmt(idle)}\n  pan=${fmt(pan)}\n` +
+        `  zoom=${fmt(zoom)}\n  drag=${fmt(drag)}`,
     );
 
-    // 치명 상태만 실패 (측정 도구이므로 느슨하게)
-    expect(pan).toBeGreaterThan(5);
-    expect(zoom).toBeGreaterThan(5);
+    // 치명 상태만 실패 (측정 도구이므로 느슨하게 — 회귀 판정은 중앙값 비교로 사람이)
+    expect(pan.med).toBeGreaterThan(5);
+    expect(zoom.med).toBeGreaterThan(5);
   });
 }
