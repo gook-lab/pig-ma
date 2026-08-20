@@ -229,9 +229,30 @@ npx vite build --mode lib      # 라이브러리 빌드 (preserveModules, konva/
 # 검증 (커밋 전 필수)
 ./scripts/convert-format-code.sh  # 포매팅
 npm run typecheck              # tsc 0건 유지 (전량 청산됨 — 신규 에러 금지)
+npm run lint:gate              # lint 신규 위반 0 (기존 부채는 베이스라인으로 통과)
 npx vitest run                 # 유닛 테스트 전체
 npx playwright test            # E2E (포트 5006 자동 기동)
 ```
+
+### Lint 게이트
+
+`eslint .` 에는 ESLint 도입 전부터 쌓인 기존 위반이 남아 있다(2026-08-20 기준
+107건). 전부 고칠 때까지 게이트를 세우지 못하면 새 위반이 계속 섞이므로,
+**파일별 위반 수를 베이스라인으로 고정하고 늘어난 파일만 실패**시킨다.
+
+```bash
+npm run lint                # 전체 현황 (기존 부채 포함)
+npm run lint:gate           # 신규 위반만 검사 — 커밋 전 실행
+npm run lint:gate:update    # 파일을 정리해 위반이 줄었을 때 베이스라인 고정
+```
+
+**점진 청산 방침**: 별도 대규모 청산 작업을 잡지 않는다. 도메인 작업으로
+파일을 건드릴 때 그 파일의 기존 위반도 함께 정리하고 `lint:gate:update` 로
+베이스라인을 낮춘다 — 베이스라인은 한 방향으로만 조여진다.
+
+`react-hooks/rules-of-hooks`(실제 버그 클래스)는 **전량 청산되어 0건**이다.
+남은 부채는 `set-state-in-effect` / `exhaustive-deps` / `react-refresh` 계열로,
+케이스별 판단이 필요해 일괄 수정하지 않는다.
 
 ## Figma Integration
 
