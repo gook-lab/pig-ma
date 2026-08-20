@@ -64,24 +64,35 @@ interface LineSeriesOptionsBarProps {
   onDeselectPoint?: () => void;
 }
 
-export function LineSeriesOptionsBar({
-  shape,
+/** 가드 전용 래퍼 — 훅은 전부 Inner 가 무조건 호출한다 (훅 순서 고정) */
+export function LineSeriesOptionsBar(props: LineSeriesOptionsBarProps) {
+  const chartData = props.shape.chartData;
+  if (!chartData) return null;
+  const series = getSeriesData(chartData)[props.selectedSeriesIndex];
+  if (!series) return null;
+  return (
+    <LineSeriesOptionsBarInner
+      {...props}
+      key={props.selectedSeriesIndex}
+      chartData={chartData}
+      series={series}
+    />
+  );
+}
+
+function LineSeriesOptionsBarInner({
   position,
   selectedSeriesIndex,
   selectedPoint,
   onUpdate,
   onDeselectSeries,
   onDeselectPoint,
-}: LineSeriesOptionsBarProps) {
-  const chartData = shape.chartData;
-
-  if (!chartData) return null;
-
-  const seriesData = getSeriesData(chartData);
-  const series = seriesData[selectedSeriesIndex];
-
-  if (!series) return null;
-
+  chartData,
+  series,
+}: LineSeriesOptionsBarProps & {
+  chartData: NonNullable<CanvasObject["chartData"]>;
+  series: ReturnType<typeof getSeriesData>[number];
+}) {
   const {
     color,
     strokeWidth = 2,
@@ -271,7 +282,7 @@ export function LineSeriesOptionsBar({
     }
   }, [hasPointSelected, onDeselectPoint, onDeselectSeries]);
 
-  const canDelete = seriesData.length > 1;
+  const canDelete = getSeriesData(chartData).length > 1;
 
   return (
     <div

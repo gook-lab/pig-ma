@@ -1012,12 +1012,28 @@ function IndividualOptionsContent({
   return null;
 }
 
-export function ChartRightPanel({
+/**
+ * 가드 전용 래퍼 — 훅은 전부 Inner 가 무조건 호출한다.
+ *
+ * 예전에는 `if (!chartData) return null` 이 20여 개 훅 위에 있어 훅 순서가
+ * 조건부였다. 차트가 chartData 를 잃는 순간(손상 데이터 import 등) React 가
+ * 훅 개수 불일치로 죽을 수 있는 구조였고, 패널 로컬 상태(탭·드래그 위치)도
+ * 분리해두는 편이 의미가 분명하다.
+ */
+export function ChartRightPanel(props: ChartRightPanelProps) {
+  const chartData = props.shape.chartData;
+  if (!chartData) return null;
+  return <ChartRightPanelInner {...props} chartData={chartData} />;
+}
+
+function ChartRightPanelInner({
   shape,
   onUpdate,
   onClose,
-}: ChartRightPanelProps) {
-  const chartData = shape.chartData;
+  chartData,
+}: ChartRightPanelProps & {
+  chartData: NonNullable<CanvasObject["chartData"]>;
+}) {
   const [activeTab, setActiveTab] = useState<ChartTab>("data");
   const [showCustomPicker, setShowCustomPicker] = useState<
     "fillColor" | "labelColor" | "valueColor" | null
@@ -1073,8 +1089,6 @@ export function ChartRightPanel({
       window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isDragging]);
-
-  if (!chartData) return null;
 
   const isPie = chartData.variant === "pie";
   const isLine = chartData.variant === "line";

@@ -132,12 +132,21 @@ const SORT_OPTIONS: {
   { value: "label-desc", label: "Label (Z to A)", shortLabel: "Z→A" },
 ];
 
-export function ChartOptionsBar({
+/** 가드 전용 래퍼 — 훅은 전부 Inner 가 무조건 호출한다 (훅 순서 고정) */
+export function ChartOptionsBar(props: ChartOptionsBarProps) {
+  const chartData = props.shape.chartData;
+  if (!chartData) return null;
+  return <ChartOptionsBarInner {...props} chartData={chartData} />;
+}
+
+function ChartOptionsBarInner({
   shape,
   position,
   onUpdate,
-}: ChartOptionsBarProps) {
-  const chartData = shape.chartData;
+  chartData,
+}: ChartOptionsBarProps & {
+  chartData: NonNullable<CanvasObject["chartData"]>;
+}) {
   const [showPanel, setShowPanel] = useState(false);
   const [activeTab, setActiveTab] = useState<ChartTab>("data");
   const [showSeriesDropdown, setShowSeriesDropdown] = useState(false);
@@ -145,8 +154,6 @@ export function ChartOptionsBar({
     "fillColor" | "labelColor" | "valueColor" | null
   >(null);
   const { customColors, addIfNotInPalette } = useGlobalCustomColors();
-
-  if (!chartData) return null;
 
   const isPie = chartData.variant === "pie";
   const isLine = chartData.variant === "line";

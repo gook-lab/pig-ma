@@ -37,23 +37,43 @@ interface ChartItemOptionsBarProps {
   onDeselectItem: () => void;
 }
 
-export function ChartItemOptionsBar({
-  shape,
-  position,
-  selectedItemIndex,
-  onUpdate,
-  onDeselectItem,
-}: ChartItemOptionsBarProps) {
-  const chartData = shape.chartData;
+/**
+ * 가드 전용 래퍼 — 훅은 전부 아래 Inner 가 무조건 호출한다.
+ *
+ * 예전에는 이 가드가 훅들보다 위에 있어서 훅 순서가 조건부였다
+ * (선택 항목이 사라지는 순간 React 가 훅 개수 불일치로 죽을 수 있는 구조).
+ * 분리하면 가드 실패 시 Inner 가 언마운트되어 로컬 입력 상태도 함께
+ * 정리된다 — 다른 항목을 선택했을 때 이전 값이 남지 않는 게 옳다.
+ */
+export function ChartItemOptionsBar(props: ChartItemOptionsBarProps) {
+  const chartData = props.shape.chartData;
 
   if (
     !chartData ||
-    selectedItemIndex < 0 ||
-    selectedItemIndex >= chartData.items.length
+    props.selectedItemIndex < 0 ||
+    props.selectedItemIndex >= chartData.items.length
   ) {
     return null;
   }
 
+  return (
+    <ChartItemOptionsBarInner
+      {...props}
+      key={props.selectedItemIndex}
+      chartData={chartData}
+    />
+  );
+}
+
+function ChartItemOptionsBarInner({
+  position,
+  selectedItemIndex,
+  onUpdate,
+  onDeselectItem,
+  chartData,
+}: ChartItemOptionsBarProps & {
+  chartData: NonNullable<CanvasObject["chartData"]>;
+}) {
   const item = chartData.items[selectedItemIndex]!;
   const globalColor = chartData.globalColor;
   // 실제 적용되는 색상: colorOverride가 true면 개별 색상, 아니면 globalColor 적용
