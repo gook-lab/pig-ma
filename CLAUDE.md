@@ -250,6 +250,11 @@ npm run lint:gate:update    # 파일을 정리해 위반이 줄었을 때 베이
 파일을 건드릴 때 그 파일의 기존 위반도 함께 정리하고 `lint:gate:update` 로
 베이스라인을 낮춘다 — 베이스라인은 한 방향으로만 조여진다.
 
+> ⚠️ **파이프 뒤에서 종료코드를 읽지 말 것.** `npm run lint:gate | tail` 처럼
+> 파이프를 걸면 `$?` 가 마지막 명령(tail)의 코드라 실패가 0으로 보인다.
+> 게이트가 조용히 무력화되는 전형적 경로다 — CI/훅에 붙일 때는 파이프 없이
+> 직접 실행하거나 `set -o pipefail` 을 켠다. (모든 검증 커맨드에 해당)
+
 `react-hooks/rules-of-hooks`(실제 버그 클래스)는 **전량 청산되어 0건**이다.
 남은 부채는 `set-state-in-effect` / `exhaustive-deps` / `react-refresh` 계열로,
 케이스별 판단이 필요해 일괄 수정하지 않는다.
