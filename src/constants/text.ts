@@ -151,3 +151,21 @@ export const CURSOR = {
   /** 기본 색상 */
   color: "#6b7280", // gray-500
 } as const;
+
+// ============================================================================
+// 줌 LOD (Level of Detail)
+// ============================================================================
+
+/**
+ * 화면상 텍스트 높이가 이 값(px) 미만이면 Konva Text 렌더를 생략한다.
+ *
+ * 5k 객체 보드에서 줌 중 CPU 의 35%+ 가 react-konva 리렌더였다
+ * (2026-08 벤치마크). 읽을 수 없는 크기의 텍스트는 그리지 않는 것이
+ * HTML 오버레이의 24px 스킵과 같은 사상이다.
+ */
+export const TEXT_LOD_MIN_SCREEN_PX = 6;
+
+/** 현재 줌에서 이 폰트 크기의 텍스트가 읽을 수 있는 크기인가 */
+export function isTextReadable(fontSize: number, zoom: number): boolean {
+  return fontSize * zoom >= TEXT_LOD_MIN_SCREEN_PX;
+}

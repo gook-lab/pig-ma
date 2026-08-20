@@ -22,7 +22,7 @@ import {
   LINE_HEIGHT,
 } from "@/utils/richText";
 import { useCanvasStore } from "@/store";
-import { TEXT_CONFIG } from "@/constants/text";
+import { TEXT_CONFIG, isTextReadable } from "@/constants/text";
 import {
   tiptapToPlainText,
   extractFirstTextStyle,
@@ -729,6 +729,10 @@ export const Shape = memo(function Shape({
   const textAlign = shape.textAlign ?? "center";
   const textColor = shape.textColor ?? "#1f2937";
   const isTextExpanded = shape.isTextExpanded ?? false;
+  // 줌 LOD — boolean 구독: 임계값을 넘나들 때만 리렌더
+  const textReadable = useCanvasStore((s) =>
+    isTextReadable(fontSize, s.viewport.zoom),
+  );
 
   // Use TEXT_CONFIG for consistent padding with edit mode
   const { padding } = TEXT_CONFIG.shape;
@@ -881,28 +885,32 @@ export const Shape = memo(function Shape({
       />
 
       {/* Text rendering - tiptapContent uses Konva Text, legacy uses RichTextRenderer */}
-      {!isEditing && useTiptap && tiptapPlainText && !isMixed && (
-        <Text
-          x={padding.left}
-          y={padding.top}
-          width={textAreaWidth}
-          height={textAreaHeight}
-          text={tiptapPlainText}
-          fontSize={tiptapStyle.fontSize ?? fontSize}
-          fontFamily={tiptapStyle.fontFamily ?? fontFamily}
-          fontStyle={tiptapStyle.fontStyle ?? "normal"}
-          fill={tiptapStyle.color ?? textColor}
-          align={(tiptapStyle.textAlign as string) ?? textAlign}
-          verticalAlign="middle"
-          lineHeight={LINE_HEIGHT}
-          wrap="word"
-          ellipsis
-          textDecoration={tiptapStyle.textDecoration}
-          listening={false}
-          perfectDrawEnabled={false}
-        />
-      )}
-      {!isEditing && richText.length > 0 && (
+      {!isEditing &&
+        textReadable &&
+        useTiptap &&
+        tiptapPlainText &&
+        !isMixed && (
+          <Text
+            x={padding.left}
+            y={padding.top}
+            width={textAreaWidth}
+            height={textAreaHeight}
+            text={tiptapPlainText}
+            fontSize={tiptapStyle.fontSize ?? fontSize}
+            fontFamily={tiptapStyle.fontFamily ?? fontFamily}
+            fontStyle={tiptapStyle.fontStyle ?? "normal"}
+            fill={tiptapStyle.color ?? textColor}
+            align={(tiptapStyle.textAlign as string) ?? textAlign}
+            verticalAlign="middle"
+            lineHeight={LINE_HEIGHT}
+            wrap="word"
+            ellipsis
+            textDecoration={tiptapStyle.textDecoration}
+            listening={false}
+            perfectDrawEnabled={false}
+          />
+        )}
+      {!isEditing && textReadable && richText.length > 0 && (
         <Group
           x={padding.left}
           y={padding.top}
@@ -945,6 +953,7 @@ export const Shape = memo(function Shape({
       )}
       {/* Placeholder when no text — hide if tiptapContent has text */}
       {!isEditing &&
+        textReadable &&
         richText.length === 0 &&
         !tiptapPlainText &&
         isSelected && (

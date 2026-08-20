@@ -9,7 +9,7 @@ import {
 import { SelectionBorder } from "@/components/SelectionBorder";
 import { textToRichText, calculateRichTextHeight } from "@/utils/richText";
 import { useCanvasStore } from "@/store";
-import { TEXT_CONFIG } from "@/constants/text";
+import { TEXT_CONFIG, isTextReadable } from "@/constants/text";
 
 interface RectangleProps {
   shape: CanvasObject;
@@ -71,6 +71,10 @@ export const Rectangle = memo(function Rectangle({
   const textAlign = shape.textAlign ?? "center";
   const textColor = shape.textColor ?? "#1f2937";
   const isTextExpanded = shape.isTextExpanded ?? false;
+  // 줌 LOD — boolean 구독: 임계값을 넘나들 때만 리렌더
+  const textReadable = useCanvasStore((s) =>
+    isTextReadable(fontSize, s.viewport.zoom),
+  );
 
   // Use TEXT_CONFIG for consistent padding with edit mode
   const { padding } = TEXT_CONFIG.shape;
@@ -204,7 +208,7 @@ export const Rectangle = memo(function Rectangle({
         shadowForStrokeEnabled={false}
       />
       {/* Text with rich formatting - clipped to text area */}
-      {!isEditing && richText.length > 0 && (
+      {!isEditing && textReadable && richText.length > 0 && (
         <Group
           x={padding.left}
           y={padding.top}
@@ -244,7 +248,7 @@ export const Rectangle = memo(function Rectangle({
         </Group>
       )}
       {/* Placeholder when no text */}
-      {!isEditing && richText.length === 0 && (
+      {!isEditing && textReadable && richText.length === 0 && (
         <Text
           x={padding.left}
           y={padding.top}

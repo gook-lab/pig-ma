@@ -44,7 +44,14 @@ export const ShapeRenderer = memo(function ShapeRenderer({
   // When batch rendering selection borders at Canvas level, suppress individual borders
   const isMultiSelected = skipSelectionBorder ? false : isMultiSelectedProp;
   // Fine-grained store subscriptions for render-time reactive state
-  const zoom = useCanvasStore((s) => s.viewport.zoom);
+  // zoom 은 선택 UI(테두리·핸들 두께 보정 `n / zoom`)에만 쓰인다 — 선택되지
+  // 않은 도형까지 raw zoom 을 구독하면 줌 틱마다 가시 노드 전부가 리렌더된다
+  // (5k 보드 줌 CPU 의 35%+, 2026-08 프로파일). 필요한 객체만 실시간 구독하고
+  // 나머지는 상수 1 을 받아 리렌더 자체를 발생시키지 않는다.
+  // chart 는 선택과 무관하게 테두리에 zoom 을 쓰므로 예외.
+  const needsLiveZoom =
+    isSelected || isMultiSelectedProp || obj.type === "chart";
+  const zoom = useCanvasStore((s) => (needsLiveZoom ? s.viewport.zoom : 1));
   const tool = useCanvasStore((s) => s.tool);
   const isLocked = useCanvasStore((s) => s.isLocked);
   const editingTextId = useCanvasStore((s) => s.editingTextId);

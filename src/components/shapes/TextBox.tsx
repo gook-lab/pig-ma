@@ -10,6 +10,8 @@ import {
 } from "@/utils/tiptapMigration";
 import { TEXT_CONFIG } from "@/utils/textConfig";
 import { LINE_HEIGHT } from "@/utils/richText";
+import { isTextReadable } from "@/constants/text";
+import { useCanvasStore } from "@/store";
 
 interface TextBoxProps {
   shape: CanvasObject;
@@ -157,15 +159,21 @@ const KonvaTextContent = memo(function KonvaTextContent({
     return {};
   }, [shape.tiptapContent]);
 
-  if (!plainText || isMixed) return null;
-
-  const pad = TEXT_CONFIG.textBox.padding;
   const fontSize = Math.max(
     8,
     tiptapStyle.fontSize ??
       shape.fontSize ??
       TEXT_CONFIG.textBox.defaultFontSize,
   );
+  // 줌 LOD — raw zoom 이 아니라 '읽을 수 있는가' boolean 을 구독한다.
+  // 줌 틱마다가 아니라 임계값을 넘나들 때만 리렌더된다.
+  const textReadable = useCanvasStore((s) =>
+    isTextReadable(fontSize, s.viewport.zoom),
+  );
+
+  if (!plainText || isMixed || !textReadable) return null;
+
+  const pad = TEXT_CONFIG.textBox.padding;
   const fontFamily =
     tiptapStyle.fontFamily ?? shape.fontFamily ?? "Pretendard, sans-serif";
   const fontStyle =

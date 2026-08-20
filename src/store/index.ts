@@ -62,9 +62,37 @@ let pendingHistoryCommit: { flush(): void; cancel(): void } | null = null;
  * - Zod validation happens AFTER migrate in the migrate function
  * - This prevents data loss when schema changes require migration
  */
+// 고빈도 상태 변경(줌/팬은 매 프레임 viewport 를 바꾼다)마다 전체 상태를
+// JSON.stringify + localStorage 쓰기 하면, 5k 객체 보드에서 줌 CPU 의
+// ~7% + GC 압박을 차지한다 (2026-08 벤치마크 프로파일). 트레일링
+// 디바운스로 묶고, 탭 이탈(pagehide/hidden) 시 flush 해서 유실을 막는다.
+const PERSIST_DEBOUNCE_MS = 500;
+
 function createStorage<T>(): PersistStorage<T> {
+  let pending: { name: string; value: StorageValue<T> } | null = null;
+  let timer: ReturnType<typeof setTimeout> | null = null;
+
+  const flush = () => {
+    if (timer !== null) {
+      clearTimeout(timer);
+      timer = null;
+    }
+    if (!pending) return;
+    localStorage.setItem(pending.name, JSON.stringify(pending.value));
+    pending = null;
+  };
+
+  if (typeof window !== "undefined") {
+    window.addEventListener("pagehide", flush);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") flush();
+    });
+  }
+
   return {
     getItem: (name: string): StorageValue<T> | null => {
+      // 같은 탭에서 저장 직후 바로 읽는 경우(테스트 등) 최신을 보장
+      if (pending?.name === name) flush();
       const str = localStorage.getItem(name);
       if (!str) return null;
 
@@ -86,10 +114,20 @@ function createStorage<T>(): PersistStorage<T> {
     },
 
     setItem: (name: string, value: StorageValue<T>) => {
-      localStorage.setItem(name, JSON.stringify(value));
+      pending = { name, value };
+      if (timer !== null) clearTimeout(timer);
+      timer = setTimeout(flush, PERSIST_DEBOUNCE_MS);
     },
 
     removeItem: (name: string) => {
+      // 지연 중인 쓰기가 삭제를 되살리지 않도록 먼저 버린다
+      if (pending?.name === name) {
+        pending = null;
+        if (timer !== null) {
+          clearTimeout(timer);
+          timer = null;
+        }
+      }
       localStorage.removeItem(name);
     },
   };

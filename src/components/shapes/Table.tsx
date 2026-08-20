@@ -17,6 +17,7 @@ import {
   getColX,
 } from "@/utils/table";
 import { TABLE_CELL } from "@/constants/table";
+import { isTextReadable } from "@/constants/text";
 import {
   tiptapToPlainText,
   extractFirstTextStyle,
@@ -62,6 +63,10 @@ export const Table = memo(function Table({
   const isDraggingCellRef = useRef(false);
   const dragStartCellRef = useRef<{ row: number; col: number } | null>(null);
   const tableDragState = useCanvasStore((s) => s.tableDragState);
+  // 줌 LOD — 셀 텍스트는 기본 폰트(14px) 기준 boolean 구독
+  const cellTextReadable = useCanvasStore((s) =>
+    isTextReadable(TABLE_CELL.fontSize, s.viewport.zoom),
+  );
 
   if (!tableData) {
     return null;
@@ -428,6 +433,7 @@ export const Table = memo(function Table({
         }
 
         if (!cell.content) return null;
+        if (!cellTextReadable) return null;
 
         const text = tiptapToPlainText(cell.content);
         if (!text) return null;

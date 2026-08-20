@@ -9,6 +9,8 @@ import {
   hasMixedStyles,
 } from "@/utils/tiptapMigration";
 import { TEXT_CONFIG } from "@/utils/textConfig";
+import { isTextReadable } from "@/constants/text";
+import { useCanvasStore } from "@/store";
 import { LINE_HEIGHT } from "@/utils/richText";
 
 interface StickyNoteProps {
@@ -62,6 +64,17 @@ export const StickyNote = memo(function StickyNote({
     return {};
   }, [shape.tiptapContent]);
 
+  const stickyFontSize = Math.max(
+    8,
+    tiptapStyle.fontSize ??
+      shape.fontSize ??
+      TEXT_CONFIG.stickyNote.defaultFontSize,
+  );
+  // 줌 LOD — boolean 구독: 임계값을 넘나들 때만 리렌더
+  const textReadable = useCanvasStore((s) =>
+    isTextReadable(stickyFontSize, s.viewport.zoom),
+  );
+
   return (
     <Group
       id={shape.id}
@@ -109,6 +122,7 @@ export const StickyNote = memo(function StickyNote({
       />
       {/* Konva Text - 편집 중이 아닐 때 Canvas 내부에서 텍스트 렌더링 */}
       {!isEditing &&
+        textReadable &&
         plainText &&
         !isMixed &&
         (() => {

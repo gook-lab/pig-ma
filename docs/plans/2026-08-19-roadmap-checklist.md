@@ -117,7 +117,12 @@ Excalidraw 파일은 로컬 JSON이라 API 인증이 필요 없어 Figma보다 �
 
 - [x] 이미지 lazy loading — CanvasImage에 디코드 캐시(LRU 100) + 로딩 플레이스홀더. 뷰포트 재진입 시 재디코드/깜빡임 제거, 로딩 중에도 선택·드래그 가능 (2026-08-19)
 - [x] React 리렌더 추가 최소화 — 전수 점검 완료: shapes/* 구독은 전부 안정 참조(액션/타입 한정)로 확인. 실누수 2건 수리: ① ShapeRenderer가 테이블/차트 편집 상태를 전 타입에서 구독 → 타입별 null 셀렉터로 좁힘(셀 선택 드래그 중 전체 리렌더 제거), ② ConnectorShapeRenderer가 objects 배열 전체 구독 + objectsById Map 재생성 → 끝점 도형/그룹 bounds 좁은 구독으로 교체, Connector의 스냅 목록은 이벤트 시점 getState()로 전환 (2026-08-19)
-- [ ] WebGL 전환 검토 (PixiJS) — 대형 보드 벤치마크 후 판단
+- [x] 대형 보드 성능 1차 수리 (2026-08-20, 벤치 실측 기반)
+  - **줌 리렌더 격리**: ShapeRenderer 가 선택되지 않은 도형까지 raw zoom 을 구독해 줌 틱마다 가시 노드 전부가 리렌더되던 것을 선택적 구독(선택 객체 + chart 만 실시간, 나머지 상수 1)으로 수리. zoom 은 선택 UI 두께 보정(`n / zoom`)에만 쓰이므로 시각적 결과 불변
+  - **persist 디바운스(500ms)**: 뷰포트 변경마다 전체 상태를 JSON.stringify + localStorage 쓰기 하던 것을 트레일링 디바운스로 묶음. pagehide/visibilitychange 에서 flush, getItem/removeItem 은 대기분 우선 처리 (테스트 2개)
+  - **줌 LOD**: 화면상 텍스트 높이 6px 미만이면 Konva Text 렌더 생략 (`isTextReadable`, boolean 구독이라 임계값 통과 시에만 리렌더). TextBox/Rectangle/Shape/StickyNote/Table 적용
+  - 5k 노드 실측(중앙값, 각 3~5회): **줌 36 → 106fps, 드래그 113 → 436fps**. 팬은 91fps 로 변화 없음(가상화가 이미 처리). 벤치가 줌 인/아웃을 왕복해 LOD 임계값 통과 여부에 따라 값이 이봉분포를 보이므로 단일 실행값이 아닌 중앙값 기준
+- [ ] WebGL 전환 검토 (PixiJS) — 1차 수리 후 재평가 (팬 91fps 가 다음 병목 후보)
 
 ---
 
