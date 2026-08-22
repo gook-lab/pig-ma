@@ -28,3 +28,4 @@ playwright-report/
 captures/
 tests/capture/
 *.zip
+.gstack/

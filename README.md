@@ -377,6 +377,9 @@ enters either shape's interior.
 | [docs/TYPES.md](docs/TYPES.md)               | Type reference                                                                                               |
 | [docs/TOOLS.md](docs/TOOLS.md)               | Tool behaviour                                                                                               |
 | [CLAUDE.md](CLAUDE.md)                       | Working conventions                                                                                          |
+| [docs/plans/](docs/plans/)                    | Active work log — current roadmap and checklist                                                              |
+| [docs/archive/](docs/archive/README.md)       | Completed plans, kept as history only (may not match current code)                                           |
+| [docs/proposals/](docs/proposals/README.md)   | Reviewed but **not adopted** designs                                                                         |
 
 ### Test layout
 
@@ -398,8 +401,6 @@ enters either shape's interior.
 | `src/figma/__tests__/mapper.test.ts`         | Figma node mapping                                                                            |
 
 Store tests run in Node with a minimal `localStorage` stub (`src/test/setup.ts`) — no jsdom needed.
-| [TODO-library-packaging.md](TODO-library-packaging.md) | Remaining work to publish as a package |
-| `plans/` | [chart tools](plans/feat-chart-tools.md) · [canvas object data structure refactor](plans/refactor-canvas-object-data-structure.md) · [rendering optimization](plans/rendering-optimization.md) · [elbow connector refactor](docs/elbow-refactoring-plan.md) |
 
 ## Peer Dependencies
 

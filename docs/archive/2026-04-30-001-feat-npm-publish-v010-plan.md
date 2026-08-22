@@ -222,4 +222,4 @@ pig-ma 캔버스 라이브러리의 첫 npm 배포를 완료한다. TS 빌드 �
 
 - **Origin document:** ~/.gstack/projects/pig/kyb-ontact-main-design-20260430-134537.md
 - Related code: `vite.config.ts`, `src/index.ts`, `package.json`, `tsconfig.lib.json`
-- Related TODO: `TODO-library-packaging.md`
+- Related TODO: `2026-08-library-packaging-todo.md`

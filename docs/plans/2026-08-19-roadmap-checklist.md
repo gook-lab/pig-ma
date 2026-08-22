@@ -1,7 +1,7 @@
 # pig-ma 로드맵 체크리스트 (2026-08-19)
 
 기존 기능 보완 + 신규 기능 + 파일 포맷(Import/Export) 지원 계획.
-기존 `TODO-library-packaging.md`의 미완료 항목을 흡수하고, Excalidraw 지원을 신규 트랙으로 추가.
+기존 `docs/archive/2026-08-library-packaging-todo.md`의 미완료 항목을 흡수하고, Excalidraw 지원을 신규 트랙으로 추가.
 
 ---
 
@@ -72,7 +72,7 @@ Excalidraw 파일은 로컬 JSON이라 API 인증이 필요 없어 Figma보다 �
 
 ---
 
-## 2. 기존 기능 보완 (TODO-library-packaging.md 이월 포함)
+## 2. 기존 기능 보완 (library-packaging TODO 이월 포함)
 
 ### 라이브러리 패키징
 

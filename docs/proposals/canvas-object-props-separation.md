@@ -1,5 +1,9 @@
 # ♻️ refactor: CanvasObject 데이터 구조 리팩토링
 
+> **상태: 미채택** (2026-08-22 확인). `CanvasObject` 는 여전히 flat 81필드다
+> (`src/types.ts:348`). 이 문서는 검토된 제안이지 현재 구조가 아니다.
+
+
 ## Overview
 
 현재 `CanvasObject`는 85+ 개의 optional 필드를 가진 flat 구조로, 개발자 혼란과 타입 안전성 부족을 야기합니다. tldraw 스타일의 `props` 분리 패턴을 적용하여 타입별 속성을 명확히 격리하고, IDE 자동완성 및 런타임 검증을 개선합니다.

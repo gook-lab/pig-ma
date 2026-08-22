@@ -3,7 +3,7 @@ title: "feat: Add Embed Support for YouTube and Figma"
 type: feat
 status: active
 date: 2026-03-26
-origin: docs/brainstorms/2026-03-26-embed-feature-brainstorm.md
+origin: 2026-03-26-embed-feature-brainstorm.md
 deepened: 2026-03-26
 ---
 
@@ -42,7 +42,7 @@ deepened: 2026-03-26
 - 툴바 버튼으로 명시적 추가
 - 썸네일 카드 기본 표시 → 클릭 시 iframe 활성화 (성능 최적화)
 
-(see brainstorm: docs/brainstorms/2026-03-26-embed-feature-brainstorm.md)
+(see brainstorm: 2026-03-26-embed-feature-brainstorm.md)
 
 ## Technical Approach
 
@@ -820,7 +820,7 @@ useEffect(() => {
 
 ### Origin
 
-- **Brainstorm document:** [docs/brainstorms/2026-03-26-embed-feature-brainstorm.md](docs/brainstorms/2026-03-26-embed-feature-brainstorm.md)
+- **Brainstorm document:** [2026-03-26-embed-feature-brainstorm.md](2026-03-26-embed-feature-brainstorm.md)
 - Key decisions: 단일 embed ObjectType, 썸네일+클릭재생, CodeBlock 패턴
 
 ### Internal References
