@@ -1,4 +1,4 @@
-# API Reference
+# API 레퍼런스 (API Reference)
 
 ## Store (Zustand)
 
@@ -10,12 +10,12 @@
 import { useCanvasStore } from '@/store'
 
 const {
-  // State
+  // 상태 (State)
   objects,
   selectedIds,
   tool,
   viewport,
-  // Actions
+  // 액션 (Actions)
   addObject,
   updateObject,
   deleteSelected,
@@ -25,7 +25,7 @@ const {
 } = useCanvasStore()
 ```
 
-### State
+### 상태 (State)
 
 | 필드 | 타입 | 설명 |
 |------|------|------|
@@ -44,9 +44,9 @@ const {
 | `hideUI` | `boolean` | UI 숨김 |
 | `lastMousePosition` | `{ x, y }` | 마지막 마우스 위치 |
 
-### Actions
+### 액션 (Actions)
 
-#### Object Management
+#### 객체 관리 (Object Management)
 
 ```typescript
 // 객체 추가
@@ -65,7 +65,7 @@ deleteObjects(ids: string[]): void
 clearAllObjects(): void
 ```
 
-#### Selection
+#### 선택 (Selection)
 
 ```typescript
 // 선택 설정
@@ -78,7 +78,7 @@ addToSelection(id: string): void
 clearSelection(): void
 ```
 
-#### Clipboard & Z-order
+#### 클립보드 & Z-order (Clipboard & Z-order)
 
 ```typescript
 // 복사
@@ -97,7 +97,7 @@ bringToFront(): void
 sendToBack(): void
 ```
 
-#### Lock
+#### 잠금 (Lock)
 
 ```typescript
 // 선택 객체 잠금
@@ -110,7 +110,7 @@ unlockObjects(): void
 unlockAllObjects(): void
 ```
 
-#### Viewport
+#### 뷰포트 (Viewport)
 
 ```typescript
 // 뷰포트 설정
@@ -131,7 +131,7 @@ redo()  // Cmd+Shift+Z
 
 ---
 
-## Components
+## 컴포넌트 (Components)
 
 ### Canvas
 
@@ -145,9 +145,9 @@ import { Canvas } from '@/components/Canvas'
 
 내부적으로 Konva Stage, Layer, 모든 Shape 컴포넌트를 렌더링합니다.
 
-### Shape Components
+### Shape 컴포넌트 (Shape Components)
 
-모든 Shape 컴포넌트는 동일한 props 인터페이스를 따르고 있어요:
+모든 Shape 컴포넌트는 동일한 props 인터페이스를 따릅니다:
 
 ```typescript
 interface ShapeProps {
@@ -269,7 +269,7 @@ import { ContextMenu } from '@/components/ContextMenu'
 
 ---
 
-## Hooks
+## Hook (Hooks)
 
 ### useKeyboardShortcuts
 
@@ -322,7 +322,7 @@ restoreFromHistory(index)
 
 ---
 
-## Utilities
+## 유틸리티 (Utilities)
 
 ### factory.ts
 
@@ -429,7 +429,7 @@ const lineHeight = fontSize * LINE_HEIGHT  // 1.5
 
 ---
 
-## File I/O Modules (2026-08)
+## File I/O 모듈 (File I/O Modules, 2026-08)
 
 ### utils/pigmaFile
 
@@ -478,7 +478,7 @@ isAlignable(obj): boolean  // 잠긴 객체와 attached 커넥터는 제외합�
 // 커넥터는 endX/endY + elbowBends(절대좌표)까지 강체로 이동합니다
 ```
 
-## Types
+## 타입 (Types)
 
 ### CanvasObject
 
@@ -556,7 +556,7 @@ type ObjectType = 'rectangle' | 'circle' | 'image' | 'line' | 'stickyNote' | 'co
 
 type Tool = 'select' | 'hand' | 'rectangle' | 'circle' | 'image' | 'pencil' | 'eraser' | 'stickyNote' | 'connector' | 'textBox' | 'shape'
 
-type ShapeVariant = 'rectangle' | 'roundedRect' | 'circle' | 'ellipse' | 'triangle' | 'diamond' | ... | 'flowDatabase' | ...
+type ShapeVariant = 'rectangle' | 'roundedRect' | 'circle' | 'ellipse' | 'triangle' | 'diamond' | ... | 'flowDatabase' | ... (참고: [타입 정의](./TYPES.md) 참조)
 
 type PenType = 'pen' | 'marker' | 'highlighter'
 

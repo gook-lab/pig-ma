@@ -1,8 +1,8 @@
-# Type Definitions
+# 타입 정의 (Type Definitions)
 
 전체 TypeScript 타입 정의를 참고할 수 있습니다.
 
-## Core Types
+## 핵심 타입 (Core Types)
 
 ### ObjectType
 
@@ -83,7 +83,7 @@ type ShapeVariant =
 
 ---
 
-## Object Interface
+## 객체 인터페이스 (Object Interface)
 
 ### CanvasObject
 
@@ -162,7 +162,7 @@ interface CanvasObject {
 
 ---
 
-## Style Types
+## 스타일 타입 (Style Types)
 
 ### PenType
 
@@ -219,7 +219,7 @@ type FontFamily =
   | 'IBM Plex Sans KR'
 ```
 
-### FontSize (Preset)
+### FontSize (프리셋 - Preset)
 
 ```typescript
 type FontSize = 'S' | 'M' | 'L' | 'XL' | 'XXL'
@@ -251,7 +251,7 @@ type ListType = 'none' | 'number' | 'bullet'
 
 ---
 
-## Rich Text
+## 리치 텍스트 (Rich Text)
 
 ### TextSegment
 
@@ -280,7 +280,7 @@ const richText: TextSegment[] = [
 
 ---
 
-## Settings
+## 설정 (Settings)
 
 ### PenSettings
 
@@ -304,7 +304,7 @@ interface ShapeSettings {
 
 ---
 
-## State Types
+## 상태 타입 (State Types)
 
 ### CanvasState
 
@@ -339,7 +339,7 @@ interface CanvasBounds {
 
 ---
 
-## Caption System Types
+## 댓글 시스템 타입 (Caption System Types)
 
 ### CaptionThread
 
@@ -413,7 +413,7 @@ interface CaptionFilter {
 
 ---
 
-## Keyboard Shortcuts
+## 키보드 단축키 (Keyboard Shortcuts)
 
 ### ShortcutAction
 

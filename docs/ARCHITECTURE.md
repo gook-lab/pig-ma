@@ -1,6 +1,6 @@
-# Architecture
+# 아키텍처 (Architecture)
 
-## Overview
+## 개요 (Overview)
 
 Pig-ma는 React-Konva 기반의 무한 캔버스 라이브러리입니다. Figma/FigJam의 UX를 참고해서 설계했습니다.
 
@@ -13,7 +13,7 @@ Pig-ma는 React-Konva 기반의 무한 캔버스 라이브러리입니다. Figma
 > 이 다이어그램은 pig-ma 자신의 Mermaid import로 그렸습니다 (도그푸딩).
 > 원본 정의는 [`diagrams/text-render-flow.mmd`](diagrams/text-render-flow.mmd).
 
-## Core Concepts
+## 핵심 개념 (Core Concepts)
 
 ### 1. Flat Object Model
 
@@ -159,7 +159,7 @@ const gap = Math.min(500, Math.max(10, Math.round(rawGap / 10) * 10))
 | 1x | 20px | 20px |
 | 10x | 10px | 100px |
 
-## Performance Optimizations
+## 성능 최적화 (Performance Optimizations)
 
 ### 1. React.memo
 
@@ -204,9 +204,9 @@ const objectsById = useMemo(() => {
 />
 ```
 
-## Component Communication
+## 컴포넌트 통신 (Component Communication)
 
-### Props Down, Events Up
+### Props는 아래로, 이벤트는 위로 (Props Down, Events Up)
 
 ```
 App
@@ -221,15 +221,15 @@ App
      └─ TextBoxEditor
 ```
 
-### Store as Single Source of Truth
+### Store를 단일 진실 공급원으로 (Store as Single Source of Truth)
 
 - 모든 상태를 Zustand store에서 관리합니다
 - 컴포넌트는 필요한 상태만 구독합니다
 - 로컬 UI 상태 (hover, editing 등)만 컴포넌트 state를 사용합니다
 
-## Event Flow
+## 이벤트 흐름 (Event Flow)
 
-### Mouse Events
+### 마우스 이벤트 (Mouse Events)
 
 ```
 Stage.onMouseDown
@@ -251,7 +251,7 @@ Stage.onMouseUp
   → 화살표 완료 → 커넥터를 생성합니다
 ```
 
-### Keyboard Events
+### 키보드 이벤트 (Keyboard Events)
 
 ```
 useKeyboardShortcuts hook
@@ -278,7 +278,7 @@ useKeyboardShortcuts hook
 - UI 진입점은 `FileMenu.tsx` (숨김 input) + `useImageDrop.ts` (드래그&드롭 확장자 분기)입니다
 - 사용자 피드백은 `utils/toast`를 사용합니다 (성공 시 개수 포함, alert는 금지)
 
-## Extension Points
+## 확장 포인트 (Extension Points)
 
 ### 새 도형 타입 추가할 때
 

@@ -1,8 +1,8 @@
-# Tools Guide
+# 도구 가이드 (Tools Guide)
 
 캔버스에서 사용 가능한 모든 도구를 상세히 설명합니다.
 
-## Tool Overview
+## 도구 개요 (Tool Overview)
 
 | 도구 | 단축키 | 설명 |
 |------|--------|------|
@@ -18,7 +18,7 @@
 
 ---
 
-## 1. Select Tool (V)
+## 1. 선택 도구 (Select Tool, V)
 
 객체를 선택하고 조작하는 기본 도구입니다.
 
@@ -60,7 +60,7 @@ const handleSelect = (id: string, e: KonvaEvent) => {
 
 ---
 
-## 2. Hand Tool (H)
+## 2. 손 도구 (Hand Tool, H)
 
 캔버스를 패닝하는 전용 도구입니다.
 
@@ -74,13 +74,13 @@ const handleSelect = (id: string, e: KonvaEvent) => {
 
 | 방법 | 동작 |
 |------|------|
-| Hand 도구 + 드래그 | 캔버스 패닝 |
+| 손 도구 + 드래그 | 캔버스 패닝 |
 | 스크롤 (도구 무관) | 패닝 (2배속) |
 | Cmd + 스크롤 | 줌 인/아웃 |
 
 ---
 
-## 3. Pencil Tool (P)
+## 3. 펜슬 도구 (Pencil Tool, P)
 
 자유롭게 그릴 수 있는 도구입니다.
 
@@ -124,9 +124,9 @@ interface PenSettings {
 
 ---
 
-## 4. Shape Tools
+## 4. 도형 도구 (Shape Tools)
 
-### 4.1 Basic Shapes (R)
+### 4.1 기본 도형 (Basic Shapes, R)
 
 Shape 패널에서 선택해서 생성할 수 있습니다.
 
@@ -145,7 +145,7 @@ Shape 패널에서 선택해서 생성할 수 있습니다.
 - flowPreparation, flowDelay
 - flowOr, flowSumming
 
-### 4.2 Sticky Note (S)
+### 4.2 메모지 (Sticky Note, S)
 
 메모지 스타일의 텍스트 박스입니다.
 
@@ -167,7 +167,7 @@ const STICKY_COLORS = [
 ]
 ```
 
-### 4.3 TextBox (T)
+### 4.3 텍스트 박스 (TextBox, T)
 
 자유롭게 텍스트를 입력할 수 있는 영역입니다.
 
@@ -186,7 +186,7 @@ const STICKY_COLORS = [
 
 ---
 
-## 5. Connector Tool (L)
+## 5. 커넥터 도구 (Connector Tool, L)
 
 도형 간에 연결선을 그리는 도구입니다.
 
@@ -226,7 +226,7 @@ Shape을 선택하면 4방향에 파란색 핸들이 표시됩니다:
 
 ---
 
-## 6. Caption Tool (C)
+## 6. 댓글 도구 (Caption Tool, C)
 
 FigJam 스타일의 댓글 시스템입니다.
 
@@ -264,7 +264,7 @@ interface CommentMessage {
 
 ---
 
-## 7. Eraser Tool (E)
+## 7. 지우개 도구 (Eraser Tool, E)
 
 드로잉(Line)을 지우는 도구입니다.
 
@@ -310,9 +310,9 @@ interface CommentMessage {
 
 ---
 
-## Options Bars
+## 옵션 바 (Options Bars)
 
-### TextOptionsBar
+### 텍스트옵션바 (TextOptionsBar)
 
 TextBox나 StickyNote를 선택하면 표시됩니다:
 - 배경색 (StickyNote만)
@@ -324,14 +324,14 @@ TextBox나 StickyNote를 선택하면 표시됩니다:
 - 정렬
 - 리스트 스타일
 
-### ShapeOptionsBar
+### 도형옵션바 (ShapeOptionsBar)
 
 Shape을 선택하면 표시됩니다:
 - Fill 색상과 모드 (Fill/Transparent/None)
 - Stroke 색상과 스타일 (Solid/Dashed/Dotted)
 - 텍스트 옵션
 
-### ConnectorOptionsBar
+### 커넥터옵션바 (ConnectorOptionsBar)
 
 Connector를 선택하면 표시됩니다:
 - 선 색상
@@ -340,7 +340,7 @@ Connector를 선택하면 표시됩니다:
 - 시작/끝 마커
 - 텍스트 레이블
 
-### LineOptionsBar
+### 선옵션바 (LineOptionsBar)
 
 Line(펜슬)을 선택하면 표시됩니다:
 - 선 색상
