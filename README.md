@@ -1,6 +1,6 @@
 # Pig-ma
 
-**한국어** · [English](README.en.md)
+**한국어** | [English](README.en.md)
 
 FigJam-style infinite canvas library for React with rich text editing, shapes, connectors, and comments.
 
