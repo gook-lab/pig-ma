@@ -1,8 +1,8 @@
-# Pig-ma Canvas Library
+# Pig-ma 캔버스 라이브러리 (Pig-ma Canvas Library)
 
 FigJam 스타일의 무한 캔버스 라이브러리. React + TypeScript + Konva.js 기반.
 
-## Features
+## 기능 (Features)
 
 - **무한 캔버스**: 패닝 & 줌 (Figma 스타일 Cmd+스크롤)
 - **다양한 도형**: 사각형, 원, 다각형, 플로우차트 도형
@@ -16,21 +16,21 @@ FigJam 스타일의 무한 캔버스 라이브러리. React + TypeScript + Konva
 - **로컬 저장**: localStorage 자동 저장 + 열기 전 자동 백업
 - **파일 I/O**: `.pigma` 프로젝트 저장/열기, Excalidraw 양방향, Mermaid import, Figma 연동
 
-## Quick Start
+## 빠른 시작 (Quick Start)
 
 ```bash
 npm install
 npm run dev
 ```
 
-## Documentation
+## 문서 (Documentation)
 
-- [Architecture](./ARCHITECTURE.md) - 전체 아키텍처 및 설계
-- [Tools Guide](./TOOLS.md) - 도구별 상세 가이드
-- [API Reference](./API.md) - 컴포넌트/훅 API
-- [Types](./TYPES.md) - TypeScript 타입 정의
+- [아키텍처 (Architecture)](./ARCHITECTURE.md) - 전체 아키텍처 및 설계
+- [도구 가이드 (Tools Guide)](./TOOLS.md) - 도구별 상세 가이드
+- [API 레퍼런스 (API Reference)](./API.md) - 컴포넌트/훅 API
+- [타입 (Types)](./TYPES.md) - TypeScript 타입 정의
 
-## Tech Stack
+## 기술 스택 (Tech Stack)
 
 | 분야 | 기술 |
 |------|------|
@@ -41,7 +41,7 @@ npm run dev
 | Styling | TailwindCSS |
 | Icons | Lucide React |
 
-## Project Structure
+## 프로젝트 구조 (Project Structure)
 
 ```
 src/
@@ -72,6 +72,6 @@ src/
 └── App.tsx
 ```
 
-## License
+## 라이선스 (License)
 
 MIT
