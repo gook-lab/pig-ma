@@ -1,16 +1,12 @@
 # Pig-ma
 
-**한국어** · [English](README.en.md)
+[한국어](README.md) · **English**
 
 FigJam-style infinite canvas library for React with rich text editing, shapes, connectors, and comments.
 
-> **한 줄 요약** — React용 FigJam 스타일 무한 캔버스 라이브러리입니다. 도형·리치 텍스트·커넥터·
-> 댓글·Figma 연동을 포함하고 있습니다. npm 패키지로 배포 가능한 형태로 만든 토이 프로젝트입니다.
-> 설계 문서는 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)에 한국어로 정리되어 있습니다.
+## Screenshots
 
-## 스크린샷
-
-| 마인드맵 | 칸반 보드 |
+| Mindmap | Kanban Board |
 |---|---|
 | <img src="docs/screenshots/01-canvas.png" width="380"> | <img src="docs/screenshots/02-kanban.png" width="380"> |
 
