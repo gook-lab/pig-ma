@@ -1,12 +1,12 @@
 # Type Definitions
 
-전체 TypeScript 타입 정의 참조입니다.
+전체 TypeScript 타입 정의를 참고할 수 있어요.
 
 ## Core Types
 
 ### ObjectType
 
-캔버스에 배치할 수 있는 객체 타입입니다.
+캔버스에 배치할 수 있는 객체 타입들이에요.
 
 ```typescript
 type ObjectType =
@@ -22,7 +22,7 @@ type ObjectType =
 
 ### Tool
 
-사용 가능한 도구 타입입니다.
+사용 가능한 도구 타입들이에요.
 
 ```typescript
 type Tool =
@@ -41,7 +41,7 @@ type Tool =
 
 ### ShapeVariant
 
-Shape 타입의 세부 도형 종류입니다.
+Shape 타입의 세부 도형 종류들이에요.
 
 ```typescript
 type ShapeVariant =
@@ -87,7 +87,7 @@ type ShapeVariant =
 
 ### CanvasObject
 
-모든 캔버스 객체의 통합 인터페이스입니다.
+모든 캔버스 객체를 위한 통합 인터페이스예요.
 
 ```typescript
 interface CanvasObject {
@@ -178,7 +178,7 @@ type PenType = 'pen' | 'marker' | 'highlighter'
 
 ### MarkerStyle
 
-커넥터 엔드포인트 마커 스타일입니다.
+커넥터 엔드포인트 마커 스타일이에요.
 
 ```typescript
 type MarkerStyle =
@@ -191,7 +191,7 @@ type MarkerStyle =
 
 ### LineStyle
 
-선 스타일입니다.
+선 스타일을 정의해요.
 
 ```typescript
 type LineStyle = 'solid' | 'dashed' | 'dotted'
@@ -199,7 +199,7 @@ type LineStyle = 'solid' | 'dashed' | 'dotted'
 
 ### PathStyle
 
-커넥터 경로 스타일입니다.
+커넥터 경로 스타일을 정의해요.
 
 ```typescript
 type PathStyle =
@@ -235,11 +235,15 @@ type FontSize = 'S' | 'M' | 'L' | 'XL' | 'XXL'
 
 ### TextAlign
 
+텍스트 정렬 방향을 정의해요.
+
 ```typescript
 type TextAlign = 'left' | 'center' | 'right'
 ```
 
 ### ListType
+
+리스트 스타일을 정의해요.
 
 ```typescript
 type ListType = 'none' | 'number' | 'bullet'
@@ -251,13 +255,13 @@ type ListType = 'none' | 'number' | 'bullet'
 
 ### TextSegment
 
-인라인 서식 단위입니다.
+인라인 서식 단위예요.
 
 ```typescript
 interface TextSegment {
   text: string                              // 텍스트 내용
-  fontWeight?: 'normal' | 'bold'            // 굵기
-  textDecoration?: 'none' | 'line-through'  // 장식
+  fontWeight?: 'normal' | 'bold'            // 굵기 설정
+  textDecoration?: 'none' | 'line-through'  // 텍스트 장식
   fontSize?: number                         // 폰트 크기
   textColor?: string                        // 텍스트 색상
   link?: string                             // 링크 URL
@@ -271,7 +275,7 @@ const richText: TextSegment[] = [
   { text: 'World', fontWeight: 'bold' },
   { text: '!', textColor: '#ef4444' }
 ]
-// 결과: "Hello **World**!"
+// 결과: "Hello **World**!" 형태가 되어요
 ```
 
 ---
@@ -304,6 +308,8 @@ interface ShapeSettings {
 
 ### CanvasState
 
+캔버스의 전체 상태를 나타내요.
+
 ```typescript
 interface CanvasState {
   objects: CanvasObject[]
@@ -320,6 +326,8 @@ interface CanvasState {
 
 ### CanvasBounds
 
+캔버스 경계를 정의해요.
+
 ```typescript
 interface CanvasBounds {
   minX: number
@@ -334,6 +342,8 @@ interface CanvasBounds {
 ## Caption System Types
 
 ### CaptionThread
+
+댓글 스레드를 나타내요.
 
 ```typescript
 interface CaptionThread {
@@ -350,6 +360,8 @@ interface CaptionThread {
 
 ### CommentMessage
 
+댓글 메시지를 나타내요.
+
 ```typescript
 interface CommentMessage {
   id: string
@@ -363,6 +375,8 @@ interface CommentMessage {
 
 ### CommentAttachment
 
+댓글 첨부파일을 나타내요.
+
 ```typescript
 interface CommentAttachment {
   id: string
@@ -374,6 +388,8 @@ interface CommentAttachment {
 
 ### User
 
+사용자 정보를 나타내요.
+
 ```typescript
 interface User {
   id: string
@@ -383,6 +399,8 @@ interface User {
 ```
 
 ### CaptionFilter
+
+댓글 필터 옵션을 정의해요.
 
 ```typescript
 interface CaptionFilter {
@@ -398,6 +416,8 @@ interface CaptionFilter {
 ## Keyboard Shortcuts
 
 ### ShortcutAction
+
+단축키 액션을 정의해요.
 
 ```typescript
 type ShortcutAction =
@@ -416,6 +436,8 @@ type ShortcutAction =
 
 ### KeyBinding
 
+키 바인딩을 정의해요.
+
 ```typescript
 interface KeyBinding {
   key: string
@@ -424,6 +446,8 @@ interface KeyBinding {
 ```
 
 ### ShortcutConfig
+
+단축키 설정을 정의해요.
 
 ```typescript
 interface ShortcutConfig {

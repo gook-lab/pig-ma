@@ -1,6 +1,6 @@
 # Tools Guide
 
-캔버스에서 사용 가능한 모든 도구에 대한 상세 가이드입니다.
+캔버스에서 사용 가능한 모든 도구를 상세히 설명할게요.
 
 ## Tool Overview
 
@@ -20,7 +20,7 @@
 
 ## 1. Select Tool (V)
 
-객체를 선택하고 조작하는 기본 도구입니다.
+객체를 선택하고 조작하는 기본 도구예요.
 
 ### 기능
 
@@ -35,9 +35,9 @@
 
 ### 잠금된 객체
 
-- `locked: true`인 객체는 선택/드래그 불가
-- Transformer도 표시되지 않음
-- 잠금 해제: 우클릭 메뉴 또는 `Shift+Cmd+L`
+- `locked: true`인 객체는 선택하거나 드래그할 수 없어요
+- Transformer도 표시되지 않아요
+- 잠금 해제는 우클릭 메뉴나 `Shift+Cmd+L`로 할 수 있어요
 
 ### 코드 예시
 
@@ -62,13 +62,13 @@ const handleSelect = (id: string, e: KonvaEvent) => {
 
 ## 2. Hand Tool (H)
 
-캔버스를 패닝하는 전용 도구입니다.
+캔버스를 패닝하는 전용 도구예요.
 
 ### 기능
 
-- 드래그로 캔버스 이동
-- 객체 선택/클릭 불가 (순수 패닝 전용)
-- 화면 잠금 모드에서도 사용 가능
+- 드래그로 캔버스를 이동할 수 있어요
+- 객체를 선택하거나 클릭할 수 없어요 (순수 패닝 전용)
+- 화면 잠금 모드에서도 사용 가능해요
 
 ### 패닝 방식
 
@@ -82,7 +82,7 @@ const handleSelect = (id: string, e: KonvaEvent) => {
 
 ## 3. Pencil Tool (P)
 
-자유 드로잉 도구입니다.
+자유롭게 그릴 수 있는 도구예요.
 
 ### 펜 타입
 
@@ -94,6 +94,8 @@ const handleSelect = (id: string, e: KonvaEvent) => {
 
 ### 설정
 
+펜의 설정을 하는 인터페이스예요.
+
 ```typescript
 interface PenSettings {
   penType: 'pen' | 'marker' | 'highlighter'
@@ -103,6 +105,8 @@ interface PenSettings {
 ```
 
 ### 드로잉 데이터
+
+드로잉은 Line 객체로 저장돼요.
 
 ```typescript
 // Line 객체
@@ -124,7 +128,7 @@ interface PenSettings {
 
 ### 4.1 Basic Shapes (R)
 
-Shape 패널에서 선택하여 생성합니다.
+Shape 패널에서 선택해서 생성할 수 있어요.
 
 **기본 도형:**
 - rectangle, roundedRect, circle, ellipse
@@ -143,13 +147,13 @@ Shape 패널에서 선택하여 생성합니다.
 
 ### 4.2 Sticky Note (S)
 
-메모지 스타일의 텍스트 박스입니다.
+메모지 스타일의 텍스트 박스예요.
 
 **특징:**
-- 6가지 배경색 선택 가능
-- 작성자명 하단 표시
-- 리치 텍스트 지원
-- 그림자 효과
+- 6가지 배경색을 선택할 수 있어요
+- 작성자명이 하단에 표시돼요
+- 리치 텍스트를 지원해요
+- 그림자 효과가 있어요
 
 **기본 색상:**
 ```typescript
@@ -165,42 +169,44 @@ const STICKY_COLORS = [
 
 ### 4.3 TextBox (T)
 
-자유 텍스트 입력 영역입니다.
+자유롭게 텍스트를 입력할 수 있는 영역이에요.
 
 **특징:**
-- 투명 배경 (fill/stroke 설정 가능)
-- 자동 높이 조정
-- 리치 텍스트 지원
-- 폰트 크기 프리셋 (S/M/L/XL/XXL)
+- 투명 배경이고 fill/stroke 설정이 가능해요
+- 자동으로 높이가 조정돼요
+- 리치 텍스트를 지원해요
+- 폰트 크기 프리셋이 있어요 (S/M/L/XL/XXL)
 
 **텍스트 옵션:**
-- 색상: 텍스트 색상, 배경색, 테두리색
-- 폰트: Pretendard, Noto Sans KR, Nanum Gothic 등
-- 스타일: 굵게, 취소선
-- 정렬: 왼쪽, 가운데, 오른쪽
-- 리스트: 번호, 글머리 기호
+- 색상: 텍스트 색상, 배경색, 테두리색을 설정해요
+- 폰트: Pretendard, Noto Sans KR, Nanum Gothic 등을 선택할 수 있어요
+- 스타일: 굵게, 취소선을 적용할 수 있어요
+- 정렬: 왼쪽, 가운데, 오른쪽 정렬이 가능해요
+- 리스트: 번호, 글머리 기호를 추가할 수 있어요
 
 ---
 
 ## 5. Connector Tool (L)
 
-도형 간 연결선을 그리는 도구입니다.
+도형 간에 연결선을 그리는 도구예요.
 
 ### 생성 방식
 
-1. **자유 배치**: 빈 공간에서 드래그
-2. **도형 연결**: 도형 근처에서 시작/종료 시 자동 스냅
+1. **자유 배치**: 빈 공간에서 드래그해요
+2. **도형 연결**: 도형 근처에서 시작하거나 종료하면 자동으로 스냅돼요
 
 ### 스냅 시스템
+
+자동 연결을 위한 설정이에요.
 
 ```typescript
 const SNAP_THRESHOLD = 30  // 자동 연결 거리 (px)
 const GRID_SIZE = 10       // 그리드 스냅 단위
 ```
 
-- 시작/끝점이 도형의 30px 이내면 자동 연결
-- 연결 시 앵커(top/right/bottom/left/center) 설정
-- 도형 이동 시 커넥터도 함께 이동
+- 시작/끝점이 도형의 30px 이내면 자동으로 연결돼요
+- 연결할 때 앵커(top/right/bottom/left/center)가 설정되어요
+- 도형을 이동하면 커넥터도 함께 이동해요
 
 ### 스타일 옵션
 
@@ -214,23 +220,23 @@ const GRID_SIZE = 10       // 그리드 스냅 단위
 
 ### 연결 핸들
 
-Shape 선택 시 4방향 파란색 핸들 표시:
-- 클릭 시 가까운 도형이 있으면 연결
-- 없으면 도형 복제 후 연결
+Shape을 선택하면 4방향에 파란색 핸들이 표시돼요:
+- 클릭 시 가까운 도형이 있으면 그 도형과 연결해요
+- 없으면 도형을 복제한 후 연결해요
 
 ---
 
 ## 6. Caption Tool (C)
 
-FigJam 스타일의 댓글 시스템입니다.
+FigJam 스타일의 댓글 시스템이에요.
 
 ### 기능
 
-- 캔버스 위 마커 표시 (번호)
-- 스레드 방식 대화
-- 해결/미해결 상태
-- 이미지 첨부 (Ctrl+V)
-- 우측 패널에서 전체 목록 관리
+- 캔버스 위에 번호가 매겨진 마커가 표시돼요
+- 스레드 방식으로 대화를 나눠요
+- 해결/미해결 상태를 표시할 수 있어요
+- 이미지 첨부가 가능해요 (Ctrl+V)
+- 우측 패널에서 전체 목록을 관리해요
 
 ### 데이터 구조
 
@@ -260,7 +266,7 @@ interface CommentMessage {
 
 ## 7. Eraser Tool (E)
 
-드로잉(Line)을 지우는 도구입니다.
+드로잉(Line)을 지우는 도구예요.
 
 ### 크기 설정
 
@@ -272,8 +278,8 @@ interface CommentMessage {
 
 ### 동작
 
-- 드래그로 지나가는 Line 객체 삭제
-- Shape, TextBox 등은 영향 없음
+- 드래그로 지나가는 Line 객체를 삭제해요
+- Shape, TextBox 등은 영향을 받지 않아요
 
 ---
 
@@ -308,7 +314,7 @@ interface CommentMessage {
 
 ### TextOptionsBar
 
-TextBox, StickyNote 선택 시 표시:
+TextBox나 StickyNote를 선택하면 표시돼요:
 - 배경색 (StickyNote만)
 - Fill/Stroke 설정
 - 텍스트 색상
@@ -320,14 +326,14 @@ TextBox, StickyNote 선택 시 표시:
 
 ### ShapeOptionsBar
 
-Shape 선택 시 표시:
-- Fill 색상 및 모드 (Fill/Transparent/None)
-- Stroke 색상 및 스타일 (Solid/Dashed/Dotted)
+Shape을 선택하면 표시돼요:
+- Fill 색상과 모드 (Fill/Transparent/None)
+- Stroke 색상과 스타일 (Solid/Dashed/Dotted)
 - 텍스트 옵션
 
 ### ConnectorOptionsBar
 
-Connector 선택 시 표시:
+Connector를 선택하면 표시돼요:
 - 선 색상
 - 경로 스타일 (직선/곡선/꺾인선)
 - 선 스타일 (실선/점선/점)
@@ -336,6 +342,6 @@ Connector 선택 시 표시:
 
 ### LineOptionsBar
 
-Line(펜슬) 선택 시 표시:
+Line(펜슬)을 선택하면 표시돼요:
 - 선 색상
 - 선 두께

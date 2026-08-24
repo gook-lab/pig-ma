@@ -1,0 +1,8 @@
+flowchart TD
+  APP["소비 앱 — pig-ma 를 import"] -->|"peer deps: Konva · Tiptap 인스턴스 공유"| CANVAS["Canvas 컴포넌트"]
+  CANVAS --> ST[("Zustand store — objects · selection · zundo undo")]
+  ST -->|보기| KONVA["Konva Text — 캔버스 렌더 · DOM 없음"]
+  ST -->|더블클릭 편집| TIP["Tiptap — HTML 오버레이"]
+  CONST["src/constants — padding · lineHeight · fontSize"] -.->|같은 값 import| KONVA
+  CONST -.->|같은 값 import| TIP
+  TIP -->|"커밋 시 1회 반영"| ST2[("store 갱신 → undo 스택")]

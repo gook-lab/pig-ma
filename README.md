@@ -2,9 +2,9 @@
 
 FigJam-style infinite canvas library for React with rich text editing, shapes, connectors, and comments.
 
-> **한 줄 요약** — React용 FigJam 스타일 무한 캔버스 라이브러리. 도형·리치 텍스트·커넥터·
-> 댓글·Figma 연동을 포함하며, npm 패키지로 배포 가능한 형태로 만든 토이 프로젝트다.
-> 설계 문서는 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)에 한국어로 정리되어 있다.
+> **한 줄 요약** — React용 FigJam 스타일 무한 캔버스 라이브러리예요. 도형·리치 텍스트·커넥터·
+> 댓글·Figma 연동을 포함하고 있어요. npm 패키지로 배포 가능한 형태로 만든 토이 프로젝트예요.
+> 설계 문서는 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)에 한국어로 정리되어 있어요.
 
 ## 스크린샷
 

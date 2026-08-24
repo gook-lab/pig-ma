@@ -4,7 +4,7 @@
 
 ### useCanvasStore
 
-메인 상태 관리 스토어입니다.
+메인 상태 관리 스토어예요.
 
 ```typescript
 import { useCanvasStore } from '@/store'
@@ -36,7 +36,7 @@ const {
 | `canvasBounds` | `CanvasBounds` | 캔버스 경계 |
 | `penSettings` | `PenSettings` | 펜 설정 |
 | `shapeSettings` | `ShapeSettings` | 도형 설정 |
-| `editingTextId` | `string \| null` | 편집 중인 텍스트 ID |
+| `editingTextId` | `string \| null` | 편집 중인 텍스트의 ID |
 | `isLocked` | `boolean` | 화면 잠금 상태 |
 | `captions` | `CaptionThread[]` | 댓글 목록 |
 | `clipboard` | `CanvasObject[]` | 클립보드 |
@@ -135,7 +135,7 @@ redo()  // Cmd+Shift+Z
 
 ### Canvas
 
-메인 캔버스 컴포넌트입니다.
+메인 캔버스 컴포넌트예요.
 
 ```tsx
 import { Canvas } from '@/components/Canvas'
@@ -143,11 +143,11 @@ import { Canvas } from '@/components/Canvas'
 <Canvas />
 ```
 
-내부적으로 Konva Stage, Layer, 모든 Shape 컴포넌트를 렌더링합니다.
+내부적으로 Konva Stage, Layer, 모든 Shape 컴포넌트를 렌더링해요.
 
 ### Shape Components
 
-모든 Shape 컴포넌트는 동일한 props 인터페이스를 따릅니다:
+모든 Shape 컴포넌트는 동일한 props 인터페이스를 따르고 있어요:
 
 ```typescript
 interface ShapeProps {
@@ -182,12 +182,12 @@ import { Rectangle } from '@/components/shapes/Rectangle'
 
 ```tsx
 import { Circle } from '@/components/shapes/Circle'
-// Rectangle과 동일한 props
+// Rectangle과 동일한 props 구조예요
 ```
 
 #### Shape (통합 도형)
 
-다양한 ShapeVariant를 렌더링합니다.
+다양한 ShapeVariant를 렌더링할 수 있어요.
 
 ```tsx
 import { Shape, getShapePath } from '@/components/shapes/Shape'
@@ -205,9 +205,9 @@ const path = getShapePath('triangle', 100, 100)  // [50, 0, 100, 100, 0, 100]
 
 ```tsx
 import { StickyNote } from '@/components/shapes/StickyNote'
-// Rectangle과 동일한 props
-// shape.backgroundColor로 배경색 설정
-// shape.authorName으로 작성자 표시
+// Rectangle과 동일한 props 구조예요
+// shape.backgroundColor로 배경색을 설정해요
+// shape.authorName으로 작성자를 표시해요
 ```
 
 #### TextBox
@@ -273,12 +273,12 @@ import { ContextMenu } from '@/components/ContextMenu'
 
 ### useKeyboardShortcuts
 
-전역 키보드 단축키를 처리합니다.
+전역 키보드 단축키를 처리해요.
 
 ```typescript
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 
-// App.tsx에서 한 번만 호출
+// App.tsx에서 한 번만 호출하면 돼요
 function App() {
   useKeyboardShortcuts()
   return <Canvas />
@@ -287,36 +287,36 @@ function App() {
 
 ### useDragCoordinator
 
-드래그 성능 최적화를 위한 coordinator입니다.
+드래그 성능 최적화를 위한 coordinator예요.
 
 ```typescript
 import { dragCoordinator } from '@/hooks/useDragCoordinator'
 
-// 위치 업데이트 (React state 없이)
+// 위치를 업데이트해요 (React state 없이)
 dragCoordinator.setPosition(id, x, y)
 
-// 구독 (Connector에서 source shape 드래그 감지)
+// 구독하면 Connector에서 source shape 드래그를 감지해요
 const unsubscribe = dragCoordinator.subscribe(id, (pos) => {
   // pos: { x, y }
 })
 
-// 드래그 종료
+// 드래그를 종료해요
 dragCoordinator.clear(id)
 ```
 
 ### useAutoSave
 
-히스토리 관리 및 자동 저장
+히스토리 관리 및 자동 저장을 담당해요.
 
 ```typescript
 import { useHistoryStore } from '@/hooks/useAutoSave'
 
 const { history, addSnapshot, restoreFromHistory, clearHistory } = useHistoryStore()
 
-// 수동 저장
+// 수동으로 저장해요
 addSnapshot(objects, '수동 저장')
 
-// 복원
+// 복원할 수 있어요
 restoreFromHistory(index)
 ```
 
@@ -326,7 +326,7 @@ restoreFromHistory(index)
 
 ### factory.ts
 
-객체 생성 함수들입니다.
+객체를 생성하는 함수들이 있어요.
 
 ```typescript
 import {
@@ -367,7 +367,7 @@ const shapesnapped = snapToShapeGrid(value)  // 3px 단위
 
 ### geometry.ts
 
-기하학 계산 함수들입니다.
+기하학 계산을 위한 함수들이 있어요.
 
 ```typescript
 import {
@@ -406,7 +406,7 @@ const target = findSnapTarget(point, objects, excludeIds?)
 
 ### richText.ts
 
-리치 텍스트 유틸리티입니다.
+리치 텍스트를 처리하는 유틸리티들이 있어요.
 
 ```typescript
 import {
@@ -415,15 +415,15 @@ import {
   LINE_HEIGHT,
 } from '@/utils/richText'
 
-// 평문 → 리치텍스트
+// 평문을 리치텍스트로 변환해요
 const richText = textToRichText('Hello World')
 // [{ text: 'Hello World' }]
 
-// 리치텍스트 → 평문
+// 리치텍스트를 평문으로 변환해요
 const plain = richTextToPlainText(richText)
 // 'Hello World'
 
-// 줄 높이 상수
+// 줄 높이 상수를 사용해요
 const lineHeight = fontSize * LINE_HEIGHT  // 1.5
 ```
 
@@ -434,15 +434,15 @@ const lineHeight = fontSize * LINE_HEIGHT  // 1.5
 ### utils/pigmaFile
 
 ```typescript
-// 순수 변환
-buildPigmaFile(input): PigmaFile          // 프로젝트 → .pigma (현재 페이지 라이브 상태 동기화)
-parsePigmaFile(json: string): PigmaFile   // 검증 포함, 실패 시 PigmaFileError
+// 순수 변환 함수들이에요
+buildPigmaFile(input): PigmaFile          // 프로젝트를 .pigma로 변환해요 (현재 페이지 라이브 상태 동기화)
+parsePigmaFile(json: string): PigmaFile   // 검증을 포함해요, 실패 시 PigmaFileError 발생
 
-// store 연동
+// store 연동 함수들이에요
 exportCurrentProject(): PigmaFile
-applyPigmaFile(file): { backedUp: boolean }  // 프로젝트 교체 + 자동 백업 + undo 초기화
+applyPigmaFile(file): { backedUp: boolean }  // 프로젝트를 교체해요 + 자동 백업 + undo 초기화
 getBackupInfo(): PigmaBackupInfo | null
-restoreBackup(): PigmaFile                // 현재 ↔ 백업 스왑 (재복원 가능)
+restoreBackup(): PigmaFile                // 현재 ↔ 백업 스왑이 가능해요 (재복원 가능)
 downloadPigmaFile(file, filename?)
 readPigmaFile(blob: File): Promise<PigmaFile>
 ```
@@ -450,12 +450,12 @@ readPigmaFile(blob: File): Promise<PigmaFile>
 ### src/excalidraw
 
 ```typescript
-parseExcalidrawFile(json: string): ExcalidrawData     // 실패 시 ExcalidrawImportError
-convertExcalidraw(data): { objects, groups, skippedCount }      // → pig-ma (순수)
-convertToExcalidraw(objects, groups, options?): ExcalidrawExportResult  // ← pig-ma (순수)
-//   options.rasterize?: (obj) => string | null — chart/codeBlock/table/embed PNG 캡처 주입
-importExcalidrawToCanvas(json): ExcalidrawImportSummary  // 뷰포트 중앙 배치 + store 추가
-exportCanvasToExcalidraw(): ExcalidrawExportResult        // Konva.stages[0] 래스터라이저 사용
+parseExcalidrawFile(json: string): ExcalidrawData     // 실패 시 ExcalidrawImportError 발생해요
+convertExcalidraw(data): { objects, groups, skippedCount }      // → pig-ma 변환이에요 (순수)
+convertToExcalidraw(objects, groups, options?): ExcalidrawExportResult  // ← pig-ma 변환이에요 (순수)
+//   options.rasterize?: (obj) => string | null — chart/codeBlock/table/embed을 PNG로 캡처해요
+importExcalidrawToCanvas(json): ExcalidrawImportSummary  // 뷰포트 중앙에 배치해요 + store에 추가
+exportCanvasToExcalidraw(): ExcalidrawExportResult        // Konva.stages[0] 래스터라이저를 사용해요
 downloadExcalidrawFile(data, filename?)
 extractPlainText(tiptapContent): string
 ```
@@ -463,19 +463,19 @@ extractPlainText(tiptapContent): string
 ### src/mermaid
 
 ```typescript
-parseMermaid(source: string): MermaidGraph   // flowchart 서브셋, 실패 시 MermaidImportError
-layoutGraph(graph): Map<string, NodeLayout>  // Kahn 위상정렬 레이어드 배치
-convertMermaid(graph): { objects }           // flow variant shape + attached connector
+parseMermaid(source: string): MermaidGraph   // flowchart 서브셋을 파싱해요, 실패 시 MermaidImportError 발생
+layoutGraph(graph): Map<string, NodeLayout>  // Kahn 위상정렬로 레이어드 배치를 해요
+convertMermaid(graph): { objects }           // flow variant shape + attached connector으로 변환해요
 importMermaidToCanvas(source): { nodeCount, edgeCount }
 ```
 
 ### utils/align
 
 ```typescript
-alignObjects(objects, direction): ObjectUpdate[]       // "left"|"centerX"|"right"|"top"|"centerY"|"bottom"
-distributeObjects(objects, direction): ObjectUpdate[]  // "horizontal"|"vertical", 3개 미만이면 []
-isAlignable(obj): boolean  // 잠긴 객체·attached 커넥터 제외
-// 커넥터는 endX/endY + elbowBends(절대좌표)까지 강체 이동
+alignObjects(objects, direction): ObjectUpdate[]       // "left"|"centerX"|"right"|"top"|"centerY"|"bottom"으로 정렬해요
+distributeObjects(objects, direction): ObjectUpdate[]  // "horizontal"|"vertical"로 분배해요, 3개 미만이면 []
+isAlignable(obj): boolean  // 잠긴 객체와 attached 커넥터는 제외해요
+// 커넥터는 endX/endY + elbowBends(절대좌표)까지 강체로 이동해요
 ```
 
 ## Types
