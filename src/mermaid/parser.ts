@@ -1,4 +1,5 @@
 import type {
+  MermaidNodeStyle,
   MermaidDirection,
   MermaidEdge,
   MermaidEdgeStyle,
@@ -36,13 +37,30 @@ const EDGE_SPLIT_RE =
 const SKIP_KEYWORDS = [
   "subgraph",
   "end",
-  "style",
-  "classDef",
-  "class",
   "click",
   "linkStyle",
   "direction",
 ];
+
+/** `fill:#fff,stroke:#333,color:#111,stroke-width:2px` → MermaidNodeStyle */
+function parseStyleDecl(decl: string): MermaidNodeStyle {
+  const out: MermaidNodeStyle = {};
+  for (const pair of decl.split(",")) {
+    const idx = pair.indexOf(":");
+    if (idx < 0) continue;
+    const key = pair.slice(0, idx).trim().toLowerCase();
+    const value = pair.slice(idx + 1).trim();
+    if (!value) continue;
+    if (key === "fill") out.fill = value;
+    else if (key === "stroke") out.stroke = value;
+    else if (key === "color") out.textColor = value;
+    else if (key === "stroke-width") {
+      const n = parseFloat(value);
+      if (Number.isFinite(n)) out.strokeWidth = n;
+    }
+  }
+  return out;
+}
 
 function parseDirection(token: string | undefined): MermaidDirection {
   switch (token?.toUpperCase()) {
@@ -123,6 +141,10 @@ export function parseMermaid(source: string): MermaidGraph {
   const nodesById = new Map<string, MermaidNode>();
   const edges: MermaidEdge[] = [];
   let sawHeader = false;
+  const classDefs = new Map<string, MermaidNodeStyle>();
+  /** class 문이 노드 정의보다 먼저 나올 수 있어 배정만 모아 두고 끝에 적용한다 */
+  const pendingClass: Array<{ ids: string[]; names: string[] }> = [];
+  const pendingStyle = new Map<string, MermaidNodeStyle>();
 
   /** 노드 등록 — 라벨/도형이 있는 정의가 bare 참조보다 우선 */
   function upsertNode(seg: {
@@ -157,6 +179,28 @@ export function parseMermaid(source: string): MermaidGraph {
     // 지원하지 않는 키워드 라인 스킵
     const firstWord = rawLine.split(/\s+/)[0]!;
     if (SKIP_KEYWORDS.includes(firstWord)) continue;
+
+    // classDef <name> k:v,...
+    const classDef = /^classDef\s+(\S+)\s+(.+)$/.exec(rawLine);
+    if (classDef) {
+      classDefs.set(classDef[1]!, parseStyleDecl(classDef[2]!));
+      continue;
+    }
+    // class <id>[,<id>...] <name>[,<name>...]
+    const classAssign = /^class\s+([^\s]+)\s+(\S+)$/.exec(rawLine);
+    if (classAssign) {
+      pendingClass.push({
+        ids: classAssign[1]!.split(",").map((v) => v.trim()).filter(Boolean),
+        names: classAssign[2]!.split(",").map((v) => v.trim()).filter(Boolean),
+      });
+      continue;
+    }
+    // style <id> k:v,...
+    const styleLine = /^style\s+(\S+)\s+(.+)$/.exec(rawLine);
+    if (styleLine) {
+      pendingStyle.set(styleLine[1]!, parseStyleDecl(styleLine[2]!));
+      continue;
+    }
 
     // 세미콜론으로 구분된 복수 문장
     for (const stmt of rawLine.split(";")) {
@@ -217,6 +261,22 @@ export function parseMermaid(source: string): MermaidGraph {
   }
   if (nodesById.size === 0) {
     throw new MermaidImportError("No nodes found in diagram");
+  }
+
+  // class → classDef → style 순으로 겹쳐 쓴다 (style 이 가장 구체적)
+  for (const { ids, names } of pendingClass) {
+    for (const id of ids) {
+      const node = nodesById.get(id);
+      if (!node) continue;
+      for (const name of names) {
+        const def = classDefs.get(name);
+        if (def) node.style = { ...node.style, ...def };
+      }
+    }
+  }
+  for (const [id, style] of pendingStyle) {
+    const node = nodesById.get(id);
+    if (node) node.style = { ...node.style, ...style };
   }
 
   return { direction, nodes: [...nodesById.values()], edges };

@@ -90,6 +90,13 @@ export function convertMermaid(graph: MermaidGraph): MermaidConvertResult {
       text: node.label,
       textAlign: "center",
       ...NODE_STYLE,
+      // classDef/class/style 로 지정한 값이 기본 스타일을 덮는다
+      ...(node.style?.fill ? { fill: node.style.fill } : {}),
+      ...(node.style?.stroke ? { stroke: node.style.stroke } : {}),
+      ...(node.style?.textColor ? { textColor: node.style.textColor } : {}),
+      ...(node.style?.strokeWidth != null
+        ? { strokeWidth: node.style.strokeWidth }
+        : {}),
     });
   }
 
@@ -113,8 +120,28 @@ export function convertMermaid(graph: MermaidGraph): MermaidConvertResult {
       ? "right"
       : "left";
   // 랭크를 건너뛰는 엣지는 흐름 방향 변에서 나가면 중간 랭크의 노드를 관통한다.
-  // 옆면으로 빼서 바깥으로 우회시킨다.
-  const sideAnchor: AnchorSide = vertical ? "right" : "bottom";
+  // 옆면으로 빼서 우회시키되, 도형을 가로지르지 않게 **가까운 쪽**으로 돈다.
+  // 도해 전체의 가운데를 기준으로 **바깥쪽**으로 돈다 — 안쪽으로 돌면
+  // 반대편 열을 가로질러 다른 노드 위를 지나간다.
+  const allRects = [...nodeLayoutById.values()];
+  const graphMidX =
+    (Math.min(...allRects.map((r) => r.x)) +
+      Math.max(...allRects.map((r) => r.x + r.width))) /
+    2;
+  const graphMidY =
+    (Math.min(...allRects.map((r) => r.y)) +
+      Math.max(...allRects.map((r) => r.y + r.height))) /
+    2;
+  const detourSide = (from: Rect, to: Rect): AnchorSide => {
+    if (vertical) {
+      const anchorMid =
+        ((from.x + from.width / 2) + (to.x + to.width / 2)) / 2;
+      return anchorMid <= graphMidX ? "left" : "right";
+    }
+    const anchorMid =
+      ((from.y + from.height / 2) + (to.y + to.height / 2)) / 2;
+    return anchorMid <= graphMidY ? "top" : "bottom";
+  };
 
   // 라벨은 경로 중앙(t=0.5)이 기본인데, 엘보우에서 그 지점은 랭크 사이의
   // 공용 가로 구간이라 한 노드로 모이는(또는 한 노드에서 갈라지는) 엣지끼리
@@ -142,8 +169,9 @@ export function convertMermaid(graph: MermaidGraph): MermaidConvertResult {
       ? Math.abs(reversed ? from.y - (to.y + to.height) : to.y - (from.y + from.height))
       : Math.abs(reversed ? from.x - (to.x + to.width) : to.x - (from.x + from.width));
     const skipsRank = span > RANK_GAP * 1.6;
-    const sourceAnchor = skipsRank ? sideAnchor : flowSource;
-    const targetAnchor = skipsRank ? sideAnchor : flowTarget;
+    const side = detourSide(from, to);
+    const sourceAnchor = skipsRank ? side : flowSource;
+    const targetAnchor = skipsRank ? side : flowTarget;
 
     // 시작/끝점은 앵커 변의 중앙 — attached 커넥터라 도형 이동 시 재계산됨
     const start = anchorPoint(from, sourceAnchor);

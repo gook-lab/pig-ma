@@ -18,10 +18,19 @@ export type MermaidNodeShape =
   | "subroutine" // A[[Text]]
   | "data"; // A[/Text/]
 
+/** classDef/class/style 로 지정한 노드 스타일 (지원 키만) */
+export interface MermaidNodeStyle {
+  fill?: string;
+  stroke?: string;
+  textColor?: string;
+  strokeWidth?: number;
+}
+
 export interface MermaidNode {
   id: string;
   label: string;
   shape: MermaidNodeShape;
+  style?: MermaidNodeStyle;
 }
 
 export type MermaidEdgeStyle = "solid" | "dotted" | "thick";
