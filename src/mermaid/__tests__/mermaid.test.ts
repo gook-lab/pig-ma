@@ -202,3 +202,89 @@ describe("convertMermaid", () => {
     expect(first.some((id) => second.includes(id))).toBe(false);
   });
 });
+
+describe("분기 커넥터 묶기", () => {
+  it("같은 소스에서 나가는 형제 엣지를 커넥터 하나로 묶는다", () => {
+    const { objects } = convertMermaid(
+      parseMermaid("flowchart TD\n  A --> B\n  A --> C"),
+    );
+    const connectors = objects.filter((o) => o.type === "connector");
+    expect(connectors).toHaveLength(1);
+    expect(connectors[0]!.targetIds).toHaveLength(2);
+    expect(connectors[0]!.targetId).toBeUndefined();
+  });
+
+  it("갈래 라벨을 타깃 id 별로 옮긴다", () => {
+    const { objects } = convertMermaid(
+      parseMermaid("flowchart TD\n  A -->|보기| B\n  A -->|편집| C"),
+    );
+    const c = objects.find((o) => o.type === "connector")!;
+    expect(Object.values(c.branchLabels ?? {}).sort()).toEqual([
+      "보기",
+      "편집",
+    ]);
+  });
+
+  it("갈래가 하나뿐이면 기존 1:1 커넥터로 남는다", () => {
+    const { objects } = convertMermaid(parseMermaid("flowchart TD\n  A --> B"));
+    const c = objects.find((o) => o.type === "connector")!;
+    expect(c.targetIds).toBeUndefined();
+    expect(c.targetId).toBeDefined();
+  });
+
+  it("선 스타일이 다르면 묶지 않는다", () => {
+    const { objects } = convertMermaid(
+      parseMermaid("flowchart TD\n  A --> B\n  A -.-> C"),
+    );
+    const connectors = objects.filter((o) => o.type === "connector");
+    expect(connectors).toHaveLength(2);
+    expect(connectors.every((c) => c.targetIds === undefined)).toBe(true);
+  });
+});
+
+describe("도착점 분산 (한 노드로 모이는 엣지)", () => {
+  it("모이는 1:1 커넥터는 도착점을 앵커 변에 나눠 갖는다", () => {
+    const { objects } = convertMermaid(
+      parseMermaid("flowchart TD\n  A --> C\n  B --> C"),
+    );
+    const ratios = objects
+      .filter((o) => o.type === "connector")
+      .map((o) => o.targetOffsetRatioX);
+    expect(ratios).toHaveLength(2);
+    expect(new Set(ratios).size).toBe(2);
+    for (const r of ratios) {
+      expect(r).toBeGreaterThan(0);
+      expect(r).toBeLessThan(1);
+    }
+  });
+
+  it("모이지 않으면 도착점을 건드리지 않는다 (변의 중앙 유지)", () => {
+    const { objects } = convertMermaid(parseMermaid("flowchart TD\n  A --> B"));
+    const c = objects.find((o) => o.type === "connector")!;
+    expect(c.targetOffsetRatioX).toBeUndefined();
+    expect(c.targetOffsetRatioY).toBeUndefined();
+  });
+
+  it("갈래와 1:1 커넥터가 같은 타깃으로 가면 서로 다른 지점으로 들어간다", () => {
+    // A 는 B·C 로 갈라지고(분기 커넥터), D 도 C 로 들어온다 → C 는 fan-in 2
+    const { objects } = convertMermaid(
+      parseMermaid("flowchart TD\n  A --> B\n  A --> C\n  D --> C"),
+    );
+    const branch = objects.find((o) => o.targetIds)!;
+    const plain = objects.find((o) => o.type === "connector" && o.targetId)!;
+    const cId = plain.targetId!;
+    expect(branch.branchTargetT?.[cId]).toBeDefined();
+    expect(branch.branchTargetT![cId]).not.toBe(plain.targetOffsetRatioX);
+  });
+
+  it("도착 비율은 변을 벗어나지 않는다", () => {
+    const { objects } = convertMermaid(
+      parseMermaid("flowchart TD\n  A --> E\n  B --> E\n  C --> E\n  D --> E"),
+    );
+    const ratios = objects
+      .filter((o) => o.type === "connector")
+      .map((o) => o.targetOffsetRatioX!);
+    expect(Math.min(...ratios)).toBeGreaterThan(0.1);
+    expect(Math.max(...ratios)).toBeLessThan(0.9);
+  });
+});

@@ -52,7 +52,7 @@ export function MentionPanel({ onClose }: MentionPanelProps) {
 
   return (
     <div
-      className="popover-enter fixed right-4 top-20 w-72 rounded-xl border border-gray-200 bg-white shadow-xl"
+      className="popover-enter fixed top-20 right-4 w-72 rounded-xl border border-gray-200 bg-white shadow-xl"
       style={{ zIndex: Z_SIDE_PANEL }}
     >
       {/* Header */}

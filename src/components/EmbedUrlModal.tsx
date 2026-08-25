@@ -159,7 +159,7 @@ export function EmbedUrlModal({
               )}
             />
             {parsedUrl && (
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+              <div className="absolute top-1/2 right-3 -translate-y-1/2">
                 {parsedUrl.type === "youtube" ? (
                   <Youtube className="h-4 w-4 text-red-500" />
                 ) : parsedUrl.type === "figma" ? (
@@ -246,7 +246,7 @@ export function EmbedUrlModal({
                     <Youtube className="h-3 w-3" />
                     YouTube
                   </div>
-                  <ul className="ml-4 mt-1 list-disc text-gray-500">
+                  <ul className="mt-1 ml-4 list-disc text-gray-500">
                     <li>youtube.com/watch?v=...</li>
                     <li>youtu.be/...</li>
                     <li>youtube.com/shorts/...</li>
@@ -257,7 +257,7 @@ export function EmbedUrlModal({
                     <Figma className="h-3 w-3" />
                     Figma
                   </div>
-                  <ul className="ml-4 mt-1 list-disc text-gray-500">
+                  <ul className="mt-1 ml-4 list-disc text-gray-500">
                     <li>figma.com/design/... (Design file)</li>
                     <li>figma.com/board/... (FigJam)</li>
                     <li>figma.com/proto/... (Prototype)</li>
@@ -271,7 +271,7 @@ export function EmbedUrlModal({
                     <FileText className="h-3 w-3" />
                     Notion
                   </div>
-                  <ul className="ml-4 mt-1 list-disc text-gray-500">
+                  <ul className="mt-1 ml-4 list-disc text-gray-500">
                     <li>notion.so/Page-Name-...</li>
                     <li>notion.site/Page-Name-...</li>
                   </ul>

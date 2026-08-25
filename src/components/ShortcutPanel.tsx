@@ -305,7 +305,7 @@ export function ShortcutPanel() {
                     className={cn(
                       "text-sm",
                       isConflicting
-                        ? "text-red-600 font-medium"
+                        ? "font-medium text-red-600"
                         : "text-gray-600",
                     )}
                   >

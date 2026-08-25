@@ -332,7 +332,7 @@ export function CodeBlockEditor() {
       {/* Options Bar */}
       <div
         className={cn(
-          "pointer-events-auto fixed flex items-center gap-2 cursor-default",
+          "pointer-events-auto fixed flex cursor-default items-center gap-2",
           "popover-enter rounded-lg bg-gray-800 px-2 py-1.5 shadow-lg",
         )}
         style={{
@@ -381,8 +381,8 @@ export function CodeBlockEditor() {
                   key={lang.value}
                   onClick={() => handleLanguageChange(lang.value)}
                   className={cn(
-                    "w-full px-3 py-1.5 text-left text-sm text-white cursor-pointer",
-                    "hover:bg-gray-700 transition-colors",
+                    "w-full cursor-pointer px-3 py-1.5 text-left text-sm text-white",
+                    "transition-colors hover:bg-gray-700",
                     selectedObject.codeLanguage === lang.value && "bg-gray-700",
                   )}
                 >
@@ -426,8 +426,8 @@ export function CodeBlockEditor() {
         <button
           onClick={handleCopy}
           className={cn(
-            "flex items-center gap-1 rounded px-2 py-1 text-sm text-white cursor-pointer",
-            "hover:bg-gray-700 transition-colors",
+            "flex cursor-pointer items-center gap-1 rounded px-2 py-1 text-sm text-white",
+            "transition-colors hover:bg-gray-700",
           )}
           title="Copy code"
         >
@@ -448,7 +448,7 @@ export function CodeBlockEditor() {
             })
           }
           className={cn(
-            "rounded p-1.5 transition-all cursor-pointer",
+            "cursor-pointer rounded p-1.5 transition-all",
             "hover:bg-gray-700",
             selectedObject.locked && "bg-red-600 hover:bg-red-700",
           )}
@@ -515,8 +515,8 @@ export function CodeBlockEditor() {
               placeholder="Enter title..."
               className={cn(
                 "pointer-events-auto fixed bg-transparent",
-                "outline-none border-b border-violet-500",
-                "font-mono cursor-text",
+                "border-b border-violet-500 outline-none",
+                "cursor-text font-mono",
               )}
               style={{
                 left: titleStartX,
@@ -560,7 +560,7 @@ export function CodeBlockEditor() {
       {isEditingCode && (
         <div
           id={`codeblock-editor-${selectedObject.id}`}
-          className="pointer-events-auto fixed overflow-hidden rounded-b-lg cursor-text"
+          className="pointer-events-auto fixed cursor-text overflow-hidden rounded-b-lg"
           style={{
             left: screenX,
             top: screenY + headerHeight,
@@ -573,7 +573,7 @@ export function CodeBlockEditor() {
           {/* Syntax highlighted background */}
           <div
             ref={highlightRef}
-            className="pointer-events-none absolute inset-0 overflow-hidden whitespace-pre-wrap break-words font-mono"
+            className="pointer-events-none absolute inset-0 overflow-hidden font-mono break-words whitespace-pre-wrap"
             style={{
               padding: `${12 * viewport.zoom}px`,
               fontSize: `${(selectedObject.fontSize ?? 14) * viewport.zoom}px`,
@@ -599,9 +599,9 @@ export function CodeBlockEditor() {
             onScroll={handleScroll}
             onKeyDown={handleCodeKeyDown}
             className={cn(
-              "absolute inset-0 w-full h-full resize-none font-mono",
+              "absolute inset-0 h-full w-full resize-none font-mono",
               "bg-transparent text-transparent",
-              "outline-none border-l-2 border-r-2 border-b-2 border-t-0 border-violet-500 rounded-b-lg",
+              "rounded-b-lg border-t-0 border-r-2 border-b-2 border-l-2 border-violet-500 outline-none",
             )}
             style={{
               padding: `${12 * viewport.zoom}px`,

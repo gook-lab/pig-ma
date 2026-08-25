@@ -3,6 +3,8 @@ import type Konva from "konva";
 import type { CanvasObject } from "@/types";
 import { useCanvasStore } from "@/store";
 import { Connector } from "./shapes/Connector";
+import { BranchConnector } from "./shapes/BranchConnector";
+import { isBranchConnector } from "@/utils/branchPath";
 
 interface ConnectorShapeRendererProps {
   obj: CanvasObject;
@@ -35,6 +37,32 @@ export const ConnectorShapeRenderer = memo(function ConnectorShapeRenderer({
     obj.targetId && !obj.targetId.startsWith("__group:")
       ? s.objects.find((o) => o.id === obj.targetId)
       : undefined,
+  );
+  // 분기 커넥터의 갈래 타깃들.
+  // ⚠️ 셀렉터가 배열을 만들어 돌려주면 매 렌더 새 참조라 무한 루프가 난다
+  // ("getSnapshot should be cached"). 구독은 **원시값 키**로 하고, 실제 도형은
+  // 그 키가 바뀔 때만 getState() 로 읽는다.
+  const branchTargetKey = useCanvasStore((s) => {
+    const ids = obj.targetIds;
+    if (!ids?.length) return "";
+    let key = "";
+    for (const id of ids) {
+      const o = s.objects.find((x) => x.id === id);
+      key += o
+        ? `${o.id}:${o.x},${o.y},${o.width ?? 0},${o.height ?? 0}|`
+        : "-|";
+    }
+    return key;
+  });
+  const branchTargets = useMemo(
+    () => {
+      const ids = obj.targetIds;
+      if (!ids?.length) return [];
+      const objects = useCanvasStore.getState().objects;
+      return ids.map((id) => objects.find((o) => o.id === id));
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [branchTargetKey, obj.targetIds],
   );
   // __group: 연결은 그룹 customBounds 만 구독 (참조 안정 — 이동 시에만 변경)
   const sourceGroupBounds = useCanvasStore((s) => {
@@ -134,6 +162,20 @@ export const ConnectorShapeRenderer = memo(function ConnectorShapeRenderer({
         : undefined),
     [targetRaw, targetGroupBounds, obj.targetId],
   );
+
+  if (isBranchConnector(obj)) {
+    return (
+      <BranchConnector
+        connector={obj}
+        sourceObject={sourceObj}
+        targetObjects={branchTargets}
+        isSelected={isSelected && !isObjectLocked}
+        isMultiSelected={isMultiSelected}
+        zoom={zoom}
+        onSelect={handleSelect}
+      />
+    );
+  }
 
   return (
     <Connector

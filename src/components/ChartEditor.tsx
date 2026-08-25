@@ -70,7 +70,8 @@ export function ChartEditor() {
   // Reset title editing only when a different chart is selected
   const prevSelectedIdRef = useRef<string | null>(null);
   useEffect(() => {
-    const currentId = selectedIds.length === 1 ? selectedIds[0] ?? null : null;
+    const currentId =
+      selectedIds.length === 1 ? (selectedIds[0] ?? null) : null;
     if (
       prevSelectedIdRef.current !== null &&
       prevSelectedIdRef.current !== currentId
@@ -165,8 +166,8 @@ export function ChartEditor() {
             }
             className={cn(
               "pointer-events-auto fixed bg-transparent",
-              "outline-none border-b border-violet-500",
-              "font-sans cursor-text",
+              "border-b border-violet-500 outline-none",
+              "cursor-text font-sans",
             )}
             style={{
               left: screenX + 8 * viewport.zoom,

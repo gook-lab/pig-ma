@@ -250,6 +250,11 @@ export const CanvasObjectSchema = z
     label: z.string().optional(),
     labelT: z.number().optional(),
     labelOffsetY: z.number().optional(),
+    // 분기 커넥터
+    targetIds: z.array(z.string()).optional(),
+    junctionT: z.number().optional(),
+    branchLabels: z.record(z.string(), z.string()).optional(),
+    branchTargetT: z.record(z.string(), z.number()).optional(),
 
     // Elbow connector advanced options
     elbowBends: z.array(ElbowBendSchema).optional(),

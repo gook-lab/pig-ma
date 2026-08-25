@@ -347,7 +347,7 @@ function IndividualOptionsContent({
             >
               <span
                 className={cn(
-                  "absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow-md transition-transform",
+                  "absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow-md transition-transform",
                   showLabel && "translate-x-4",
                 )}
               />
@@ -448,7 +448,7 @@ function IndividualOptionsContent({
             >
               <span
                 className={cn(
-                  "absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow-md transition-transform",
+                  "absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow-md transition-transform",
                   showValue && "translate-x-4",
                 )}
               />
@@ -764,7 +764,7 @@ function IndividualOptionsContent({
             >
               <span
                 className={cn(
-                  "absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow-md transition-transform",
+                  "absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow-md transition-transform",
                   fillEnabled && "translate-x-4",
                 )}
               />
@@ -893,7 +893,7 @@ function IndividualOptionsContent({
           >
             <span
               className={cn(
-                "absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow-md transition-transform",
+                "absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow-md transition-transform",
                 showPointLabel && "translate-x-4",
               )}
             />
@@ -924,7 +924,7 @@ function IndividualOptionsContent({
           >
             <span
               className={cn(
-                "absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow-md transition-transform",
+                "absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow-md transition-transform",
                 showPointValue && "translate-x-4",
               )}
             />
@@ -1856,7 +1856,7 @@ function ChartRightPanelInner({
                           </div>
 
                           {/* Header labels */}
-                          <div className="flex items-center gap-2 px-2 pt-2 text-[10px] uppercase tracking-wide text-gray-400">
+                          <div className="flex items-center gap-2 px-2 pt-2 text-[10px] tracking-wide text-gray-400 uppercase">
                             <span className="w-6"></span>
                             <span className="w-20">Label</span>
                             <span className="flex-1">Value</span>
@@ -1960,7 +1960,7 @@ function ChartRightPanelInner({
                 {/* Item list with scroll */}
                 <div className="border-t border-gray-200">
                   {/* Header labels */}
-                  <div className="flex items-center gap-2 px-2 pt-2 text-[10px] uppercase tracking-wide text-gray-400">
+                  <div className="flex items-center gap-2 px-2 pt-2 text-[10px] tracking-wide text-gray-400 uppercase">
                     <span className="w-6"></span>
                     <span className="w-20">Label</span>
                     <span className="flex-1">Value</span>
@@ -2279,7 +2279,7 @@ function ChartRightPanelInner({
                 </div>
                 {/* Custom colors history */}
                 {customColors.length > 0 && (
-                  <div className="flex gap-1.5 border-b border-gray-100 pb-1.5 mb-1.5">
+                  <div className="mb-1.5 flex gap-1.5 border-b border-gray-100 pb-1.5">
                     {customColors.slice(0, 6).map((color) => (
                       <button
                         key={color}
@@ -2585,7 +2585,7 @@ function ChartRightPanelInner({
                   >
                     <span
                       className={cn(
-                        "absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow-md transition-transform",
+                        "absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow-md transition-transform",
                         isAreaFillEnabled && "translate-x-4",
                       )}
                     />

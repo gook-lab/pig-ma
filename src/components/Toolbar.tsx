@@ -1229,7 +1229,7 @@ export function Toolbar() {
 
                 return (
                   <div
-                    className="absolute bottom-full left-1/2 mb-3 radial-menu-enter"
+                    className="radial-menu-enter absolute bottom-full left-1/2 mb-3"
                     style={{ transform: "translateX(-50%)" }}
                   >
                     <div
@@ -1302,7 +1302,7 @@ export function Toolbar() {
                         />
                       </svg>
                       {/* Center + icon */}
-                      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                         <Plus className="h-5 w-5 text-gray-300" />
                       </div>
                       {/* Icon + label overlays */}
@@ -1315,7 +1315,7 @@ export function Toolbar() {
                         return (
                           <div
                             key={item.label}
-                            className="absolute flex flex-col items-center pointer-events-none"
+                            className="pointer-events-none absolute flex flex-col items-center"
                             style={{
                               left: pos.x - 20,
                               top: pos.y - 18,
@@ -1340,7 +1340,7 @@ export function Toolbar() {
                             </button>
                             <span
                               className={cn(
-                                "text-[9px] font-medium leading-none transition-colors duration-150",
+                                "text-[9px] leading-none font-medium transition-colors duration-150",
                                 isActive || isHovered
                                   ? "text-primary"
                                   : "text-gray-400",
@@ -1351,7 +1351,7 @@ export function Toolbar() {
 
                             {/* Chart sub-menu */}
                             {item.isChart && showChartSub && (
-                              <div className="pointer-events-auto absolute bottom-full left-1/2 mb-1 flex -translate-x-1/2 gap-1 rounded-lg bg-white p-1.5 shadow-lg ring-1 ring-gray-200 radial-menu-enter">
+                              <div className="radial-menu-enter pointer-events-auto absolute bottom-full left-1/2 mb-1 flex -translate-x-1/2 gap-1 rounded-lg bg-white p-1.5 shadow-lg ring-1 ring-gray-200">
                                 {(
                                   [
                                     {

@@ -1024,9 +1024,7 @@ export function getSegments(points: number[]): Segment[] {
  * - 'endHorizontal': Shape B에 연결된 수평 핸들 (파란색, Y축 이동)
  */
 export type ExtendedHandleType =
-  | HandleType
-  | "startHorizontal"
-  | "endHorizontal";
+  HandleType | "startHorizontal" | "endHorizontal";
 
 export interface ExtendedMidpointHandle extends Point {
   segmentIndex: number;
@@ -1334,10 +1332,7 @@ export function getMidpointHandlePositions(
       // 기본 ㄷ자의 좌/우측 핸들 구분
       let handleType: HandleType = "left";
       let verticalTarget:
-        | "leftCorner"
-        | "midLeft"
-        | "rightCorner"
-        | "midRight" = "leftCorner";
+        "leftCorner" | "midLeft" | "rightCorner" | "midRight" = "leftCorner";
 
       // 수직 세그먼트의 X 좌표
       const segX = seg.start.x;

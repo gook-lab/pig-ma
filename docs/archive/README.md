@@ -26,3 +26,5 @@
 | `2026-08-library-packaging-todo` | peerDeps 외부화 · `preserveModules` 빌드 |
 
 > `2026-xx-` 접두사는 원본 파일에 날짜가 없어 시기를 특정하지 못한 것들이다.
+
+| 2026-08-25 | `feat-branch-connector` | 분기 커넥터(마인드맵 줄기+갈래) — `utils/branchPath.ts`, `shapes/BranchConnector.tsx` |

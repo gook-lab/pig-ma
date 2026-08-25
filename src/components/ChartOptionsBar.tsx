@@ -595,7 +595,7 @@ function ChartOptionsBarInner({
       {showPanel && panelAbove && (
         <div
           className={cn(
-            "mb-2 w-72 max-h-[50vh] overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg",
+            "mb-2 max-h-[50vh] w-72 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg",
           )}
         >
           {renderPanelContent()}
@@ -645,7 +645,7 @@ function ChartOptionsBarInner({
                 <ChevronDown className="h-3 w-3 text-gray-400" />
               </button>
               {showSeriesDropdown && (
-                <div className="absolute left-0 top-full z-10 mt-1 min-w-[140px] rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+                <div className="absolute top-full left-0 z-10 mt-1 min-w-[140px] rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
                   {seriesData.map((series, index) => (
                     <button
                       key={series.id}
@@ -718,7 +718,7 @@ function ChartOptionsBarInner({
       {showPanel && !panelAbove && (
         <div
           className={cn(
-            "mt-2 w-72 max-h-[50vh] overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg",
+            "mt-2 max-h-[50vh] w-72 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg",
           )}
         >
           {renderPanelContent()}
@@ -829,7 +829,7 @@ function ChartOptionsBarInner({
                         {isExpanded && (
                           <div className="space-y-1.5 border-t border-gray-200 p-2 pt-2">
                             {/* Header labels */}
-                            <div className="flex items-center gap-2 text-[10px] text-gray-400 uppercase tracking-wide">
+                            <div className="flex items-center gap-2 text-[10px] tracking-wide text-gray-400 uppercase">
                               <span className="w-16">Label</span>
                               <span className="flex-1">Value</span>
                             </div>
@@ -914,7 +914,7 @@ function ChartOptionsBarInner({
                       <div
                         key={index}
                         className={cn(
-                          "space-y-1 rounded-md p-1 -mx-1 cursor-pointer transition-colors",
+                          "-mx-1 cursor-pointer space-y-1 rounded-md p-1 transition-colors",
                           isItemSelected
                             ? "bg-violet-50 ring-1 ring-violet-300"
                             : "hover:bg-gray-50",
@@ -1188,7 +1188,7 @@ function ChartOptionsBarInner({
                   </div>
                   {/* Custom colors history */}
                   {customColors.length > 0 && (
-                    <div className="flex gap-1.5 border-b border-gray-100 pb-1.5 mb-1.5">
+                    <div className="mb-1.5 flex gap-1.5 border-b border-gray-100 pb-1.5">
                       {customColors.slice(0, 6).map((color) => (
                         <button
                           key={color}

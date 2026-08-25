@@ -1,7 +1,9 @@
 # 🌿 feat: 분기 커넥터 (마인드맵 화살표)
 
-> **상태: 미채택** (2026-08-25 작성). 현재 커넥터는 1:1 만 지원한다
-> (`src/types.ts` `sourceId` / `targetId` 각각 단일 값).
+> **상태: 구현됨** (2026-08-25). `targetIds` / `junctionT` / `branchLabels` 로
+> 데이터 모델이 들어갔고, 렌더는 `components/shapes/BranchConnector.tsx`,
+> 경로 계산은 `utils/branchPath.ts` 다. Mermaid import 가 형제 엣지를
+> 자동으로 묶는다. **편집 UX(+ 핸들, 분기점 드래그)는 아직 없다.**
 
 ## 문제 — 갈래가 여러 개면 선이 겹쳐 그려진다
 

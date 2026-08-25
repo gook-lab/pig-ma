@@ -100,7 +100,7 @@ export function AIPanel() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-20 right-4 flex items-center gap-2 rounded-full bg-violet-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:bg-violet-700 active:scale-95"
+        className="fixed right-4 bottom-20 flex items-center gap-2 rounded-full bg-violet-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:bg-violet-700 active:scale-95"
         style={{ zIndex: Z_SIDE_PANEL }}
         title="AI Diagram Generator"
       >
@@ -112,7 +112,7 @@ export function AIPanel() {
 
   return (
     <div
-      className="fixed bottom-20 right-4 flex w-80 flex-col rounded-xl bg-gray-800 shadow-2xl popover-enter"
+      className="popover-enter fixed right-4 bottom-20 flex w-80 flex-col rounded-xl bg-gray-800 shadow-2xl"
       style={{ zIndex: Z_SIDE_PANEL }}
       onMouseDown={(e) => e.preventDefault()}
       onKeyDown={(e) => e.stopPropagation()}
@@ -145,7 +145,7 @@ export function AIPanel() {
             <ChevronDown className="h-3 w-3" />
           </button>
           {showProviderMenu && (
-            <div className="absolute left-0 top-full z-10 mt-1 w-full rounded-lg bg-gray-700 py-1 shadow-lg">
+            <div className="absolute top-full left-0 z-10 mt-1 w-full rounded-lg bg-gray-700 py-1 shadow-lg">
               {(["gemini", "claude"] as AIProvider[]).map((p) => (
                 <button
                   key={p}
@@ -235,12 +235,12 @@ export function AIPanel() {
             }
             disabled={!hasKey || aiLoading}
             rows={2}
-            className="w-full resize-none rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 pr-10 text-sm text-white placeholder-gray-500 outline-none transition-colors focus:border-violet-500 disabled:opacity-50"
+            className="w-full resize-none rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 pr-10 text-sm text-white placeholder-gray-500 transition-colors outline-none focus:border-violet-500 disabled:opacity-50"
           />
           <button
             onClick={handleGenerate}
             disabled={!prompt.trim() || !hasKey || aiLoading}
-            className="absolute bottom-2 right-2 rounded p-1.5 text-gray-400 transition-colors hover:bg-gray-600 hover:text-white disabled:opacity-30"
+            className="absolute right-2 bottom-2 rounded p-1.5 text-gray-400 transition-colors hover:bg-gray-600 hover:text-white disabled:opacity-30"
             title="Generate (Enter)"
           >
             {aiLoading ? (

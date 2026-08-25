@@ -308,7 +308,7 @@ export const EmbedViewerOverlay = memo(function EmbedViewerOverlay({
 
             {/* Click to load hint */}
             <div
-              className="absolute bottom-0 left-0 right-0 flex items-center justify-center"
+              className="absolute right-0 bottom-0 left-0 flex items-center justify-center"
               style={{
                 height: 28 * viewport.zoom,
                 backgroundColor: "rgba(0, 0, 0, 0.6)",

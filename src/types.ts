@@ -161,11 +161,7 @@ export type ChartVariant = "bar" | "line" | "pie";
  * 차트 정렬 옵션
  */
 export type ChartSortBy =
-  | "none"
-  | "value-asc"
-  | "value-desc"
-  | "label-asc"
-  | "label-desc";
+  "none" | "value-asc" | "value-desc" | "label-asc" | "label-desc";
 
 /**
  * 차트 데이터 항목
@@ -303,11 +299,7 @@ export type PenType = "marker" | "pen" | "highlighter";
 
 // Connector styles
 export type MarkerStyle =
-  | "none"
-  | "arrow"
-  | "filledArrow"
-  | "diamond"
-  | "circle";
+  "none" | "arrow" | "filledArrow" | "diamond" | "circle";
 export type LineStyle = "solid" | "dashed" | "dotted";
 export type PathStyle = "straight" | "curved" | "elbowed";
 export type ElbowCornerStyle = "sharp" | "rounded";
@@ -402,6 +394,15 @@ export interface CanvasObject {
   endY?: number;
   sourceId?: string; // optional - set when snapped to a shape
   targetId?: string; // optional - set when snapped to a shape
+  // 분기 커넥터 (마인드맵식 줄기+갈래). 있으면 targetId 대신 이쪽을 쓴다 —
+  // 줄기를 한 번만 그리고 분기점에서 갈래가 뻗는다. 없으면 기존 1:1 동작.
+  targetIds?: string[];
+  junctionT?: number; // 소스→타깃 사이 분기점 위치 (0~1, 기본 0.5)
+  branchLabels?: Record<string, string>; // 타깃 id → 갈래 라벨
+  // 타깃 id → 도착점이 앵커 변 어디인지 (0~1, 기본 0.5 = 변의 중앙).
+  // 1:1 커넥터의 targetOffsetRatioX/Y 와 같은 역할 — 한 도형으로 여러 선이
+  // 모일 때 도착점을 나눠 마지막 구간이 겹치지 않게 한다.
+  branchTargetT?: Record<string, number>;
   sourceAnchor?: "top" | "right" | "bottom" | "left" | "center";
   targetAnchor?: "top" | "right" | "bottom" | "left" | "center";
   sourceAngle?: number; // for circle: exact angle in radians

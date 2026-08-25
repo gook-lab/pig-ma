@@ -12,7 +12,8 @@ Konva 기반 캔버스 도형 컴포넌트.
 | `StickyNote.tsx` | 메모지 | `stickyNote` |
 | `TextBox.tsx` | 자유 텍스트 | `textBox` |
 | `Line.tsx` | 펜슬 드로잉 | `line` |
-| `Connector.tsx` | 연결선/화살표 | `connector` |
+| `Connector.tsx` | 연결선/화살표 (1:1) | `connector` |
+| `BranchConnector.tsx` | 분기 커넥터 — 줄기 1개 + 갈래 N개 (마인드맵식) | `connector` (`targetIds` 있음) |
 | `ConnectorLabel.tsx` | 커넥터 텍스트 라벨 | `connectorLabel` |
 | `CanvasImage.tsx` | 이미지 | `image` |
 | `Chart.tsx` | 차트 (bar/line/pie) | `chart` |
@@ -33,6 +34,27 @@ Konva 기반 캔버스 도형 컴포넌트.
 |------|------|------|
 | **Attached** | `sourceId` 또는 `targetId` 존재 | shape와 연결, shape 드래그 시 자동 추적 |
 | **Standalone** | `sourceId`, `targetId` 모두 없음 | 독립적인 선 객체, 직접 드래그 가능 |
+| **Branch** | `targetIds` 존재 | 줄기를 한 번만 그리고 분기점에서 갈래가 뻗는다. `BranchConnector.tsx` 가 렌더 (Connector.tsx 는 타지 않음) |
+
+### 분기 커넥터 (2026-08-25)
+
+한 소스에서 여러 타깃으로 갈 때 1:1 커넥터를 N개 얹으면 줄기 구간이 겹쳐
+그려지고 갈라지는 자리에 갈고리가 생긴다. `targetIds` 가 있으면
+`ConnectorShapeRenderer` 가 `BranchConnector` 로 분기한다.
+
+| 필드 | 뜻 |
+|------|-----|
+| `targetIds` | 갈래 타깃 id 목록 (있으면 분기 모드) |
+| `junctionT` | 소스→가장 가까운 타깃 사이 분기점 위치 (0~1, 기본 0.5) |
+| `branchLabels` | 타깃 id → 갈래 라벨 |
+
+- 경로는 `utils/branchPath.ts` (순수). 갈래는 **버스 → 드롭** 2구간이고
+  범용 엘보우 라우터를 쓰지 않는다 — 그쪽은 타깃 박스를 피해 돌아서
+  분기점이 가까우면 크게 우회한다 (실측: 80px 간격에서 260px 밖으로).
+- ⚠️ 갈래 타깃 구독은 **원시값 키**로 한다. 셀렉터가 배열을 만들어 돌려주면
+  매 렌더 새 참조라 무한 루프가 난다 ("getSnapshot should be cached").
+- 편집 UX(+ 핸들로 타깃 추가, 분기점 드래그)는 아직 없다 — 선택 시 분기점만
+  표시한다.
 
 ### 핵심 Refs
 

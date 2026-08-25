@@ -83,7 +83,7 @@ export function FigmaExportModal({ onClose }: FigmaExportModalProps) {
       />
 
       <div
-        className="popover-enter fixed left-1/2 top-1/2 w-[440px] -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-2xl"
+        className="popover-enter fixed top-1/2 left-1/2 w-[440px] -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-2xl"
         style={{ zIndex: Z_MODAL_CONTENT }}
       >
         {/* Header */}
@@ -189,7 +189,7 @@ export function FigmaExportModal({ onClose }: FigmaExportModalProps) {
 
         {/* ===== Option 2: Quick export (SVG) ===== */}
         <div className="flex flex-col gap-2">
-          <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">
+          <span className="text-xs font-medium tracking-wide text-gray-400 uppercase">
             Quick export (SVG → editable nodes)
           </span>
 

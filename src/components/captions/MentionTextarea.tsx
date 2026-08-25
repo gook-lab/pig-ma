@@ -86,7 +86,7 @@ export const MentionTextarea = forwardRef<
         <div
           ref={highlightRef}
           className={cn(
-            "pointer-events-none absolute inset-0 overflow-hidden whitespace-pre-wrap break-words text-sm text-gray-800",
+            "pointer-events-none absolute inset-0 overflow-hidden text-sm break-words whitespace-pre-wrap text-gray-800",
             className,
           )}
           style={{
@@ -113,7 +113,7 @@ export const MentionTextarea = forwardRef<
         placeholder={placeholder}
         className={cn(
           className,
-          hasMentions && "caret-gray-800 text-transparent",
+          hasMentions && "text-transparent caret-gray-800",
         )}
       />
     </div>
