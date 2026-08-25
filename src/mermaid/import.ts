@@ -2,7 +2,7 @@ import type { CanvasObject, ShapeVariant } from "@/types";
 import { useCanvasStore } from "@/store";
 import { generateUUID } from "@/utils/uuid";
 import { parseMermaid } from "./parser";
-import { layoutGraph } from "./layout";
+import { layoutGraph, RANK_GAP } from "./layout";
 import type { MermaidGraph, MermaidNodeShape } from "./types";
 import { MermaidImportError } from "./types";
 
@@ -33,6 +33,29 @@ const NODE_STYLE = {
 };
 
 const CONNECTOR_STROKE = "#374151";
+
+type AnchorSide = "top" | "right" | "bottom" | "left";
+
+interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/** 사각형에서 지정한 변의 중앙점. */
+function anchorPoint(rect: Rect, side: AnchorSide): { x: number; y: number } {
+  switch (side) {
+    case "top":
+      return { x: rect.x + rect.width / 2, y: rect.y };
+    case "bottom":
+      return { x: rect.x + rect.width / 2, y: rect.y + rect.height };
+    case "left":
+      return { x: rect.x, y: rect.y + rect.height / 2 };
+    case "right":
+      return { x: rect.x + rect.width, y: rect.y + rect.height / 2 };
+  }
+}
 
 export interface MermaidConvertResult {
   objects: CanvasObject[];
@@ -71,6 +94,42 @@ export function convertMermaid(graph: MermaidGraph): MermaidConvertResult {
   }
 
   const vertical = graph.direction === "TD" || graph.direction === "BT";
+  const reversed = graph.direction === "BT" || graph.direction === "RL";
+
+  // 흐름이 나가고 들어오는 변. attached 커넥터는 앵커가 없으면 "center" 로
+  // 해석되어 선이 도형 중심에서 출발한다 (connectorPath.ts).
+  const flowSource: AnchorSide = vertical
+    ? reversed
+      ? "top"
+      : "bottom"
+    : reversed
+      ? "left"
+      : "right";
+  const flowTarget: AnchorSide = vertical
+    ? reversed
+      ? "bottom"
+      : "top"
+    : reversed
+      ? "right"
+      : "left";
+  // 랭크를 건너뛰는 엣지는 흐름 방향 변에서 나가면 중간 랭크의 노드를 관통한다.
+  // 옆면으로 빼서 바깥으로 우회시킨다.
+  const sideAnchor: AnchorSide = vertical ? "right" : "bottom";
+
+  // 라벨은 경로 중앙(t=0.5)이 기본인데, 엘보우에서 그 지점은 랭크 사이의
+  // 공용 가로 구간이라 한 노드로 모이는(또는 한 노드에서 갈라지는) 엣지끼리
+  // 라벨이 겹친다. 겹치는 쪽을 피해 라벨을 세로 구간으로 밀어 둔다.
+  const fanIn = new Map<string, number>();
+  const fanOut = new Map<string, number>();
+  for (const edge of graph.edges) {
+    fanIn.set(edge.to, (fanIn.get(edge.to) ?? 0) + 1);
+    fanOut.set(edge.from, (fanOut.get(edge.from) ?? 0) + 1);
+  }
+  // 같은 끝점을 공유하는 엣지끼리는 순번만큼 라벨을 더 밀어 준다 —
+  // 모이면서 동시에 갈라지는 노드에서는 한쪽으로만 밀면 다시 겹친다.
+  const seenIn = new Map<string, number>();
+  const seenOut = new Map<string, number>();
+
   for (const edge of graph.edges) {
     const sourceId = objectIdByNode.get(edge.from);
     const targetId = objectIdByNode.get(edge.to);
@@ -78,13 +137,36 @@ export function convertMermaid(graph: MermaidGraph): MermaidConvertResult {
     const to = nodeLayoutById.get(edge.to);
     if (!sourceId || !targetId || !from || !to) continue;
 
-    // 시작/끝점은 방향에 맞는 변 중앙 — attached 커넥터라 도형 이동 시 재계산됨
-    const start = vertical
-      ? { x: from.x + from.width / 2, y: from.y + from.height }
-      : { x: from.x + from.width, y: from.y + from.height / 2 };
-    const end = vertical
-      ? { x: to.x + to.width / 2, y: to.y }
-      : { x: to.x, y: to.y + to.height / 2 };
+    // 랭크 간 거리로 건너뛰기를 판정한다 (한 랭크면 간격이 RANK_GAP 하나).
+    const span = vertical
+      ? Math.abs(reversed ? from.y - (to.y + to.height) : to.y - (from.y + from.height))
+      : Math.abs(reversed ? from.x - (to.x + to.width) : to.x - (from.x + from.width));
+    const skipsRank = span > RANK_GAP * 1.6;
+    const sourceAnchor = skipsRank ? sideAnchor : flowSource;
+    const targetAnchor = skipsRank ? sideAnchor : flowTarget;
+
+    // 시작/끝점은 앵커 변의 중앙 — attached 커넥터라 도형 이동 시 재계산됨
+    const start = anchorPoint(from, sourceAnchor);
+    const end = anchorPoint(to, targetAnchor);
+
+    // 모이는 엣지면 출발 쪽(각 엣지의 세로 구간이 서로 다른 x),
+    // 갈라지는 엣지면 도착 쪽으로. 둘 다면 모이는 쪽을 우선한다.
+    const converging = (fanIn.get(edge.to) ?? 0) > 1;
+    const diverging = (fanOut.get(edge.from) ?? 0) > 1;
+    const inSeq = seenIn.get(edge.to) ?? 0;
+    const outSeq = seenOut.get(edge.from) ?? 0;
+    seenIn.set(edge.to, inSeq + 1);
+    seenOut.set(edge.from, outSeq + 1);
+    const LABEL_STEP = 0.09;
+    // 모이면서 동시에 갈라지면 양끝 모두 경로가 겹친다 — 가운데 구간만 남는다.
+    const labelT =
+      converging && diverging
+        ? Math.min(0.72, 0.5 + outSeq * LABEL_STEP)
+        : converging
+          ? Math.min(0.45, 0.18 + inSeq * LABEL_STEP)
+          : diverging
+            ? Math.max(0.55, 0.82 - outSeq * LABEL_STEP)
+            : 0.5;
 
     objects.push({
       id: generateUUID(),
@@ -97,13 +179,18 @@ export function convertMermaid(graph: MermaidGraph): MermaidConvertResult {
       opacity: 1,
       sourceId,
       targetId,
-      pathStyle: "straight",
+      sourceAnchor,
+      targetAnchor,
+      // 레이어드 레이아웃이라 랭크를 가로지르는 사선보다 직교 경로가 읽기 쉽다
+      pathStyle: "elbowed",
+      elbowCornerStyle: "rounded",
       startMarker: "none",
       endMarker: edge.arrow ? "arrow" : "none",
       lineStyle: edge.style === "dotted" ? "dashed" : "solid",
       strokeWidth: edge.style === "thick" ? 4 : 2,
       stroke: CONNECTOR_STROKE,
       label: edge.label,
+      labelT,
     });
   }
 

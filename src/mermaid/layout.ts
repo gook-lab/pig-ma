@@ -14,7 +14,7 @@ export interface NodeLayout {
   height: number;
 }
 
-const RANK_GAP = 90; // 랭크 사이 간격
+export const RANK_GAP = 140; // 랭크 사이 간격 — 엘보우 커넥터의 세로 구간과 엣지 라벨이 들어갈 자리
 const NODE_GAP = 50; // 같은 랭크 내 노드 간격
 const MIN_WIDTH = 120;
 const NODE_HEIGHT = 60;
