@@ -12,6 +12,7 @@ import { TEXT_CONFIG } from "@/utils/textConfig";
 import { LINE_HEIGHT } from "@/utils/richText";
 import { isTextReadable } from "@/constants/text";
 import { useCanvasStore } from "@/store";
+import { fontStack } from "@/constants/fonts";
 
 interface TextBoxProps {
   shape: CanvasObject;
@@ -174,8 +175,7 @@ const KonvaTextContent = memo(function KonvaTextContent({
   if (!plainText || isMixed || !textReadable) return null;
 
   const pad = TEXT_CONFIG.textBox.padding;
-  const fontFamily =
-    tiptapStyle.fontFamily ?? shape.fontFamily ?? "Pretendard, sans-serif";
+  const fontFamily = fontStack(tiptapStyle.fontFamily ?? shape.fontFamily);
   const fontStyle =
     tiptapStyle.fontStyle ?? (shape.fontWeight === "bold" ? "bold" : "normal");
   const textColor = tiptapStyle.color ?? shape.textColor ?? "#1f2937";

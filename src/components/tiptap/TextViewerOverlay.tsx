@@ -10,6 +10,7 @@ import {
 import { dragCoordinator } from "@/hooks/useDragCoordinator";
 import type { CanvasObject } from "@/types";
 import { TEXT_CONFIG } from "@/utils/textConfig";
+import { fontStack } from "@/constants/fonts";
 
 interface Viewport {
   x: number;
@@ -153,7 +154,7 @@ export const TextViewerOverlay = memo(function TextViewerOverlay({
             onChange={() => {}}
             editable={false}
             defaultFontSize={shape.fontSize ?? 16}
-            defaultFontFamily={shape.fontFamily ?? "Pretendard"}
+            defaultFontFamily={fontStack(shape.fontFamily)}
             defaultTextColor={shape.textColor ?? "#1f2937"}
             defaultTextAlign={
               (shape.textAlign as "left" | "center" | "right") ?? "center"
@@ -168,7 +169,7 @@ export const TextViewerOverlay = memo(function TextViewerOverlay({
             style={{
               color: "#9ca3af",
               fontSize: `${Math.max(8, shape.fontSize ?? 16)}px`,
-              fontFamily: shape.fontFamily ?? "Pretendard",
+              fontFamily: fontStack(shape.fontFamily),
             }}
           >
             {isStickyNote ? "텍스트를 입력하세요..." : "Add text"}

@@ -1,4 +1,5 @@
 import type { TextSegment } from "@/types";
+import { DEFAULT_FONT_FAMILY, fontStack } from "@/constants/fonts";
 
 /**
  * 공통 라인 높이 배율 (HTML CSS와 Konva에서 동일하게 사용)
@@ -192,7 +193,10 @@ export function measureTextWidth(
   const ctx = getMeasureContext();
   if (!ctx) return text.length * fontSize * 0.6; // Fallback estimate
 
-  const font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+  // 토큰(FontFamily)이 그대로 들어올 수 있다. 스택으로 풀지 않으면 폴백이
+  // 없는 폰트명 하나만 넘어가고, 그 폰트가 없으면 브라우저 기본 폰트로
+  // 측정된다 — 렌더와 측정이 어긋나 줄바꿈이 틀어진다.
+  const font = `${fontWeight} ${fontSize}px ${fontStack(fontFamily)}`;
   // Only update font if changed (avoid expensive font parsing)
   if (_lastFont !== font) {
     ctx.font = font;
@@ -218,7 +222,7 @@ export function calculateLineBreaks(
   segments: TextSegment[],
   maxWidth: number,
   defaultFontSize: number,
-  defaultFontFamily: string = "Pretendard",
+  defaultFontFamily: string = DEFAULT_FONT_FAMILY,
   lineIndents: number[] = [],
 ): LineData[] {
   if (segments.length === 0) return [];
@@ -383,7 +387,7 @@ export function getCharIndexFromPosition(
   clickY: number,
   maxWidth: number,
   defaultFontSize: number,
-  fontFamily: string = "Pretendard",
+  fontFamily: string = DEFAULT_FONT_FAMILY,
   textAlign: "left" | "center" | "right" = "left",
   lineIndents: number[] = [],
 ): number {
@@ -531,7 +535,7 @@ export function calculateRichTextHeight(
   richText: TextSegment[],
   maxWidth: number,
   defaultFontSize: number,
-  defaultFontFamily: string = "Pretendard",
+  defaultFontFamily: string = DEFAULT_FONT_FAMILY,
   lineIndents: number[] = [],
 ): { height: number; lineCount: number } {
   if (richText.length === 0 || richText.every((seg) => seg.text === "")) {

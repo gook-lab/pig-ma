@@ -1,4 +1,5 @@
 import { nanoid } from "nanoid";
+import { DEFAULT_FONT_FAMILY } from "@/constants/fonts";
 import type {
   CanvasObject,
   AIGenerateResponse,
@@ -184,7 +185,7 @@ function createCanvasObjectFromAI(
       fontSize: 16,
       fontWeight: "normal",
       textDecoration: "none",
-      fontFamily: "Pretendard",
+      fontFamily: DEFAULT_FONT_FAMILY,
       fontSizePreset: "S",
       textAlign: "left",
       rotation: 0,
@@ -202,7 +203,7 @@ function createCanvasObjectFromAI(
       height: shape.height || 40,
       text: shape.text || "",
       textColor: "#000000",
-      fontFamily: "Pretendard",
+      fontFamily: DEFAULT_FONT_FAMILY,
       fontSizePreset: "M",
       fontSize: 16,
       fontWeight: "normal",

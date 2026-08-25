@@ -6,6 +6,10 @@ import { getOptionsBarTransform } from "@/utils/optionsBar";
 import { ColorPickerPopup, CustomColorButton } from "./ColorPickerPopup";
 import { useGlobalCustomColors } from "@/hooks/useCustomColors";
 import type { CanvasObject, FontFamily } from "@/types";
+import {
+  DEFAULT_FONT_FAMILY,
+  FONT_OPTIONS as FONT_FAMILY_OPTIONS,
+} from "@/constants/fonts";
 
 interface ConnectorLabelOptionsBarProps {
   label: CanvasObject;
@@ -40,12 +44,11 @@ const TEXT_COLORS = [
   "#f9a8d4",
 ];
 
-const FONT_OPTIONS: { value: FontFamily; label: string }[] = [
-  { value: "Pretendard", label: "Pretendard" },
-  { value: "Noto Sans KR", label: "Noto Sans" },
-  { value: "Nanum Gothic", label: "Nanum Gothic" },
-  { value: "IBM Plex Sans KR", label: "IBM Plex" },
-];
+// value/label 형태를 유지한다 — 이 바의 select 가 value 로 읽는다
+const FONT_OPTIONS = FONT_FAMILY_OPTIONS.map((f) => ({
+  value: f.id,
+  label: f.label,
+}));
 
 const SIZE_OPTIONS = [
   { value: 10, label: "Small" },
@@ -70,7 +73,7 @@ export const ConnectorLabelOptionsBar = memo(function ConnectorLabelOptionsBar({
   const { customColors, addIfNotInPalette } = useGlobalCustomColors();
 
   const currentColor = label.textColor ?? "#374151";
-  const currentFont = label.fontFamily ?? "Pretendard";
+  const currentFont = label.fontFamily ?? DEFAULT_FONT_FAMILY;
   const currentSize = label.fontSize ?? 12;
   const isBold = label.fontWeight === "bold";
   const isStrikethrough = label.textDecoration === "line-through";

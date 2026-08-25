@@ -1,6 +1,7 @@
 import { memo, useRef, useEffect, useState } from "react";
 import { Group, Rect, Text } from "react-konva";
 import type Konva from "konva";
+import { fontStack } from "@/constants/fonts";
 
 interface SectionTagProps {
   name: string;
@@ -53,7 +54,7 @@ export const SectionTag = memo(function SectionTag({
         text={name}
         fontSize={fontSize}
         fill="#ffffff"
-        fontFamily="Pretendard, sans-serif"
+        fontFamily={fontStack()}
       />
     </Group>
   );

@@ -1,11 +1,12 @@
 import { memo, useMemo } from "react";
 import { Group, Text } from "react-konva";
-import type { TextSegment, TextAlign, FontFamily } from "@/types";
+import type { TextSegment, TextAlign } from "@/types";
 import {
   measureTextWidth,
   richTextToPlainText,
   LINE_HEIGHT,
 } from "@/utils/richText";
+import { fontStack } from "@/constants/fonts";
 
 interface RichTextRendererProps {
   richText: TextSegment[];
@@ -16,7 +17,8 @@ interface RichTextRendererProps {
   height: number;
   defaultFontSize: number;
   defaultColor: string;
-  defaultFontFamily?: FontFamily;
+  /** 이미 풀린 폰트 스택 (constants/fonts 의 fontStack 통과분) */
+  defaultFontFamily?: string;
   textAlign?: TextAlign;
   verticalAlign?: "top" | "middle" | "bottom";
   listening?: boolean;
@@ -54,7 +56,7 @@ export const RichTextRenderer = memo(function RichTextRenderer({
   height,
   defaultFontSize,
   defaultColor,
-  defaultFontFamily = "Pretendard",
+  defaultFontFamily = fontStack(),
   textAlign = "left",
   verticalAlign = "top",
   listening = false,
@@ -106,7 +108,7 @@ export const RichTextRenderer = memo(function RichTextRenderer({
     for (let segIdx = 0; segIdx < richText.length; segIdx++) {
       const segment = richText[segIdx]!;
       const fontSize = segment.fontSize ?? defaultFontSize;
-      const fontFamily: string = defaultFontFamily || "Pretendard";
+      const fontFamily: string = defaultFontFamily || fontStack();
       const fontWeight = segment.fontWeight ?? "normal";
       const hasLink = !!segment.link;
       // Link text is blue, otherwise use segment color or default
@@ -200,7 +202,12 @@ export const RichTextRenderer = memo(function RichTextRenderer({
         } else {
           // Accumulate word
           word += char;
-          wordWidth += measureTextWidth(char as string, fontSize, fontFamily, fontWeight);
+          wordWidth += measureTextWidth(
+            char as string,
+            fontSize,
+            fontFamily,
+            fontWeight,
+          );
         }
       }
     }
@@ -296,7 +303,7 @@ export const SimpleRichTextRenderer = memo(function SimpleRichTextRenderer({
   height,
   defaultFontSize,
   defaultColor,
-  defaultFontFamily = "Pretendard",
+  defaultFontFamily = fontStack(),
   textAlign = "left",
   verticalAlign = "top",
   listening = false,

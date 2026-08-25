@@ -28,6 +28,7 @@ import {
   extractFirstTextStyle,
   hasMixedStyles,
 } from "@/utils/tiptapMigration";
+import { fontStack } from "@/constants/fonts";
 
 interface ShapeProps {
   shape: CanvasObject;
@@ -725,7 +726,7 @@ export const Shape = memo(function Shape({
 
   // Text styling
   const fontSize = shape.fontSize ?? 10;
-  const fontFamily = shape.fontFamily ?? "Pretendard";
+  const fontFamily = fontStack(shape.fontFamily);
   const textAlign = shape.textAlign ?? "center";
   const textColor = shape.textColor ?? "#1f2937";
   const isTextExpanded = shape.isTextExpanded ?? false;
@@ -897,7 +898,7 @@ export const Shape = memo(function Shape({
             height={textAreaHeight}
             text={tiptapPlainText}
             fontSize={tiptapStyle.fontSize ?? fontSize}
-            fontFamily={tiptapStyle.fontFamily ?? fontFamily}
+            fontFamily={fontStack(tiptapStyle.fontFamily) ?? fontFamily}
             fontStyle={tiptapStyle.fontStyle ?? "normal"}
             fill={tiptapStyle.color ?? textColor}
             align={(tiptapStyle.textAlign as string) ?? textAlign}

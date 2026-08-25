@@ -2,6 +2,7 @@ import { useMemo, memo, useCallback } from "react";
 import { generateHTML } from "@tiptap/react";
 import type { JSONContent } from "@tiptap/core";
 import { tiptapExtensions } from "./TiptapEditor";
+import { fontStack } from "@/constants/fonts";
 
 export interface TiptapViewerProps {
   content: JSONContent;
@@ -18,7 +19,7 @@ export const TiptapViewer = memo(function TiptapViewer({
   content,
   className,
   defaultFontSize = 10,
-  defaultFontFamily = "Pretendard",
+  defaultFontFamily = fontStack(),
   defaultTextColor = "#1f2937",
   defaultTextAlign = "left",
   enableLinkClick = false,

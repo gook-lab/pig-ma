@@ -8,6 +8,7 @@ import {
   getConnectorEndpoints,
   getConnectorPathPoints,
 } from "@/utils/connectorPath";
+import { fontStack } from "@/constants/fonts";
 
 interface ConnectorLabelProps {
   shape: CanvasObject;
@@ -201,7 +202,7 @@ export const ConnectorLabel = memo(function ConnectorLabel({
   );
 
   const fontSize = shape.fontSize ?? 12;
-  const fontFamily = shape.fontFamily ?? "Pretendard";
+  const fontFamily = fontStack(shape.fontFamily);
   const fontWeight = shape.fontWeight === "bold" ? "bold" : "normal";
   const textDecoration =
     shape.textDecoration === "line-through" ? "line-through" : "";

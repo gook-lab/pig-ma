@@ -22,6 +22,7 @@ import {
   tiptapToPlainText,
   extractFirstTextStyle,
 } from "@/utils/tiptapMigration";
+import { fontStack } from "@/constants/fonts";
 
 interface TableProps {
   shape: CanvasObject;
@@ -467,7 +468,7 @@ export const Table = memo(function Table({
             }
             text={text}
             fontSize={style.fontSize ?? 14}
-            fontFamily={style.fontFamily ?? "Pretendard"}
+            fontFamily={fontStack(style.fontFamily)}
             fontStyle={style.fontStyle}
             textDecoration={style.textDecoration}
             fill={style.color ?? "#1f2937"}

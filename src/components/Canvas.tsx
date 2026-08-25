@@ -114,6 +114,7 @@ import {
   toElbowSize,
 } from "@/utils/connectorPath";
 import { isShape } from "@/utils/typeGuards";
+import { useFontsReady } from "@/hooks/useFontsReady";
 
 interface MarqueeState {
   startX: number;
@@ -256,6 +257,9 @@ export function Canvas() {
   useEffect(() => {
     useCanvasStore.getState().setStageRef(stageRef);
   }, []);
+
+  // 웹폰트가 늦게 붙으면 텍스트 폭이 폴백 기준으로 굳는다 — 붙은 뒤 재측정
+  useFontsReady(stageRef);
 
   // Listen for alignment guide updates from ShapeRenderer
   useEffect(() => {

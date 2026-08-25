@@ -7,6 +7,7 @@ import { calculateRichTextHeight, textToRichText } from "@/utils/richText";
 import { TEXT_CONFIG } from "@/utils/textConfig";
 import { isShape } from "@/utils/typeGuards";
 import toast from "react-hot-toast";
+import { DEFAULT_FONT_FAMILY } from "@/constants/fonts";
 
 /**
  * TextBoxEditor - 선택된 textBox/stickyNote에 대한 옵션바 표시
@@ -188,7 +189,7 @@ export function TextBoxEditor() {
           updatedRichText,
           textWidth,
           newFontSize,
-          selectedTextObject.fontFamily ?? "Pretendard",
+          selectedTextObject.fontFamily ?? DEFAULT_FONT_FAMILY,
           selectedTextObject.lineIndents ?? [],
         );
 

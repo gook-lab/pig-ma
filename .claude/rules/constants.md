@@ -13,6 +13,7 @@
 | `index.ts` | 모든 상수 re-export |
 | `zIndex.ts` | z-index 계층 상수 |
 | `colors.ts` | 색상 팔레트 상수 |
+| `fonts.ts` | 폰트 토큰 → 스택 레지스트리 (기본 폰트·드롭다운 목록 정본) |
 | `text.ts` | 텍스트/타이포그래피 설정 |
 | `table.ts` | 테이블 셀 설정 |
 | `zoom.ts` | 줌 레벨 상수 |
@@ -30,6 +31,38 @@ import { TABLE_CELL } from "@/constants/table";
 const padding = 8; // ❌
 const padding = TABLE_CELL.padding.left; // ✅
 ```
+
+## FONTS — 폰트 토큰과 스택
+
+`FontFamily` 는 **토큰**이지 CSS 패밀리명이 아니다. 렌더·측정에 넘기기 직전에
+`fontStack()` 으로 풀어서 쓴다.
+
+```typescript
+import { DEFAULT_FONT_FAMILY, fontStack } from "@/constants/fonts";
+
+// 저장할 값(토큰)
+fontFamily: DEFAULT_FONT_FAMILY
+
+// Konva / CSS / measureTextWidth 에 넘길 값(스택)
+<Text fontFamily={fontStack(shape.fontFamily)} />
+```
+
+**폰트명을 그대로 넘기지 않는다.** 폴백 없는 이름 하나만 넘어가면 그 폰트가
+설치·로드되지 않았을 때 브라우저 기본 폰트(대개 세리프)로 떨어진다. 기본값이던
+`"Pretendard"` 가 어디에서도 로드되지 않아 캔버스 텍스트 전부가 세리프로
+그려지고 있었다 (2026-08-25 수리).
+
+폰트를 추가할 때 손대야 하는 곳:
+
+1. `types.ts` 의 `FontFamily` 유니온
+2. `schemas/canvasObject.ts` 의 `FontFamilySchema` (빠뜨리면 그 폰트가 담긴
+   `.pigma` 가 검증에서 튕긴다)
+3. `constants/fonts.ts` 의 `FONTS` — `Record<FontFamily, …>` 라 빠뜨리면
+   타입 에러로 잡힌다
+4. 웹폰트면 `index.html` 의 Google Fonts 링크
+
+드롭다운 목록(`FONT_OPTIONS`)과 Figma 매퍼의 허용 목록은 레지스트리에서
+파생되므로 따로 고치지 않는다.
 
 ## TEXT_CONFIG
 

@@ -3,6 +3,8 @@
  * Table.tsx, TableAddButtons.tsx, TableCellEditor.tsx 등에서 공유
  */
 
+import { DEFAULT_FONT_FAMILY } from "./fonts";
+
 // 테이블 기본 크기
 export const TABLE_DEFAULTS = {
   /** 기본 열 너비 (px) */
@@ -33,7 +35,7 @@ export const TABLE_CELL = {
   /** 기본 폰트 크기 */
   fontSize: 14,
   /** 기본 폰트 패밀리 */
-  fontFamily: "Pretendard",
+  fontFamily: DEFAULT_FONT_FAMILY,
   /** 기본 텍스트 색상 */
   textColor: "#1f2937",
   /** 기본 텍스트 정렬 */
