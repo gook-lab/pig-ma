@@ -1,4 +1,5 @@
 import { nanoid } from "nanoid";
+import { DEFAULT_FONT_FAMILY } from "@/constants/fonts";
 import type {
   CanvasObject,
   PenSettings,
@@ -225,7 +226,7 @@ export function createStickyNote(
     fontSize: 16,
     fontWeight: "normal",
     textDecoration: "none",
-    fontFamily: "Pretendard",
+    fontFamily: DEFAULT_FONT_FAMILY,
     fontSizePreset: "S", // 'S' preset = 16px, matches fontSize
     textAlign: "left",
     listType: "none",
@@ -254,7 +255,7 @@ export function createTextBox(
     height: 40,
     text: "",
     textColor: "#000000",
-    fontFamily: "Pretendard",
+    fontFamily: DEFAULT_FONT_FAMILY,
     fontSizePreset: "M",
     fontSize: 16,
     fontWeight: "normal",
@@ -420,7 +421,7 @@ export function createConnectorLabel(
     y,
     text: "",
     fontSize: 12,
-    fontFamily: "Pretendard",
+    fontFamily: DEFAULT_FONT_FAMILY,
     textColor: "#374151",
     fontWeight: "normal",
     textDecoration: "none",

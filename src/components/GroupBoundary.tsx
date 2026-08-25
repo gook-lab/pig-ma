@@ -9,6 +9,7 @@ import {
   getConnectorEndpoints,
   getConnectorPathPoints,
 } from "@/utils/connectorPath";
+import { fontStack } from "@/constants/fonts";
 
 interface GroupBoundaryProps {
   group: GroupInfo;
@@ -333,7 +334,7 @@ export const GroupBoundary = memo(function GroupBoundary({
           text="Hidden"
           fontSize={14 / zoom}
           fill="#9ca3af"
-          fontFamily="Pretendard, sans-serif"
+          fontFamily={fontStack()}
           listening={false}
         />
         <SectionTag

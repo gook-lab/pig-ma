@@ -22,7 +22,6 @@ import {
 import { cn } from "@/lib/utils";
 import type {
   CanvasObject,
-  FontFamily,
   FontSize,
   TextAlign,
   ListType,
@@ -30,6 +29,7 @@ import type {
 } from "@/types";
 import type { RichTextEditorRef } from "./RichTextEditor";
 import type { Editor } from "@tiptap/react";
+import { DEFAULT_FONT_FAMILY, FONT_OPTIONS } from "@/constants/fonts";
 
 interface TextOptionsBarProps {
   object: CanvasObject;
@@ -57,13 +57,7 @@ interface TextOptionsBarProps {
 
 type FillMode = "fill" | "transparent" | "nofill";
 
-const FONT_FAMILIES: { id: FontFamily; label: string }[] = [
-  { id: "Pretendard", label: "Pretendard" },
-  { id: "Noto Sans KR", label: "Noto Sans" },
-  { id: "Nanum Gothic", label: "나눔고딕" },
-  { id: "Nanum Myeongjo", label: "나눔명조" },
-  { id: "IBM Plex Sans KR", label: "IBM Plex" },
-];
+const FONT_FAMILIES = FONT_OPTIONS;
 
 const FONT_SIZES: { id: FontSize; size: number; label: string }[] = [
   { id: "S", size: 16, label: "Small" },
@@ -201,7 +195,7 @@ export function TextOptionsBar({
     setCustomFontSize(String(Math.round(fontSize)));
   }, [object.fontSize, selectionFontSize]);
 
-  const currentFontFamily = object.fontFamily ?? "Pretendard";
+  const currentFontFamily = object.fontFamily ?? DEFAULT_FONT_FAMILY;
   const currentTextAlign = object.textAlign ?? "left";
   const currentListType = object.listType ?? "none";
   const isBold = object.fontWeight === "bold";

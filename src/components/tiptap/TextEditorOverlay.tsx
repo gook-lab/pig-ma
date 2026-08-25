@@ -22,6 +22,7 @@ import { isShape as isShapeType } from "@/utils/typeGuards";
 import { TEXT_CONFIG } from "@/utils/textConfig";
 import { useCanvasStore } from "@/store";
 import { TextOptionsBar } from "@/components/TextOptionsBar";
+import { fontStack } from "@/constants/fonts";
 
 export function TextEditorOverlay() {
   const editingTextId = useCanvasStore((s) => s.editingTextId);
@@ -516,7 +517,7 @@ export function TextEditorOverlay() {
             onChange={handleChange}
             onEditorReady={handleEditorReady}
             defaultFontSize={editingObject.fontSize ?? 16}
-            defaultFontFamily={editingObject.fontFamily ?? "Pretendard"}
+            defaultFontFamily={fontStack(editingObject.fontFamily)}
             defaultTextColor={editingObject.textColor ?? "#1f2937"}
             defaultTextAlign={
               (editingObject.textAlign as "left" | "center" | "right") ??

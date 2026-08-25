@@ -20,6 +20,7 @@ import {
   textSegmentsToTiptap,
   tiptapToStyledSegments,
 } from "@/utils/tiptapMigration";
+import { DEFAULT_FONT_FAMILY, FONT_FAMILY_IDS } from "@/constants/fonts";
 
 /** Result of importing a Figma document: shapes + groups */
 export interface FigmaImportResult {
@@ -107,13 +108,9 @@ function pigmaTextAlignToFigma(align?: PigmaTextAlign): FigmaTextAlign {
 // Font & Rich Text Mapping
 // ============================================================================
 
-const PIGMA_FONT_FAMILIES = [
-  "Pretendard",
-  "Noto Sans KR",
-  "Nanum Gothic",
-  "Nanum Myeongjo",
-  "IBM Plex Sans KR",
-] as const;
+// 정본은 constants/fonts.ts — 여기에 목록을 복사해 두면 폰트를 추가할 때
+// 한쪽만 늘어나 Figma import 가 조용히 그 폰트를 버린다.
+const PIGMA_FONT_FAMILIES = FONT_FAMILY_IDS;
 
 /**
  * Figma 폰트명 → pig-ma FontFamily.
@@ -348,7 +345,7 @@ export function figmaToPigma(node: FigmaNode): PigmaShape | null {
                 measureTextWidth(
                   line,
                   fontSize,
-                  mappedFamily ?? "Pretendard",
+                  mappedFamily ?? DEFAULT_FONT_FAMILY,
                   fontWeight,
                 ),
               ),

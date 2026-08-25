@@ -10,6 +10,7 @@ import { SelectionBorder } from "@/components/SelectionBorder";
 import { textToRichText, calculateRichTextHeight } from "@/utils/richText";
 import { useCanvasStore } from "@/store";
 import { TEXT_CONFIG, isTextReadable } from "@/constants/text";
+import { fontStack } from "@/constants/fonts";
 
 interface RectangleProps {
   shape: CanvasObject;
@@ -67,7 +68,7 @@ export const Rectangle = memo(function Rectangle({
     : getStrokeDash(shape.lineStyle, strokeWidth);
   const strokeColor = isLocked ? "#ef4444" : (shape.stroke ?? "#374151");
   const fontSize = shape.fontSize ?? 10;
-  const fontFamily = shape.fontFamily ?? "Pretendard";
+  const fontFamily = fontStack(shape.fontFamily);
   const textAlign = shape.textAlign ?? "center";
   const textColor = shape.textColor ?? "#1f2937";
   const isTextExpanded = shape.isTextExpanded ?? false;

@@ -24,6 +24,11 @@ import type {
   FontSize,
 } from "@/types";
 import type { Editor } from "@tiptap/core";
+import {
+  DEFAULT_FONT_FAMILY,
+  FONT_OPTIONS,
+  fontStack,
+} from "@/constants/fonts";
 
 interface ShapeOptionsBarProps {
   shape: CanvasObject;
@@ -95,14 +100,8 @@ const TEXT_COLORS = [
   "#8b5cf6",
 ];
 
-// Font families
-const FONT_FAMILIES: { id: FontFamily; label: string }[] = [
-  { id: "Pretendard", label: "Pretendard" },
-  { id: "Noto Sans KR", label: "Noto Sans" },
-  { id: "Nanum Gothic", label: "나눔고딕" },
-  { id: "Nanum Myeongjo", label: "나눔명조" },
-  { id: "IBM Plex Sans KR", label: "IBM Plex" },
-];
+// Font families — 정본은 constants/fonts.ts (세 옵션바가 각자 들고 있었다)
+const FONT_FAMILIES = FONT_OPTIONS;
 
 // Font sizes
 const FONT_SIZES: { id: FontSize; size: number; label: string }[] = [
@@ -472,7 +471,7 @@ export function ShapeOptionsBar({
   // Text options
   const currentTextColor = shape.textColor ?? "#000000";
   const currentTextAlign = shape.textAlign ?? "center";
-  const currentFontFamily = shape.fontFamily ?? "Pretendard";
+  const currentFontFamily = shape.fontFamily ?? DEFAULT_FONT_FAMILY;
   const currentFontSize = shape.fontSize ?? 10;
 
   // Sync customFontSize with shape's fontSize
@@ -531,12 +530,7 @@ export function ShapeOptionsBar({
   const togglePanel = useCallback(
     (
       panel:
-        | "shape"
-        | "fill"
-        | "stroke"
-        | "textColor"
-        | "fontFamily"
-        | "fontSize",
+        "shape" | "fill" | "stroke" | "textColor" | "fontFamily" | "fontSize",
     ) => {
       setActivePanel((prev) => {
         if (prev === panel) return null;
@@ -774,7 +768,7 @@ export function ShapeOptionsBar({
           <Type className="h-4 w-4 text-white" />
           <span
             className="max-w-[50px] truncate text-xs text-white"
-            style={{ fontFamily: currentFontFamily }}
+            style={{ fontFamily: fontStack(currentFontFamily) }}
           >
             {FONT_FAMILIES.find((f) => f.id === currentFontFamily)?.label ??
               "Pretendard"}

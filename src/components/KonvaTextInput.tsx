@@ -14,6 +14,7 @@ import {
   CURSOR_WIDTH,
   CURSOR_HEIGHT_RATIO,
 } from "@/utils/textConfig";
+import { fontStack } from "@/constants/fonts";
 
 // ============================================================================
 // Types
@@ -231,7 +232,7 @@ export const KonvaCursor = memo(function KonvaCursor({
   selectionEnd,
   isFocused,
   fontSize,
-  fontFamily = "Pretendard",
+  fontFamily = fontStack(),
   fontWeight = "normal",
   width,
   textAlign = "left",
@@ -366,7 +367,7 @@ export const HiddenTextarea = memo(
       onFocus,
       screenPosition,
       fontSize,
-      fontFamily = "Pretendard",
+      fontFamily = fontStack(),
       autoFocus = true,
     },
     ref,

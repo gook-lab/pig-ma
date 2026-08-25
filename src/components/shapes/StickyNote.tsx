@@ -12,6 +12,7 @@ import { TEXT_CONFIG } from "@/utils/textConfig";
 import { isTextReadable } from "@/constants/text";
 import { useCanvasStore } from "@/store";
 import { LINE_HEIGHT } from "@/utils/richText";
+import { fontStack } from "@/constants/fonts";
 
 interface StickyNoteProps {
   shape: CanvasObject;
@@ -140,11 +141,7 @@ export const StickyNote = memo(function StickyNote({
                   shape.fontSize ??
                   TEXT_CONFIG.stickyNote.defaultFontSize,
               )}
-              fontFamily={
-                tiptapStyle.fontFamily ??
-                shape.fontFamily ??
-                "Pretendard, sans-serif"
-              }
+              fontFamily={fontStack(tiptapStyle.fontFamily ?? shape.fontFamily)}
               fontStyle={
                 tiptapStyle.fontStyle ??
                 (shape.fontWeight === "bold" ? "bold" : "normal")

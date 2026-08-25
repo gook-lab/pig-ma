@@ -134,12 +134,10 @@ export function convertMermaid(graph: MermaidGraph): MermaidConvertResult {
     2;
   const detourSide = (from: Rect, to: Rect): AnchorSide => {
     if (vertical) {
-      const anchorMid =
-        ((from.x + from.width / 2) + (to.x + to.width / 2)) / 2;
+      const anchorMid = (from.x + from.width / 2 + (to.x + to.width / 2)) / 2;
       return anchorMid <= graphMidX ? "left" : "right";
     }
-    const anchorMid =
-      ((from.y + from.height / 2) + (to.y + to.height / 2)) / 2;
+    const anchorMid = (from.y + from.height / 2 + (to.y + to.height / 2)) / 2;
     return anchorMid <= graphMidY ? "top" : "bottom";
   };
 
@@ -166,8 +164,14 @@ export function convertMermaid(graph: MermaidGraph): MermaidConvertResult {
 
     // 랭크 간 거리로 건너뛰기를 판정한다 (한 랭크면 간격이 RANK_GAP 하나).
     const span = vertical
-      ? Math.abs(reversed ? from.y - (to.y + to.height) : to.y - (from.y + from.height))
-      : Math.abs(reversed ? from.x - (to.x + to.width) : to.x - (from.x + from.width));
+      ? Math.abs(
+          reversed
+            ? from.y - (to.y + to.height)
+            : to.y - (from.y + from.height),
+        )
+      : Math.abs(
+          reversed ? from.x - (to.x + to.width) : to.x - (from.x + from.width),
+        );
     const skipsRank = span > RANK_GAP * 1.6;
     const side = detourSide(from, to);
     const sourceAnchor = skipsRank ? side : flowSource;

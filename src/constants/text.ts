@@ -9,6 +9,8 @@
  * - Rectangle.tsx, StickyNote.tsx 등 (Konva 렌더링)
  */
 
+import { DEFAULT_FONT_FAMILY } from "./fonts";
+
 // 줄 높이 배율 (폰트 크기 * LINE_HEIGHT = 실제 줄 높이)
 export const LINE_HEIGHT = 1.5;
 
@@ -19,7 +21,7 @@ export const INDENT_WIDTH = 20;
 export const TEXT_CONFIG = {
   stickyNote: {
     defaultFontSize: 16,
-    defaultFontFamily: "Pretendard",
+    defaultFontFamily: DEFAULT_FONT_FAMILY,
     defaultTextColor: "#1f2937",
     defaultWidth: 200,
     defaultHeight: 200,
@@ -34,7 +36,7 @@ export const TEXT_CONFIG = {
   },
   textBox: {
     defaultFontSize: 24, // preset M
-    defaultFontFamily: "Pretendard",
+    defaultFontFamily: DEFAULT_FONT_FAMILY,
     defaultTextColor: "#000000",
     defaultWidth: 200,
     defaultHeight: 40,
@@ -49,7 +51,7 @@ export const TEXT_CONFIG = {
   },
   shape: {
     defaultFontSize: 10,
-    defaultFontFamily: "Pretendard",
+    defaultFontFamily: DEFAULT_FONT_FAMILY,
     defaultTextColor: "#1f2937",
     defaultWidth: 100,
     defaultHeight: 100,
@@ -65,7 +67,7 @@ export const TEXT_CONFIG = {
   },
   connectorLabel: {
     defaultFontSize: 12,
-    defaultFontFamily: "Pretendard",
+    defaultFontFamily: DEFAULT_FONT_FAMILY,
     defaultTextColor: "#374151",
     defaultWidth: 100,
     defaultHeight: 24,

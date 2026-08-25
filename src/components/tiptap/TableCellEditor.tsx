@@ -22,6 +22,7 @@ import {
 import { TABLE_CELL } from "@/constants/table";
 import { TextOptionsBar } from "@/components/TextOptionsBar";
 import { calculateOptionsBarPosition } from "@/utils/optionsBar";
+import { fontStack } from "@/constants/fonts";
 
 export function TableCellEditor() {
   const editingTableCell = useCanvasStore((s) => s.editingTableCell);
@@ -300,7 +301,7 @@ export function TableCellEditor() {
             onChange={handleChange}
             onEditorReady={handleEditorReady}
             defaultFontSize={14}
-            defaultFontFamily="Pretendard"
+            defaultFontFamily={fontStack()}
             defaultTextColor="#1f2937"
             defaultTextAlign="left"
             className="h-full w-full"

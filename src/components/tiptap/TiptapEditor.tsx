@@ -19,6 +19,7 @@ import tippy, { type Instance as TippyInstance } from "tippy.js";
 import { useEffect, useCallback } from "react";
 import type { JSONContent } from "@tiptap/core";
 import { MentionList, filterUsers, type MentionListRef } from "./MentionList";
+import { fontStack } from "@/constants/fonts";
 
 const lowlight = createLowlight(common);
 
@@ -172,7 +173,7 @@ export function TiptapEditor({
   editable = true,
   className,
   defaultFontSize = 10,
-  defaultFontFamily = "Pretendard",
+  defaultFontFamily = fontStack(),
   defaultTextColor = "#1f2937",
   defaultTextAlign = "left",
 }: TiptapEditorProps) {
