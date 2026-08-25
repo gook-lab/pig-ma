@@ -200,6 +200,7 @@ src/
 | `options-bars.md` | 옵션 바 공통 패턴 | `*OptionsBar.tsx` |
 | `editors.md` | Editor 컴포넌트 패턴 | `*Editor.tsx` |
 | `figma.md` | Figma 연동 매핑/클라이언트 규칙 | `src/figma/**/*.ts` |
+| `docs.md` | 문서 톤앤매너·다이어그램 규약 (guk-lab 공통) | `README*.md`, `docs/**/*.md` |
 
 ---
 
