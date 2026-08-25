@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { convertExcalidraw, parseExcalidrawFile } from "../mapper";
+import {
+  anchorFromPoint,
+  convertExcalidraw,
+  parseExcalidrawFile,
+} from "../mapper";
 import { ExcalidrawImportError } from "../types";
 import type { ExcalidrawData, ExcalidrawElement } from "../types";
 
@@ -191,6 +195,61 @@ describe("화살표/선 변환", () => {
     expect(conn.pathStyle).toBe("straight");
   });
 
+  it("바인딩된 화살표는 앵커가 붙는다 — 도형 중앙에서 출발하지 않는다", () => {
+    // A(0,0,100×60) 아래에서 출발해 B(0,200,100×60) 위로 들어가는 세로 화살표
+    const { objects } = convertExcalidraw(
+      data([
+        element({ id: "a", type: "rectangle" }),
+        element({ id: "b", type: "rectangle", y: 200 }),
+        element({
+          id: "arrow1",
+          type: "arrow",
+          x: 50,
+          y: 64,
+          width: 0,
+          height: 132,
+          points: [
+            [0, 0],
+            [0, 132],
+          ],
+          startBinding: { elementId: "a" },
+          endBinding: { elementId: "b" },
+        }),
+      ]),
+    );
+    const conn = objects.find((o) => o.id === "arrow1")!;
+    // 앵커가 없으면 connectorPath 가 "center" 로 해석해 선이 도형을 뚫는다
+    expect(conn.sourceAnchor).toBe("bottom");
+    expect(conn.targetAnchor).toBe("top");
+    expect(conn.sourceOffsetRatioY).toBe(1);
+    expect(conn.targetOffsetRatioY).toBe(0);
+  });
+
+  it("변 위 위치를 비율로 보존한다 — 원본 배선 그대로", () => {
+    // B(0,200,100×60) 의 위쪽 변 1/4 지점(x=25)으로 들어간다
+    const { objects } = convertExcalidraw(
+      data([
+        element({ id: "b", type: "rectangle", y: 200 }),
+        element({
+          id: "arrow1",
+          type: "arrow",
+          x: 25,
+          y: 100,
+          width: 0,
+          height: 96,
+          points: [
+            [0, 0],
+            [0, 96],
+          ],
+          endBinding: { elementId: "b" },
+        }),
+      ]),
+    );
+    const conn = objects.find((o) => o.id === "arrow1")!;
+    expect(conn.targetAnchor).toBe("top");
+    expect(conn.targetOffsetRatioX).toBeCloseTo(0.25);
+  });
+
   it("바인딩 대상이 없으면 sourceId/targetId 를 설정하지 않는다", () => {
     const { objects } = convertExcalidraw(
       data([
@@ -321,6 +380,32 @@ describe("화살표/선 변환", () => {
     expect(poly.type).toBe("line");
     expect(poly.points).toEqual([0, 0, 10, 10, 20, 0]);
     expect(objects.find((o) => o.id === "draw")!.penType).toBe("pen");
+  });
+});
+
+describe("anchorFromPoint", () => {
+  const rect = { x: 0, y: 0, width: 100, height: 60 };
+
+  it("가장 가까운 변을 고른다", () => {
+    expect(anchorFromPoint(rect, { x: 50, y: -4 }).anchor).toBe("top");
+    expect(anchorFromPoint(rect, { x: 50, y: 64 }).anchor).toBe("bottom");
+    expect(anchorFromPoint(rect, { x: -4, y: 30 }).anchor).toBe("left");
+    expect(anchorFromPoint(rect, { x: 104, y: 30 }).anchor).toBe("right");
+  });
+
+  it("변 밖으로 나간 점도 비율이 0~1 안에 들어온다", () => {
+    const a = anchorFromPoint(rect, { x: -50, y: -4 });
+    expect(a.ratioX).toBeGreaterThanOrEqual(0);
+    expect(a.ratioX).toBeLessThanOrEqual(1);
+  });
+
+  it("크기가 0 인 도형에서도 나눗셈이 깨지지 않는다", () => {
+    const a = anchorFromPoint(
+      { x: 0, y: 0, width: 0, height: 0 },
+      { x: 5, y: 5 },
+    );
+    expect(Number.isFinite(a.ratioX)).toBe(true);
+    expect(Number.isFinite(a.ratioY)).toBe(true);
   });
 });
 
