@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { FONT_FAMILY_IDS } from "@/constants/fonts";
+import type { FontFamily } from "@/types";
 
 // Basic enum types
 export const ObjectTypeSchema = z.enum([
@@ -67,13 +69,11 @@ export const ElbowCornerStyleSchema = z.enum(["sharp", "rounded"]);
 
 export const ContentVersionSchema = z.union([z.literal(1), z.literal(2)]);
 
-export const FontFamilySchema = z.enum([
-  "Pretendard",
-  "Noto Sans KR",
-  "Nanum Gothic",
-  "Nanum Myeongjo",
-  "IBM Plex Sans KR",
-]);
+// 목록을 여기에 복사해 두면 폰트를 추가할 때 한쪽만 늘어나고, 새 폰트가 담긴
+// .pigma 가 검증에서 튕긴다. 레지스트리에서 파생시켜 그 경로를 없앤다.
+export const FontFamilySchema = z.enum(
+  FONT_FAMILY_IDS as [FontFamily, ...FontFamily[]],
+);
 
 export const FontSizeSchema = z.enum(["S", "M", "L", "XL", "XXL"]);
 

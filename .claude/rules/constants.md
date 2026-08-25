@@ -52,17 +52,22 @@ fontFamily: DEFAULT_FONT_FAMILY
 `"Pretendard"` 가 어디에서도 로드되지 않아 캔버스 텍스트 전부가 세리프로
 그려지고 있었다 (2026-08-25 수리).
 
-폰트를 추가할 때 손대야 하는 곳:
+폰트를 추가할 때 손대야 하는 곳은 **둘뿐이다**:
 
 1. `types.ts` 의 `FontFamily` 유니온
-2. `schemas/canvasObject.ts` 의 `FontFamilySchema` (빠뜨리면 그 폰트가 담긴
-   `.pigma` 가 검증에서 튕긴다)
-3. `constants/fonts.ts` 의 `FONTS` — `Record<FontFamily, …>` 라 빠뜨리면
-   타입 에러로 잡힌다
-4. 웹폰트면 `index.html` 의 Google Fonts 링크
+2. `constants/fonts.ts` 의 `FONTS` — `Record<FontFamily, …>` 라 빠뜨리면
+   타입 에러로 잡힌다. 웹폰트면 `webFonts` 에 적고 `index.html` 링크에도
+   넣는다 (둘이 어긋나면 `fonts.test.ts` 가 실패한다)
 
-드롭다운 목록(`FONT_OPTIONS`)과 Figma 매퍼의 허용 목록은 레지스트리에서
-파생되므로 따로 고치지 않는다.
+zod 스키마·드롭다운 목록(`FONT_OPTIONS`)·Figma 매퍼 허용 목록은 전부
+레지스트리에서 파생되므로 따로 고치지 않는다.
+
+### 토큰이 여러 폰트로 풀리는 경우
+
+`Handwriting` 은 라틴(Patrick Hand)과 한글(Gaegu)을 **다른 폰트로** 받는다.
+Excalidraw 의 Excalifont 는 Google Fonts 에 없고 한글 글리프도 없어서 그대로
+쓸 수 없기 때문이다. 토큰을 CSS 패밀리명이 아니라 스택으로 푸는 구조가
+필요했던 이유가 이것이다.
 
 ## TEXT_CONFIG
 

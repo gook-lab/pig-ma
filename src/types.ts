@@ -70,12 +70,16 @@ export type ShapeVariant =
   | "flowSumming"; // Circle with X
 
 // Text styles
+// 토큰이지 CSS 패밀리명이 아니다 — 스택은 constants/fonts.ts 가 갖는다.
+// 추가할 때 손댈 곳은 `.claude/rules/constants.md` 의 FONTS 절 참조.
 export type FontFamily =
+  | "System"
   | "Pretendard"
   | "Noto Sans KR"
   | "Nanum Gothic"
   | "Nanum Myeongjo"
-  | "IBM Plex Sans KR";
+  | "IBM Plex Sans KR"
+  | "Handwriting";
 export type FontSize = "S" | "M" | "L" | "XL" | "XXL";
 export type TextAlign = "left" | "center" | "right";
 export type ListType = "none" | "number" | "bullet";
