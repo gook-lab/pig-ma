@@ -9,6 +9,7 @@ import {
 } from "@/utils/branchPath";
 import { getAnchorPointWithAngle } from "@/utils/geometry";
 import { measureTextWidth } from "@/utils/richText";
+import { fontStack } from "@/constants/fonts";
 
 /**
  * 분기 커넥터 — 줄기 1개에서 갈래 N개가 뻗는 마인드맵식 화살표.
@@ -150,6 +151,9 @@ export const BranchConnector = memo(function BranchConnector({
     ],
   );
 
+  // 렌더와 측정이 같은 폰트를 봐야 한다 — 안 그러면 흰 배경 폭이 어긋난다
+  const labelFontStack = fontStack(connector.fontFamily);
+
   // 갈래 라벨은 드롭 구간 위에 놓는다 (branchLabelPoint 주석 참조) — 줄기와
   // 버스는 갈래끼리 공유될 수 있어서 라벨이 겹친다.
   const labels = useMemo(() => {
@@ -161,10 +165,11 @@ export const BranchConnector = memo(function BranchConnector({
       // 글자 수 × 상수로 폭을 잡으면 한글에서 좁게 나와 라벨이 접힌다 —
       // 캔버스로 실측한다 (DOM 없으면 measureTextWidth 가 추정 폴백).
       const width =
-        measureTextWidth(text, LABEL_FONT_SIZE, "sans-serif") + LABEL_PAD_X * 2;
+        measureTextWidth(text, LABEL_FONT_SIZE, labelFontStack) +
+        LABEL_PAD_X * 2;
       return [{ id: b.id, text, x: at.x, y: at.y, width }];
     });
-  }, [paths.branches, connector.branchLabels]);
+  }, [paths.branches, connector.branchLabels, labelFontStack]);
 
   if (targets.length === 0) return null;
 
@@ -278,6 +283,7 @@ export const BranchConnector = memo(function BranchConnector({
           <Text
             text={l.text}
             fontSize={LABEL_FONT_SIZE}
+            fontFamily={labelFontStack}
             fill="#1f2937"
             width={l.width}
             align="center"

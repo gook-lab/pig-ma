@@ -51,6 +51,10 @@ import {
   defaultCorners,
   removeStairStep,
 } from "@/utils/elbowHandlers";
+import { fontStack } from "@/constants/fonts";
+
+const LABEL_FONT_SIZE = 12;
+import { measureTextWidth } from "@/utils/richText";
 
 interface ConnectorProps {
   connector: CanvasObject;
@@ -685,6 +689,13 @@ export const Connector = memo(function Connector({
   }
   const strokeColor = isSelected ? "#0D99FF" : (connector.stroke ?? "#374151");
   const strokeWidth = connector.strokeWidth ?? 2; // Keep same width when selected
+
+  // 라벨 폭은 캔버스로 실측한다. 글자 수 × 상수로 잡으면 한글에서 좁게 나와
+  // 흰 배경이 글자를 못 덮고 가운데 정렬도 어긋난다.
+  const labelFontStack = fontStack(connector.fontFamily);
+  const labelWidth = connector.label
+    ? measureTextWidth(connector.label, LABEL_FONT_SIZE, labelFontStack)
+    : 0;
 
   // Check if connector is standalone (not attached to any shapes)
   const isStandalone = !connector.sourceId && !connector.targetId;
@@ -2286,9 +2297,9 @@ export const Connector = memo(function Connector({
           }}
         >
           <Rect
-            x={-connector.label.length * 3.5 - 4}
+            x={-labelWidth / 2 - 4}
             y={-10}
-            width={connector.label.length * 7 + 8}
+            width={labelWidth + 8}
             height={20}
             fill="white"
             cornerRadius={4}
@@ -2300,10 +2311,12 @@ export const Connector = memo(function Connector({
             x={0}
             y={-6}
             text={connector.label}
-            fontSize={12}
+            fontSize={LABEL_FONT_SIZE}
+            fontFamily={labelFontStack}
             fill="#374151"
             align="center"
-            offsetX={connector.label.length * 3.5}
+            offsetX={labelWidth / 2}
+            wrap="none"
             listening={false}
             perfectDrawEnabled={false}
           />
