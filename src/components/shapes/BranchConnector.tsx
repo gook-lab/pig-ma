@@ -2,7 +2,11 @@ import { memo, useMemo } from "react";
 import { Group, Line, Shape, Circle, Text, Rect } from "react-konva";
 import type Konva from "konva";
 import type { CanvasObject } from "@/types";
-import { computeBranchPaths, type BranchAnchor } from "@/utils/branchPath";
+import {
+  branchLabelPoint,
+  computeBranchPaths,
+  type BranchAnchor,
+} from "@/utils/branchPath";
 import { getAnchorPointWithAngle } from "@/utils/geometry";
 import { measureTextWidth } from "@/utils/richText";
 
@@ -29,6 +33,28 @@ const DASH: Record<string, number[] | undefined> = {
   dashed: [8, 4],
   dotted: [2, 4],
 };
+
+/**
+ * 앵커 변 위 비율 t 를 도형 바운즈 비율(ratioX/ratioY)로 옮긴다.
+ * 흐름 축과 직교하는 축만 t 를 쓰고, 흐름 축은 변에 고정한다.
+ */
+function anchorRatios(
+  anchor: BranchAnchor,
+  t: number,
+): { ratioX: number; ratioY: number } {
+  switch (anchor) {
+    case "top":
+      return { ratioX: t, ratioY: 0 };
+    case "bottom":
+      return { ratioX: t, ratioY: 1 };
+    case "left":
+      return { ratioX: 0, ratioY: t };
+    case "right":
+      return { ratioX: 1, ratioY: t };
+    case "center":
+      return { ratioX: 0.5, ratioY: 0.5 };
+  }
+}
 
 const LABEL_FONT_SIZE = 12;
 const LABEL_PAD_X = 6;
@@ -80,26 +106,29 @@ export const BranchConnector = memo(function BranchConnector({
 
   const targets = useMemo(() => {
     const ids = connector.targetIds ?? [];
+    const anchor = (connector.targetAnchor ?? "center") as BranchAnchor;
     return ids.flatMap((id, i) => {
       const obj = targetObjects[i];
       if (!obj) return [];
+      // 도착 비율이 지정된 갈래는 변의 중앙 대신 그 지점으로 들어간다
+      const t = connector.branchTargetT?.[id];
+      const r = t == null ? undefined : anchorRatios(anchor, t);
       const point = getAnchorPointWithAngle(
         obj,
-        connector.targetAnchor ?? "center",
+        anchor,
         connector.targetAngle,
+        undefined,
+        undefined,
+        r?.ratioX,
+        r?.ratioY,
       );
-      return [
-        {
-          id,
-          point,
-          anchor: (connector.targetAnchor ?? "center") as BranchAnchor,
-        },
-      ];
+      return [{ id, point, anchor }];
     });
   }, [
     connector.targetIds,
     connector.targetAnchor,
     connector.targetAngle,
+    connector.branchTargetT,
     targetObjects,
   ]);
 
@@ -121,20 +150,19 @@ export const BranchConnector = memo(function BranchConnector({
     ],
   );
 
-  // 갈래 라벨은 갈래의 중간 지점에 놓는다 — 줄기는 공유 구간이라 겹친다.
+  // 갈래 라벨은 드롭 구간 위에 놓는다 (branchLabelPoint 주석 참조) — 줄기와
+  // 버스는 갈래끼리 공유될 수 있어서 라벨이 겹친다.
   const labels = useMemo(() => {
     const map = connector.branchLabels ?? {};
     return paths.branches.flatMap((b) => {
       const text = map[b.id];
       if (!text) return [];
-      const mid = Math.floor(b.points.length / 4) * 2;
-      const x = b.points[mid] ?? b.points[0]!;
-      const y = b.points[mid + 1] ?? b.points[1]!;
+      const at = branchLabelPoint(b.points);
       // 글자 수 × 상수로 폭을 잡으면 한글에서 좁게 나와 라벨이 접힌다 —
       // 캔버스로 실측한다 (DOM 없으면 measureTextWidth 가 추정 폴백).
       const width =
         measureTextWidth(text, LABEL_FONT_SIZE, "sans-serif") + LABEL_PAD_X * 2;
-      return [{ id: b.id, text, x, y, width }];
+      return [{ id: b.id, text, x: at.x, y: at.y, width }];
     });
   }, [paths.branches, connector.branchLabels]);
 

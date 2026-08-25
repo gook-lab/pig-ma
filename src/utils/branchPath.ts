@@ -132,6 +132,47 @@ export function computeBranchPaths(input: BranchPathInput): BranchPathResult {
   return { junction, trunk, branches };
 }
 
+/** 화살촉 위에 라벨이 얹히지 않도록 끝점에서 물러설 거리 */
+const ARROW_CLEARANCE = 14;
+/** 이보다 짧은 드롭 구간에는 라벨을 못 놓는다 — 한 칸 앞 구간으로 물러선다 */
+const MIN_LABEL_SEGMENT = 28;
+
+/** 한 구간 위의 라벨 지점 — 중간점이되 끝점에서 최소 간격은 띄운다. */
+function segmentLabelPoint(
+  sx: number,
+  sy: number,
+  ex: number,
+  ey: number,
+): Point {
+  const len = Math.hypot(ex - sx, ey - sy);
+  if (len === 0) return { x: ex, y: ey };
+  const back = Math.max(len / 2, Math.min(len * 0.9, ARROW_CLEARANCE));
+  return { x: ex - ((ex - sx) / len) * back, y: ey - ((ey - sy) / len) * back };
+}
+
+/**
+ * 갈래 라벨을 놓을 지점 — **드롭 구간**(타깃마다 다른 마지막 구간)의 중간.
+ *
+ * 꺾임점에 놓으면 안 된다. 그 자리는 버스와 드롭이 만나는 곳이라 라벨이 어느
+ * 갈래를 가리키는지 읽히지 않고, 타깃이 같은 방향에 몰려 있으면 버스 구간이
+ * 서로 겹쳐 라벨끼리도 포개진다. 드롭 구간은 갈래마다 반드시 다르다.
+ */
+export function branchLabelPoint(points: number[]): Point {
+  const n = points.length;
+  if (n < 4) return { x: points[0] ?? 0, y: points[1] ?? 0 };
+
+  const sx = points[n - 4]!,
+    sy = points[n - 3]!;
+  const ex = points[n - 2]!,
+    ey = points[n - 1]!;
+
+  // 타깃이 분기점 바로 아래라 드롭이 짧으면 그 앞 구간(버스)으로 물러선다
+  if (Math.hypot(ex - sx, ey - sy) < MIN_LABEL_SEGMENT && n >= 6) {
+    return segmentLabelPoint(points[n - 6]!, points[n - 5]!, sx, sy);
+  }
+  return segmentLabelPoint(sx, sy, ex, ey);
+}
+
 /** 분기 커넥터인지 — 렌더러가 이걸로 갈라진다. */
 export function isBranchConnector(obj: {
   type?: string;

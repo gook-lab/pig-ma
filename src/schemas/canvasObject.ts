@@ -254,6 +254,7 @@ export const CanvasObjectSchema = z
     targetIds: z.array(z.string()).optional(),
     junctionT: z.number().optional(),
     branchLabels: z.record(z.string(), z.string()).optional(),
+    branchTargetT: z.record(z.string(), z.number()).optional(),
 
     // Elbow connector advanced options
     elbowBends: z.array(ElbowBendSchema).optional(),

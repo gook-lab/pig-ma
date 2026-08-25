@@ -395,6 +395,10 @@ export interface CanvasObject {
   targetIds?: string[];
   junctionT?: number; // 소스→타깃 사이 분기점 위치 (0~1, 기본 0.5)
   branchLabels?: Record<string, string>; // 타깃 id → 갈래 라벨
+  // 타깃 id → 도착점이 앵커 변 어디인지 (0~1, 기본 0.5 = 변의 중앙).
+  // 1:1 커넥터의 targetOffsetRatioX/Y 와 같은 역할 — 한 도형으로 여러 선이
+  // 모일 때 도착점을 나눠 마지막 구간이 겹치지 않게 한다.
+  branchTargetT?: Record<string, number>;
   sourceAnchor?: "top" | "right" | "bottom" | "left" | "center";
   targetAnchor?: "top" | "right" | "bottom" | "left" | "center";
   sourceAngle?: number; // for circle: exact angle in radians
