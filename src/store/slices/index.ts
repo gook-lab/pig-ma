@@ -6,6 +6,7 @@ export * from "./shapes";
 export * from "./drag";
 export * from "./lock";
 export * from "./grid";
+export * from "./preferences";
 export * from "./caption";
 export * from "./table";
 

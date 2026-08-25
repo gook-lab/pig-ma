@@ -849,6 +849,9 @@ export interface CanvasStoreState extends CanvasState {
   gridType: GridType;
   gridColor: string;
 
+  // 사용자 설정 (이 브라우저에만 남는다 — .pigma 에는 안 들어간다)
+  defaultFontFamily: FontFamily;
+
   // Group System
   groups: GroupInfo[];
 
@@ -988,6 +991,9 @@ export interface CanvasStoreActions {
   // Grid Settings
   setGridType: (type: GridType) => void;
   setGridColor: (color: string) => void;
+
+  // 사용자 설정 — 새로 만드는 객체에만 적용된다
+  setDefaultFontFamily: (family: FontFamily) => void;
 
   // Group System
   groupSelected: () => void;

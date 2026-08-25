@@ -29,6 +29,10 @@ import { createShapesSlice, shapesInitialState } from "./slices/shapes";
 import { createDragSlice, dragInitialState } from "./slices/drag";
 import { createLockSlice, lockInitialState } from "./slices/lock";
 import { createGridSlice, gridInitialState } from "./slices/grid";
+import {
+  createPreferencesSlice,
+  preferencesInitialState,
+} from "./slices/preferences";
 import { createCaptionSlice, captionInitialState } from "./slices/caption";
 import {
   createClipboardSlice,
@@ -149,6 +153,7 @@ export const useCanvasStore = create<CanvasStore>()(
         ...dragInitialState,
         ...lockInitialState,
         ...gridInitialState,
+        ...preferencesInitialState,
         ...captionInitialState,
         ...clipboardInitialState,
         ...groupsInitialState,
@@ -166,6 +171,7 @@ export const useCanvasStore = create<CanvasStore>()(
         ...createDragSlice(set, get, api),
         ...createLockSlice(set, get, api),
         ...createGridSlice(set, get, api),
+        ...createPreferencesSlice(set, get, api),
         ...createCaptionSlice(set, get, api),
         ...createClipboardSlice(set, get, api),
         ...createGroupsSlice(set, get, api),
@@ -590,6 +596,8 @@ export const useCanvasStore = create<CanvasStore>()(
         captions: state.captions,
         currentUser: state.currentUser,
         groups: state.groups,
+        // 사용자 설정
+        defaultFontFamily: state.defaultFontFamily,
         // Template System
         favoriteTemplates: state.favoriteTemplates,
         customTemplates: state.customTemplates,

@@ -2,6 +2,7 @@ import { nanoid } from "nanoid";
 import { DEFAULT_FONT_FAMILY } from "@/constants/fonts";
 import type {
   CanvasObject,
+  FontFamily,
   PenSettings,
   ShapeSettings,
   ShapeVariant,
@@ -213,6 +214,7 @@ export function createStickyNote(
   y: number,
   backgroundColor?: string,
   author?: AuthorInfo,
+  fontFamily: FontFamily = DEFAULT_FONT_FAMILY,
 ): CanvasObject {
   return {
     id: nanoid(),
@@ -226,7 +228,7 @@ export function createStickyNote(
     fontSize: 16,
     fontWeight: "normal",
     textDecoration: "none",
-    fontFamily: DEFAULT_FONT_FAMILY,
+    fontFamily,
     fontSizePreset: "S", // 'S' preset = 16px, matches fontSize
     textAlign: "left",
     listType: "none",
@@ -243,6 +245,7 @@ export function createTextBox(
   x: number,
   y: number,
   author?: AuthorInfo,
+  fontFamily: FontFamily = DEFAULT_FONT_FAMILY,
 ): CanvasObject {
   // 초기 높이: fontSize(16) * LINE_HEIGHT(1.5) + padding(16) = 40
   // 자동 높이 조정과 일치시켜 불필요한 상태 변경 방지
@@ -255,7 +258,7 @@ export function createTextBox(
     height: 40,
     text: "",
     textColor: "#000000",
-    fontFamily: DEFAULT_FONT_FAMILY,
+    fontFamily,
     fontSizePreset: "M",
     fontSize: 16,
     fontWeight: "normal",
@@ -359,6 +362,7 @@ export function createShape(
   variant: ShapeVariant,
   settings: ShapeSettings,
   author?: AuthorInfo,
+  fontFamily: FontFamily = DEFAULT_FONT_FAMILY,
 ): CanvasObject {
   const { width, height } = getDefaultShapeSize(variant);
 
@@ -373,6 +377,7 @@ export function createShape(
     fill: settings.fillColor,
     stroke: settings.strokeColor,
     strokeWidth: settings.strokeWidth,
+    fontFamily,
     textAlign: "center",
     rotation: 0,
     opacity: 1,
@@ -413,6 +418,7 @@ export function createConnectorLabel(
   x: number,
   y: number,
   labelT: number = 0.5,
+  fontFamily: FontFamily = DEFAULT_FONT_FAMILY,
 ): CanvasObject {
   return {
     id: nanoid(),
@@ -421,7 +427,7 @@ export function createConnectorLabel(
     y,
     text: "",
     fontSize: 12,
-    fontFamily: DEFAULT_FONT_FAMILY,
+    fontFamily,
     textColor: "#374151",
     fontWeight: "normal",
     textDecoration: "none",
