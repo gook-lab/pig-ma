@@ -8,6 +8,7 @@ import { ProjectNameEditor } from "./ProjectNameEditor";
 import { PageDropdown } from "./PageDropdown";
 import { LogoMenu } from "./LogoMenu";
 import { SearchPanel } from "./SearchPanel";
+import { SettingsMenu } from "./SettingsMenu";
 import { Z_HEADER } from "@/constants/zIndex";
 import { useCanvasStore } from "@/store";
 
@@ -50,6 +51,8 @@ export function Header() {
             <SearchPanel />
 
             <FileMenu />
+
+            <SettingsMenu />
 
             {/* Templates Button */}
             <button

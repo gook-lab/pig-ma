@@ -650,6 +650,7 @@ export function Canvas() {
         stickyNoteColor,
         selectedShapeVariant,
         selectedChartVariant,
+        defaultFontFamily,
       } = useCanvasStore.getState();
       const {
         clearSelection,
@@ -705,12 +706,18 @@ export function Canvas() {
               setSelectedIds([newRect.id]);
               setTool("select");
             } else if (tool === "stickyNote") {
-              const newNote = createStickyNote(x, y, stickyNoteColor, author);
+              const newNote = createStickyNote(
+                x,
+                y,
+                stickyNoteColor,
+                author,
+                defaultFontFamily,
+              );
               addObject(newNote);
               setSelectedIds([newNote.id]);
               setTool("select");
             } else if (tool === "textBox") {
-              const newTextBox = createTextBox(x, y, author);
+              const newTextBox = createTextBox(x, y, author, defaultFontFamily);
               addObject(newTextBox);
               setSelectedIds([newTextBox.id]);
               setTool("select");
@@ -721,6 +728,7 @@ export function Canvas() {
                 selectedShapeVariant,
                 shapeSettings,
                 author,
+                defaultFontFamily,
               );
               addObject(newShape);
               setSelectedIds([newShape.id]);
@@ -2799,7 +2807,7 @@ export function Canvas() {
                     zoom={viewport.zoom}
                     objects={objects}
                     onHandleClick={(anchor) => {
-                      const { addObject, setSelectedIds } =
+                      const { addObject, setSelectedIds, defaultFontFamily } =
                         useCanvasStore.getState();
                       // StickyNote: 커넥터 없이 새 스티키 노트만 생성
                       if (selectedObj.type === "stickyNote") {
@@ -2811,6 +2819,8 @@ export function Canvas() {
                           selectedObj.x + offset.x,
                           selectedObj.y + offset.y,
                           "#fef08a",
+                          undefined,
+                          defaultFontFamily,
                         );
                         addObject(newNote);
                         setSelectedIds([newNote.id]);
