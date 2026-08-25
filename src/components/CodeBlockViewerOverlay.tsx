@@ -202,7 +202,7 @@ export const CodeBlockViewerOverlay = memo(function CodeBlockViewerOverlay({
         }}
       >
         <div
-          className="absolute inset-0 overflow-hidden whitespace-pre-wrap break-words font-mono"
+          className="absolute inset-0 overflow-hidden font-mono break-words whitespace-pre-wrap"
           style={{
             padding: `${padding * viewport.zoom}px`,
             fontSize: `${fontSize * viewport.zoom}px`,

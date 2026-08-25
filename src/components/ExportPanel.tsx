@@ -265,7 +265,7 @@ export function ExportPanel() {
 
           <div
             className={cn(
-              "popover-enter fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
+              "popover-enter fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
               "w-[420px] rounded-2xl bg-white p-5 shadow-2xl",
             )}
             style={{ zIndex: Z_MODAL_CONTENT }}
@@ -325,7 +325,7 @@ export function ExportPanel() {
             <div className="mb-3 flex gap-3">
               {/* Format */}
               <div className="flex-1">
-                <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                <label className="mb-1 block text-[11px] font-medium tracking-wide text-gray-400 uppercase">
                   Format
                 </label>
                 <div className="flex gap-1">
@@ -349,7 +349,7 @@ export function ExportPanel() {
               {/* Scale */}
               {format !== "svg" && (
                 <div className="flex-1">
-                  <label className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                  <label className="mb-1 block text-[11px] font-medium tracking-wide text-gray-400 uppercase">
                     Scale
                   </label>
                   <div className="flex gap-1">

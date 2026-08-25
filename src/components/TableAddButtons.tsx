@@ -413,7 +413,7 @@ export const TableAddButtons = memo(function TableAddButtons({
         dragOverColIndex !== null &&
         dragColIndex !== dragOverColIndex && (
           <div
-            className="absolute pointer-events-none"
+            className="pointer-events-none absolute"
             style={{
               left: tableScreenX + getColX(dragColIndex),
               top: tableScreenY,
@@ -429,7 +429,7 @@ export const TableAddButtons = memo(function TableAddButtons({
       {/* Dragged column border (shows border and shadow only - cells move in Konva) */}
       {dragColIndex !== null && dragOverColIndex !== null && (
         <div
-          className="absolute pointer-events-none"
+          className="pointer-events-none absolute"
           style={{
             left: tableScreenX + getColX(dragColIndex) - 4,
             top: tableScreenY - 4,
@@ -496,7 +496,7 @@ export const TableAddButtons = memo(function TableAddButtons({
               onContextMenu={handleContextMenu}
             >
               <GripHorizontal
-                className={`w-5 h-5 ${isDragging ? "text-blue-600" : isTarget ? "text-indigo-500" : "text-gray-500"}`}
+                className={`h-5 w-5 ${isDragging ? "text-blue-600" : isTarget ? "text-indigo-500" : "text-gray-500"}`}
               />
             </div>
           );
@@ -509,7 +509,7 @@ export const TableAddButtons = memo(function TableAddButtons({
         dragOverRowIndex !== null &&
         dragRowIndex !== dragOverRowIndex && (
           <div
-            className="absolute pointer-events-none"
+            className="pointer-events-none absolute"
             style={{
               left: tableScreenX,
               top: tableScreenY + getRowY(dragRowIndex),
@@ -525,7 +525,7 @@ export const TableAddButtons = memo(function TableAddButtons({
       {/* Dragged row border (shows border and shadow only - cells move in Konva) */}
       {dragRowIndex !== null && dragOverRowIndex !== null && (
         <div
-          className="absolute pointer-events-none"
+          className="pointer-events-none absolute"
           style={{
             left: tableScreenX - 4,
             top: tableScreenY + getRowY(dragRowIndex) - 4,
@@ -592,7 +592,7 @@ export const TableAddButtons = memo(function TableAddButtons({
               onContextMenu={handleContextMenu}
             >
               <GripVertical
-                className={`w-5 h-5 ${isDragging ? "text-blue-600" : isTarget ? "text-indigo-500" : "text-gray-500"}`}
+                className={`h-5 w-5 ${isDragging ? "text-blue-600" : isTarget ? "text-indigo-500" : "text-gray-500"}`}
               />
             </div>
           );
@@ -690,8 +690,8 @@ export const TableAddButtons = memo(function TableAddButtons({
                   addTableRow(table.id, index);
                 }}
                 onContextMenu={handleContextMenu}
-                className={`absolute flex items-center justify-center rounded-full bg-blue-500 text-white shadow-md hover:bg-blue-600 transition-all ${
-                  isHovered ? "opacity-100 scale-100" : "opacity-0 scale-50"
+                className={`absolute flex items-center justify-center rounded-full bg-blue-500 text-white shadow-md transition-all hover:bg-blue-600 ${
+                  isHovered ? "scale-100 opacity-100" : "scale-50 opacity-0"
                 }`}
                 style={{
                   left: 6,
@@ -702,7 +702,7 @@ export const TableAddButtons = memo(function TableAddButtons({
                 }}
                 title="행 삽입"
               >
-                <Plus className="w-3 h-3" />
+                <Plus className="h-3 w-3" />
               </button>
             </div>
           );
@@ -736,8 +736,8 @@ export const TableAddButtons = memo(function TableAddButtons({
                   addTableColumn(table.id, index);
                 }}
                 onContextMenu={handleContextMenu}
-                className={`absolute flex items-center justify-center rounded-full bg-blue-500 text-white shadow-md hover:bg-blue-600 transition-all ${
-                  isHovered ? "opacity-100 scale-100" : "opacity-0 scale-50"
+                className={`absolute flex items-center justify-center rounded-full bg-blue-500 text-white shadow-md transition-all hover:bg-blue-600 ${
+                  isHovered ? "scale-100 opacity-100" : "scale-50 opacity-0"
                 }`}
                 style={{
                   left: 6,
@@ -748,7 +748,7 @@ export const TableAddButtons = memo(function TableAddButtons({
                 }}
                 title="열 삽입"
               >
-                <Plus className="w-3 h-3" />
+                <Plus className="h-3 w-3" />
               </button>
             </div>
           );
@@ -916,8 +916,8 @@ export const TableAddButtons = memo(function TableAddButtons({
         onMouseEnter={() => setIsHoveringLastCol(true)}
         onMouseLeave={() => setIsHoveringLastCol(false)}
         onContextMenu={handleContextMenu}
-        className={`absolute flex items-center justify-center bg-blue-500 text-white shadow-md hover:bg-blue-600 transition-all ${
-          isHoveringLastCol ? "opacity-100" : "opacity-0 pointer-events-none"
+        className={`absolute flex items-center justify-center bg-blue-500 text-white shadow-md transition-all hover:bg-blue-600 ${
+          isHoveringLastCol ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
         style={{
           left: tableScreenX + scaledWidth + 16,
@@ -930,7 +930,7 @@ export const TableAddButtons = memo(function TableAddButtons({
         }}
         title="열 추가"
       >
-        <Plus className="w-5 h-5" />
+        <Plus className="h-5 w-5" />
       </button>
 
       {/* Add Row bar (bottom edge - full width) - shows on last row hover */}
@@ -942,8 +942,8 @@ export const TableAddButtons = memo(function TableAddButtons({
         onMouseEnter={() => setIsHoveringLastRow(true)}
         onMouseLeave={() => setIsHoveringLastRow(false)}
         onContextMenu={handleContextMenu}
-        className={`absolute flex items-center justify-center bg-blue-500 text-white shadow-md hover:bg-blue-600 transition-all ${
-          isHoveringLastRow ? "opacity-100" : "opacity-0 pointer-events-none"
+        className={`absolute flex items-center justify-center bg-blue-500 text-white shadow-md transition-all hover:bg-blue-600 ${
+          isHoveringLastRow ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
         style={{
           left: tableScreenX,
@@ -956,7 +956,7 @@ export const TableAddButtons = memo(function TableAddButtons({
         }}
         title="행 추가"
       >
-        <Plus className="w-5 h-5" />
+        <Plus className="h-5 w-5" />
       </button>
     </div>
   );

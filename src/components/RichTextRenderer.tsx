@@ -200,7 +200,12 @@ export const RichTextRenderer = memo(function RichTextRenderer({
         } else {
           // Accumulate word
           word += char;
-          wordWidth += measureTextWidth(char as string, fontSize, fontFamily, fontWeight);
+          wordWidth += measureTextWidth(
+            char as string,
+            fontSize,
+            fontFamily,
+            fontWeight,
+          );
         }
       }
     }

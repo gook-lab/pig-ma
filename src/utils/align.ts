@@ -11,12 +11,7 @@ import { translateElbowBends } from "./translateElbowBends";
 // ============================================================================
 
 export type AlignDirection =
-  | "left"
-  | "centerX"
-  | "right"
-  | "top"
-  | "centerY"
-  | "bottom";
+  "left" | "centerX" | "right" | "top" | "centerY" | "bottom";
 
 export type DistributeDirection = "horizontal" | "vertical";
 

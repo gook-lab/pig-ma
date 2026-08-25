@@ -219,7 +219,10 @@ describe("분기 커넥터 묶기", () => {
       parseMermaid("flowchart TD\n  A -->|보기| B\n  A -->|편집| C"),
     );
     const c = objects.find((o) => o.type === "connector")!;
-    expect(Object.values(c.branchLabels ?? {}).sort()).toEqual(["보기", "편집"]);
+    expect(Object.values(c.branchLabels ?? {}).sort()).toEqual([
+      "보기",
+      "편집",
+    ]);
   });
 
   it("갈래가 하나뿐이면 기존 1:1 커넥터로 남는다", () => {

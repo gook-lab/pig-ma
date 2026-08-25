@@ -531,12 +531,7 @@ export function ShapeOptionsBar({
   const togglePanel = useCallback(
     (
       panel:
-        | "shape"
-        | "fill"
-        | "stroke"
-        | "textColor"
-        | "fontFamily"
-        | "fontSize",
+        "shape" | "fill" | "stroke" | "textColor" | "fontFamily" | "fontSize",
     ) => {
       setActivePanel((prev) => {
         if (prev === panel) return null;

@@ -34,13 +34,7 @@ const SHAPE_BRACKETS: {
 const EDGE_SPLIT_RE =
   /\s*(-\.+->|-\.+-|={2,}>|={2,}|-{2,}>|-{2,})(\|[^|]*\|)?\s*/;
 
-const SKIP_KEYWORDS = [
-  "subgraph",
-  "end",
-  "click",
-  "linkStyle",
-  "direction",
-];
+const SKIP_KEYWORDS = ["subgraph", "end", "click", "linkStyle", "direction"];
 
 /** `fill:#fff,stroke:#333,color:#111,stroke-width:2px` → MermaidNodeStyle */
 function parseStyleDecl(decl: string): MermaidNodeStyle {
@@ -190,8 +184,14 @@ export function parseMermaid(source: string): MermaidGraph {
     const classAssign = /^class\s+([^\s]+)\s+(\S+)$/.exec(rawLine);
     if (classAssign) {
       pendingClass.push({
-        ids: classAssign[1]!.split(",").map((v) => v.trim()).filter(Boolean),
-        names: classAssign[2]!.split(",").map((v) => v.trim()).filter(Boolean),
+        ids: classAssign[1]!
+          .split(",")
+          .map((v) => v.trim())
+          .filter(Boolean),
+        names: classAssign[2]!
+          .split(",")
+          .map((v) => v.trim())
+          .filter(Boolean),
       });
       continue;
     }

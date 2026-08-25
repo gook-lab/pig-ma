@@ -157,11 +157,7 @@ export type ChartVariant = "bar" | "line" | "pie";
  * 차트 정렬 옵션
  */
 export type ChartSortBy =
-  | "none"
-  | "value-asc"
-  | "value-desc"
-  | "label-asc"
-  | "label-desc";
+  "none" | "value-asc" | "value-desc" | "label-asc" | "label-desc";
 
 /**
  * 차트 데이터 항목
@@ -299,11 +295,7 @@ export type PenType = "marker" | "pen" | "highlighter";
 
 // Connector styles
 export type MarkerStyle =
-  | "none"
-  | "arrow"
-  | "filledArrow"
-  | "diamond"
-  | "circle";
+  "none" | "arrow" | "filledArrow" | "diamond" | "circle";
 export type LineStyle = "solid" | "dashed" | "dotted";
 export type PathStyle = "straight" | "curved" | "elbowed";
 export type ElbowCornerStyle = "sharp" | "rounded";

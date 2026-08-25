@@ -84,12 +84,7 @@ describe("computeBranchPaths", () => {
 
   it("줄기는 소스에서 분기점까지 한 번만 그린다", () => {
     const r = computeBranchPaths(input);
-    expect(r.trunk).toEqual([
-      start.x,
-      start.y,
-      r.junction.x,
-      r.junction.y,
-    ]);
+    expect(r.trunk).toEqual([start.x, start.y, r.junction.x, r.junction.y]);
   });
 
   it("갈래는 타깃 수만큼이고 입력 순서를 지킨다", () => {

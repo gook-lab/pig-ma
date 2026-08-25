@@ -203,7 +203,7 @@ export function CaptionPopup({
 
       <div
         ref={popupRef}
-        className="pointer-events-auto fixed z-[151] flex w-[360px] max-h-[80vh] flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xl"
+        className="pointer-events-auto fixed z-[151] flex max-h-[80vh] w-[360px] flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-2xl"
         style={{
           left: adjustedPosition.x,
           top: adjustedPosition.y,

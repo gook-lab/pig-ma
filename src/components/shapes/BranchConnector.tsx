@@ -4,6 +4,7 @@ import type Konva from "konva";
 import type { CanvasObject } from "@/types";
 import { computeBranchPaths, type BranchAnchor } from "@/utils/branchPath";
 import { getAnchorPointWithAngle } from "@/utils/geometry";
+import { measureTextWidth } from "@/utils/richText";
 
 /**
  * 분기 커넥터 — 줄기 1개에서 갈래 N개가 뻗는 마인드맵식 화살표.
@@ -129,7 +130,10 @@ export const BranchConnector = memo(function BranchConnector({
       const mid = Math.floor(b.points.length / 4) * 2;
       const x = b.points[mid] ?? b.points[0]!;
       const y = b.points[mid + 1] ?? b.points[1]!;
-      const width = text.length * (LABEL_FONT_SIZE * 0.62) + LABEL_PAD_X * 2;
+      // 글자 수 × 상수로 폭을 잡으면 한글에서 좁게 나와 라벨이 접힌다 —
+      // 캔버스로 실측한다 (DOM 없으면 measureTextWidth 가 추정 폴백).
+      const width =
+        measureTextWidth(text, LABEL_FONT_SIZE, "sans-serif") + LABEL_PAD_X * 2;
       return [{ id: b.id, text, x, y, width }];
     });
   }, [paths.branches, connector.branchLabels]);
@@ -165,9 +169,12 @@ export const BranchConnector = memo(function BranchConnector({
             ctx.beginPath();
             ctx.moveTo(p[0]!, p[1]!);
             for (let i = 2; i < p.length - 2; i += 2) {
-              const px = p[i - 2]!, py = p[i - 1]!;
-              const cx = p[i]!, cy = p[i + 1]!;
-              const nx = p[i + 2]!, ny = p[i + 3]!;
+              const px = p[i - 2]!,
+                py = p[i - 1]!;
+              const cx = p[i]!,
+                cy = p[i + 1]!;
+              const nx = p[i + 2]!,
+                ny = p[i + 3]!;
               const inLen = Math.hypot(cx - px, cy - py);
               const outLen = Math.hypot(nx - cx, ny - cy);
               const r = Math.min(cornerRadius, inLen / 2, outLen / 2);
@@ -175,7 +182,10 @@ export const BranchConnector = memo(function BranchConnector({
                 ctx.lineTo(cx, cy);
                 continue;
               }
-              ctx.lineTo(cx - ((cx - px) / inLen) * r, cy - ((cy - py) / inLen) * r);
+              ctx.lineTo(
+                cx - ((cx - px) / inLen) * r,
+                cy - ((cy - py) / inLen) * r,
+              );
               ctx.quadraticCurveTo(
                 cx,
                 cy,
@@ -223,7 +233,11 @@ export const BranchConnector = memo(function BranchConnector({
 
       {/* 갈래 라벨 */}
       {labels.map((l) => (
-        <Group key={l.id} x={l.x - l.width / 2} y={l.y - LABEL_FONT_SIZE}>
+        <Group
+          key={l.id}
+          x={l.x - l.width / 2}
+          y={l.y - (LABEL_FONT_SIZE + LABEL_PAD_Y * 2) / 2}
+        >
           <Rect
             width={l.width}
             height={LABEL_FONT_SIZE + LABEL_PAD_Y * 2}
@@ -239,6 +253,7 @@ export const BranchConnector = memo(function BranchConnector({
             fill="#1f2937"
             width={l.width}
             align="center"
+            wrap="none"
             y={LABEL_PAD_Y}
             listening={false}
             perfectDrawEnabled={false}
