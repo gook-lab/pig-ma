@@ -5,10 +5,14 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>canvas-app</title>
-    <!-- Google Fonts for Korean text -->
+    <!--
+      캔버스 텍스트용 웹폰트. 정본은 src/constants/fonts.ts 의 FONTS.webFonts 이고,
+      여기 목록과 어긋나면 fonts.test.ts 가 실패한다.
+      Patrick Hand(라틴) + Gaegu(한글) 는 Handwriting 토큰 한 쌍이다.
+    -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=Nanum+Gothic:wght@400;700&family=Nanum+Myeongjo:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;700&family=Nanum+Gothic:wght@400;700&family=Nanum+Myeongjo:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&family=Patrick+Hand&display=swap" rel="stylesheet">
   </head>
   <body>
     <div id="root"></div>

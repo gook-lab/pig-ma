@@ -19,10 +19,12 @@ export interface FontDefinition {
   /** Konva `fontFamily` 와 CSS `font-family` 에 그대로 넘기는 값 */
   stack: string;
   /**
-   * 로드가 필요한 웹폰트 패밀리명. 시스템/설치 폰트에 기대는 토큰은 없다.
-   * 로딩은 index.html 의 Google Fonts 링크가 담당한다.
+   * 받아와야 하는 웹폰트 패밀리들. 시스템/설치 폰트에만 기대는 토큰은 비운다.
+   * 실제 로딩은 index.html 의 Google Fonts 링크가 담당하고, 링크와 이 목록이
+   * 어긋나지 않는지는 fonts.test.ts 가 확인한다.
+   * 라틴·한글을 각각 받는 조합이 있어 배열이다.
    */
-  webFont?: string;
+  webFonts?: string[];
 }
 
 /**
@@ -38,7 +40,23 @@ export const SYSTEM_SANS_STACK =
 export const SYSTEM_MONO_STACK =
   'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace';
 
+/**
+ * 손글씨 스택 — Excalidraw 느낌.
+ *
+ * Excalidraw 의 Excalifont 자체는 쓸 수 없다. Google Fonts 에 없고(자체 배포),
+ * **한글 글리프가 아예 없다**. 그래서 라틴·한글을 각각 골라 짝지었다: 둘 다
+ * 직립 손글씨체이고 획 두께가 비슷해 한 문장에 섞여도 어긋나지 않는다.
+ * (흘림체인 Caveat·나눔펜스크립트는 캔버스 라벨 크기에서 읽기 어려워 탈락.)
+ */
+const HANDWRITING_STACK = '"Patrick Hand", Gaegu, cursive';
+
 export const FONTS: Record<FontFamily, FontDefinition> = {
+  // 웹폰트 없이 항상 뜨는 토큰 — 라이브러리 소비자가 폰트 설정을 전혀 하지
+  // 않아도 이건 반드시 동작한다.
+  System: {
+    label: "System",
+    stack: SYSTEM_SANS_STACK,
+  },
   // Pretendard 는 웹폰트로 싣지 않는다 (한글 폰트라 용량이 크고, 라이브러리
   // 소비자에게 네트워크 의존을 강요하게 된다). 설치돼 있으면 쓰고 없으면
   // 시스템 산세리프로 떨어진다.
@@ -49,22 +67,29 @@ export const FONTS: Record<FontFamily, FontDefinition> = {
   "Noto Sans KR": {
     label: "Noto Sans",
     stack: `"Noto Sans KR", ${SYSTEM_SANS_STACK}`,
-    webFont: "Noto Sans KR",
+    webFonts: ["Noto Sans KR"],
   },
   "Nanum Gothic": {
     label: "Nanum Gothic",
     stack: `"Nanum Gothic", ${SYSTEM_SANS_STACK}`,
-    webFont: "Nanum Gothic",
+    webFonts: ["Nanum Gothic"],
   },
   "Nanum Myeongjo": {
     label: "Nanum Myeongjo",
     stack: `"Nanum Myeongjo", Batang, serif`,
-    webFont: "Nanum Myeongjo",
+    webFonts: ["Nanum Myeongjo"],
   },
   "IBM Plex Sans KR": {
     label: "IBM Plex",
     stack: `"IBM Plex Sans KR", ${SYSTEM_SANS_STACK}`,
-    webFont: "IBM Plex Sans KR",
+    webFonts: ["IBM Plex Sans KR"],
+  },
+  // 라틴과 한글을 서로 다른 폰트로 받는 유일한 토큰 — 토큰을 CSS 패밀리명이
+  // 아니라 스택으로 푸는 구조가 필요했던 이유다.
+  Handwriting: {
+    label: "Handwriting",
+    stack: HANDWRITING_STACK,
+    webFonts: ["Patrick Hand", "Gaegu"],
   },
 };
 
