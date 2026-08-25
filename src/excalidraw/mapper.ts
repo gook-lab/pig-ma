@@ -122,7 +122,9 @@ export function convertExcalidraw(
   const files = data.files ?? {};
 
   // 바운드 텍스트 수집: containerId 가 살아있는 요소를 가리키는 text
-  const elementIds = new Set(elements.map((el) => el.id));
+  // (Set 이 아니라 Map 인 이유: 화살표 앵커를 뽑으려면 바인딩된 도형의
+  //  사각형이 필요하다 — convertLinear 참조)
+  const elementIds = new Map(elements.map((el) => [el.id, el]));
   const boundTextByContainer = new Map<string, ExcalidrawElement>();
   for (const el of elements) {
     if (
@@ -206,7 +208,7 @@ function convertElement(
   el: ExcalidrawElement,
   boundTextByContainer: Map<string, ExcalidrawElement>,
   files: NonNullable<ExcalidrawData["files"]>,
-  elementIds: Set<string>,
+  elementIds: Map<string, ExcalidrawElement>,
 ): CanvasObject | null {
   const boundText = boundTextByContainer.get(el.id);
 
@@ -301,10 +303,66 @@ function convertElement(
   }
 }
 
+export interface BoundAnchor {
+  anchor: "top" | "right" | "bottom" | "left";
+  ratioX: number;
+  ratioY: number;
+}
+
+/**
+ * 점이 도형의 어느 변에 붙는지 + 그 변 어디쯤인지.
+ *
+ * Excalidraw 는 화살표 끝점을 **도형 경계 바깥 gap 만큼** 떨어진 실좌표로
+ * 저장한다. 그런데 pig-ma 의 attached 커넥터는 앵커가 없으면 "center" 로
+ * 해석되어(connectorPath.ts) 선이 도형 한가운데서 출발한다 — 가져온 화살표가
+ * 도형을 뚫고 나오는 것처럼 보이던 원인이다. 원본 끝점에서 앵커를 되짚어
+ * 붙이고, 변 위 위치까지 비율로 보존해 원본 배선을 그대로 재현한다.
+ */
+export function anchorFromPoint(
+  rect: { x: number; y: number; width: number; height: number },
+  pt: { x: number; y: number },
+): BoundAnchor {
+  const w = rect.width || 1;
+  const h = rect.height || 1;
+  const clamp = (v: number) => Math.min(1, Math.max(0, v));
+  const tx = clamp((pt.x - rect.x) / w);
+  const ty = clamp((pt.y - rect.y) / h);
+
+  // 네 변까지의 수직 거리 중 가장 가까운 쪽. 끝점이 경계 근처(gap 몇 px)라
+  // 수직 거리만으로 충분히 갈린다.
+  const dists = [
+    {
+      anchor: "top" as const,
+      d: Math.abs(pt.y - rect.y),
+      ratioX: tx,
+      ratioY: 0,
+    },
+    {
+      anchor: "bottom" as const,
+      d: Math.abs(pt.y - (rect.y + h)),
+      ratioX: tx,
+      ratioY: 1,
+    },
+    {
+      anchor: "left" as const,
+      d: Math.abs(pt.x - rect.x),
+      ratioX: 0,
+      ratioY: ty,
+    },
+    {
+      anchor: "right" as const,
+      d: Math.abs(pt.x - (rect.x + w)),
+      ratioX: 1,
+      ratioY: ty,
+    },
+  ];
+  return dists.reduce((best, cur) => (cur.d < best.d ? cur : best));
+}
+
 /** arrow/line(2점) → pig-ma connector. 바운드 텍스트는 커넥터 라벨로 */
 function convertLinear(
   el: ExcalidrawElement,
-  elementIds: Set<string>,
+  elementIds: Map<string, ExcalidrawElement>,
   defaultEndMarker: MarkerStyle,
   boundText?: ExcalidrawElement,
 ): CanvasObject {
@@ -312,24 +370,44 @@ function convertLinear(
   const first = pts[0] ?? [0, 0];
   const last = pts[pts.length - 1] ?? [el.width, el.height];
 
-  const sourceId =
-    el.startBinding && elementIds.has(el.startBinding.elementId)
-      ? el.startBinding.elementId
-      : undefined;
-  const targetId =
-    el.endBinding && elementIds.has(el.endBinding.elementId)
-      ? el.endBinding.elementId
-      : undefined;
+  const startPoint = { x: el.x + (first[0] ?? 0), y: el.y + (first[1] ?? 0) };
+  const endPoint = { x: el.x + (last[0] ?? 0), y: el.y + (last[1] ?? 0) };
+
+  const sourceEl = el.startBinding
+    ? elementIds.get(el.startBinding.elementId)
+    : undefined;
+  const targetEl = el.endBinding
+    ? elementIds.get(el.endBinding.elementId)
+    : undefined;
+  const sourceId = sourceEl?.id;
+  const targetId = targetEl?.id;
+
+  const src = sourceEl ? anchorFromPoint(sourceEl, startPoint) : undefined;
+  const dst = targetEl ? anchorFromPoint(targetEl, endPoint) : undefined;
 
   return {
     id: el.id,
     type: "connector",
-    x: el.x + (first[0] ?? 0),
-    y: el.y + (first[1] ?? 0),
-    endX: el.x + (last[0] ?? 0),
-    endY: el.y + (last[1] ?? 0),
+    x: startPoint.x,
+    y: startPoint.y,
+    endX: endPoint.x,
+    endY: endPoint.y,
     sourceId,
     targetId,
+    ...(src
+      ? {
+          sourceAnchor: src.anchor,
+          sourceOffsetRatioX: src.ratioX,
+          sourceOffsetRatioY: src.ratioY,
+        }
+      : {}),
+    ...(dst
+      ? {
+          targetAnchor: dst.anchor,
+          targetOffsetRatioX: dst.ratioX,
+          targetOffsetRatioY: dst.ratioY,
+        }
+      : {}),
     pathStyle: toPathStyle(el),
     startMarker: toMarker(el.startArrowhead, "none"),
     endMarker: toMarker(el.endArrowhead, defaultEndMarker),
