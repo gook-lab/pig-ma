@@ -202,3 +202,39 @@ describe("convertMermaid", () => {
     expect(first.some((id) => second.includes(id))).toBe(false);
   });
 });
+
+describe("분기 커넥터 묶기", () => {
+  it("같은 소스에서 나가는 형제 엣지를 커넥터 하나로 묶는다", () => {
+    const { objects } = convertMermaid(
+      parseMermaid("flowchart TD\n  A --> B\n  A --> C"),
+    );
+    const connectors = objects.filter((o) => o.type === "connector");
+    expect(connectors).toHaveLength(1);
+    expect(connectors[0]!.targetIds).toHaveLength(2);
+    expect(connectors[0]!.targetId).toBeUndefined();
+  });
+
+  it("갈래 라벨을 타깃 id 별로 옮긴다", () => {
+    const { objects } = convertMermaid(
+      parseMermaid("flowchart TD\n  A -->|보기| B\n  A -->|편집| C"),
+    );
+    const c = objects.find((o) => o.type === "connector")!;
+    expect(Object.values(c.branchLabels ?? {}).sort()).toEqual(["보기", "편집"]);
+  });
+
+  it("갈래가 하나뿐이면 기존 1:1 커넥터로 남는다", () => {
+    const { objects } = convertMermaid(parseMermaid("flowchart TD\n  A --> B"));
+    const c = objects.find((o) => o.type === "connector")!;
+    expect(c.targetIds).toBeUndefined();
+    expect(c.targetId).toBeDefined();
+  });
+
+  it("선 스타일이 다르면 묶지 않는다", () => {
+    const { objects } = convertMermaid(
+      parseMermaid("flowchart TD\n  A --> B\n  A -.-> C"),
+    );
+    const connectors = objects.filter((o) => o.type === "connector");
+    expect(connectors).toHaveLength(2);
+    expect(connectors.every((c) => c.targetIds === undefined)).toBe(true);
+  });
+});

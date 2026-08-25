@@ -6,4 +6,3 @@
 | 제안 | 상태 (2026-08-25 확인) |
 |---|---|
 | `canvas-object-props-separation` | **미채택.** `CanvasObject` 는 여전히 flat 81필드 (`src/types.ts:348`) |
-| `branch-connector` | **미채택.** 커넥터는 아직 1:1 (`sourceId`/`targetId` 단일). 마인드맵식 줄기+갈래 구조 제안 (2026-08-25) |

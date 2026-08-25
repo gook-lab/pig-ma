@@ -12,6 +12,7 @@
 | `elbowPath.ts` | 엘보우 커넥터 경로 계산 + 핸들 분류 (Y/X-정체 + 공선 런 병합) |
 | `elbowHandlers.ts` | 엘보우 드래그 조정 헬퍼 — 미리보기/커밋이 반드시 공유 |
 | `connectorPath.ts` | 커넥터 경로 소비자 단일 소스 (endpoints/path points) |
+| `branchPath.ts` | 분기 커넥터(마인드맵 줄기+갈래) 경로 — 버스→드롭 2구간 |
 | `translateElbowBends.ts` | bend 절대좌표 강체 이동 — 델타 이동 경로 전부가 사용 |
 | `align.ts` | 정렬/분배 순수 계산 (커넥터는 elbowBends 도 강체 이동) |
 | `pigmaFile.ts` | .pigma 프로젝트 파일 저장/열기/검증/백업 |

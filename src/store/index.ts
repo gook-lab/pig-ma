@@ -514,6 +514,20 @@ export const useCanvasStore = create<CanvasStore>()(
               if (pastObj.label !== obj.label) return false;
               if (pastObj.labelOffsetY !== obj.labelOffsetY) return false;
               if (pastObj.labelTextBoxId !== obj.labelTextBoxId) return false;
+              // 분기 커넥터 — 등록을 빠뜨리면 undo 가 조용히 안 된다
+              if (
+                pastObj.targetIds !== obj.targetIds &&
+                JSON.stringify(pastObj.targetIds) !==
+                  JSON.stringify(obj.targetIds)
+              )
+                return false;
+              if (pastObj.junctionT !== obj.junctionT) return false;
+              if (
+                pastObj.branchLabels !== obj.branchLabels &&
+                JSON.stringify(pastObj.branchLabels) !==
+                  JSON.stringify(obj.branchLabels)
+              )
+                return false;
             }
 
             // ConnectorLabel-specific (text on connector)

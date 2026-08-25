@@ -157,7 +157,69 @@ export function convertMermaid(graph: MermaidGraph): MermaidConvertResult {
   const seenIn = new Map<string, number>();
   const seenOut = new Map<string, number>();
 
+  // 같은 소스에서 같은 스타일로 나가는 엣지는 **분기 커넥터 하나**로 묶는다.
+  // 개별 커넥터로 두면 줄기 구간이 겹쳐 그려지고 갈라지는 자리에 갈고리가
+  // 생긴다 (docs/proposals/branch-connector.md).
+  const branchable = new Map<string, typeof graph.edges>();
   for (const edge of graph.edges) {
+    const from = nodeLayoutById.get(edge.from);
+    const to = nodeLayoutById.get(edge.to);
+    if (!from || !to) continue;
+    const span = vertical
+      ? Math.abs(reversed ? from.y - (to.y + to.height) : to.y - (from.y + from.height))
+      : Math.abs(reversed ? from.x - (to.x + to.width) : to.x - (from.x + from.width));
+    // 랭크를 건너뛰는 엣지는 우회 경로라 줄기를 공유할 수 없다
+    if (span > RANK_GAP * 1.6) continue;
+    const key = `${edge.from}|${edge.style}|${edge.arrow}`;
+    const list = branchable.get(key) ?? [];
+    list.push(edge);
+    branchable.set(key, list);
+  }
+  const branchedEdges = new Set<(typeof graph.edges)[number]>();
+  for (const list of branchable.values()) {
+    if (list.length < 2) continue;
+    const first = list[0]!;
+    const sourceId = objectIdByNode.get(first.from);
+    const from = nodeLayoutById.get(first.from);
+    if (!sourceId || !from) continue;
+    const targetIds: string[] = [];
+    const branchLabels: Record<string, string> = {};
+    for (const edge of list) {
+      const targetId = objectIdByNode.get(edge.to);
+      if (!targetId) continue;
+      targetIds.push(targetId);
+      if (edge.label) branchLabels[targetId] = edge.label;
+      branchedEdges.add(edge);
+    }
+    if (targetIds.length < 2) {
+      for (const edge of list) branchedEdges.delete(edge);
+      continue;
+    }
+    const start = anchorPoint(from, flowSource);
+    objects.push({
+      id: generateUUID(),
+      type: "connector",
+      x: start.x,
+      y: start.y,
+      rotation: 0,
+      opacity: 1,
+      sourceId,
+      targetIds,
+      sourceAnchor: flowSource,
+      targetAnchor: flowTarget,
+      pathStyle: "elbowed",
+      elbowCornerStyle: "rounded",
+      startMarker: "none",
+      endMarker: first.arrow ? "arrow" : "none",
+      lineStyle: first.style === "dotted" ? "dashed" : "solid",
+      strokeWidth: first.style === "thick" ? 4 : 2,
+      stroke: CONNECTOR_STROKE,
+      ...(Object.keys(branchLabels).length ? { branchLabels } : {}),
+    });
+  }
+
+  for (const edge of graph.edges) {
+    if (branchedEdges.has(edge)) continue;
     const sourceId = objectIdByNode.get(edge.from);
     const targetId = objectIdByNode.get(edge.to);
     const from = nodeLayoutById.get(edge.from);

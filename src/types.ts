@@ -398,6 +398,11 @@ export interface CanvasObject {
   endY?: number;
   sourceId?: string; // optional - set when snapped to a shape
   targetId?: string; // optional - set when snapped to a shape
+  // 분기 커넥터 (마인드맵식 줄기+갈래). 있으면 targetId 대신 이쪽을 쓴다 —
+  // 줄기를 한 번만 그리고 분기점에서 갈래가 뻗는다. 없으면 기존 1:1 동작.
+  targetIds?: string[];
+  junctionT?: number; // 소스→타깃 사이 분기점 위치 (0~1, 기본 0.5)
+  branchLabels?: Record<string, string>; // 타깃 id → 갈래 라벨
   sourceAnchor?: "top" | "right" | "bottom" | "left" | "center";
   targetAnchor?: "top" | "right" | "bottom" | "left" | "center";
   sourceAngle?: number; // for circle: exact angle in radians
