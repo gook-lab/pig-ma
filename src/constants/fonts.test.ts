@@ -1,4 +1,6 @@
 import { describe, it, expect } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import {
   DEFAULT_FONT_FAMILY,
   FONTS,
@@ -15,16 +17,23 @@ describe("폰트 레지스트리", () => {
     for (const id of FONT_FAMILY_IDS) {
       const { stack } = FONTS[id];
       expect(stack.split(",").length).toBeGreaterThan(1);
-      expect(stack).toMatch(/(sans-serif|serif|monospace)\s*$/);
+      expect(stack).toMatch(/(sans-serif|serif|monospace|cursive)\s*$/);
     }
   });
 
-  it("스택은 자기 패밀리로 시작한다", () => {
+  it("선언한 웹폰트는 자기 스택 안에 있다", () => {
+    // 스택에 없는 폰트를 받아오면 로딩만 하고 쓰지는 않는 셈이다
     for (const id of FONT_FAMILY_IDS) {
-      expect(
-        FONTS[id].stack.startsWith(id) || FONTS[id].stack.startsWith(`"${id}"`),
-      ).toBe(true);
+      for (const family of FONTS[id].webFonts ?? []) {
+        expect(FONTS[id].stack).toContain(family);
+      }
     }
+  });
+
+  it("손글씨 토큰은 라틴과 한글을 모두 덮는다", () => {
+    // Excalifont 에 한글이 없어서 두 폰트를 짝지은 토큰이다 — 한쪽이 빠지면
+    // 한글만 시스템 폰트로 튀어 한 문장에서 서체가 갈린다.
+    expect(FONTS.Handwriting.webFonts).toEqual(["Patrick Hand", "Gaegu"]);
   });
 
   it("기본 토큰이 레지스트리에 있다", () => {
@@ -34,6 +43,31 @@ describe("폰트 레지스트리", () => {
   it("드롭다운 목록이 레지스트리와 같은 집합이다", () => {
     expect(FONT_OPTIONS.map((o) => o.id)).toEqual(FONT_FAMILY_IDS);
     expect(FONT_OPTIONS.every((o) => o.label.length > 0)).toBe(true);
+  });
+});
+
+describe("index.html 웹폰트 링크", () => {
+  // 레지스트리에 폰트를 넣고 링크를 안 고치면 그 폰트는 조용히 폴백으로
+  // 그려진다 — Pretendard 가 정확히 그 상태였다.
+  const html = readFileSync(
+    resolve(__dirname, "../../index.html"),
+    "utf8",
+  ).replace(/\+/g, " ");
+
+  it("선언한 웹폰트를 전부 받아온다", () => {
+    for (const id of FONT_FAMILY_IDS) {
+      for (const family of FONTS[id].webFonts ?? []) {
+        expect(html, `${id} 의 ${family} 가 index.html 에 없다`).toContain(
+          `family=${family}`,
+        );
+      }
+    }
+  });
+
+  it("웹폰트가 아닌 토큰은 받아오지 않는다", () => {
+    // System 은 네트워크 없이 떠야 한다 — 링크에 있으면 그 전제가 깨진다
+    expect(FONTS.System.webFonts ?? []).toEqual([]);
+    expect(html).not.toContain("family=System");
   });
 });
 
