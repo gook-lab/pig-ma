@@ -43,17 +43,38 @@ interface Rect {
   height: number;
 }
 
-/** 사각형에서 지정한 변의 중앙점. */
-function anchorPoint(rect: Rect, side: AnchorSide): { x: number; y: number } {
+/** 지정한 변에서 비율 t(0~1) 위치의 점. t=0.5 면 변의 중앙. */
+function anchorPoint(
+  rect: Rect,
+  side: AnchorSide,
+  t = 0.5,
+): { x: number; y: number } {
   switch (side) {
     case "top":
-      return { x: rect.x + rect.width / 2, y: rect.y };
+      return { x: rect.x + rect.width * t, y: rect.y };
     case "bottom":
-      return { x: rect.x + rect.width / 2, y: rect.y + rect.height };
+      return { x: rect.x + rect.width * t, y: rect.y + rect.height };
     case "left":
-      return { x: rect.x, y: rect.y + rect.height / 2 };
+      return { x: rect.x, y: rect.y + rect.height * t };
     case "right":
-      return { x: rect.x + rect.width, y: rect.y + rect.height / 2 };
+      return { x: rect.x + rect.width, y: rect.y + rect.height * t };
+  }
+}
+
+/** 변 위 비율 t 를 도형 바운즈 비율(ratioX/ratioY)로 옮긴다. */
+function anchorRatios(
+  side: AnchorSide,
+  t: number,
+): { ratioX: number; ratioY: number } {
+  switch (side) {
+    case "top":
+      return { ratioX: t, ratioY: 0 };
+    case "bottom":
+      return { ratioX: t, ratioY: 1 };
+    case "left":
+      return { ratioX: 0, ratioY: t };
+    case "right":
+      return { ratioX: 1, ratioY: t };
   }
 }
 
@@ -155,6 +176,24 @@ export function convertMermaid(graph: MermaidGraph): MermaidConvertResult {
   const seenIn = new Map<string, number>();
   const seenOut = new Map<string, number>();
 
+  // 한 노드로 여러 엣지가 모이면 도착점이 변의 같은 중앙이라 마지막 구간이
+  // 완전히 겹친다 — 서로 다른 두 연결이 한 줄로 보인다. 도착점을 앵커 변에
+  // 고르게 나눠 준다. 갈래끼리도, 갈래와 1:1 커넥터 사이에도 적용된다.
+  const ARRIVAL_STEP = 0.22;
+  const arrivalT = new Map<(typeof graph.edges)[number], number>();
+  {
+    const seen = new Map<string, number>();
+    for (const edge of graph.edges) {
+      const n = fanIn.get(edge.to) ?? 1;
+      if (n < 2) continue;
+      const i = seen.get(edge.to) ?? 0;
+      seen.set(edge.to, i + 1);
+      // 변을 벗어나지 않게 간격을 좁힌다 (0.17~0.83 안에 들어온다)
+      const step = Math.min(ARRIVAL_STEP, 0.66 / n);
+      arrivalT.set(edge, 0.5 + (i - (n - 1) / 2) * step);
+    }
+  }
+
   // 같은 소스에서 같은 스타일로 나가는 엣지는 **분기 커넥터 하나**로 묶는다.
   // 개별 커넥터로 두면 줄기 구간이 겹쳐 그려지고 갈라지는 자리에 갈고리가
   // 생긴다 (docs/proposals/branch-connector.md).
@@ -188,11 +227,14 @@ export function convertMermaid(graph: MermaidGraph): MermaidConvertResult {
     if (!sourceId || !from) continue;
     const targetIds: string[] = [];
     const branchLabels: Record<string, string> = {};
+    const branchTargetT: Record<string, number> = {};
     for (const edge of list) {
       const targetId = objectIdByNode.get(edge.to);
       if (!targetId) continue;
       targetIds.push(targetId);
       if (edge.label) branchLabels[targetId] = edge.label;
+      const t = arrivalT.get(edge);
+      if (t != null) branchTargetT[targetId] = t;
       branchedEdges.add(edge);
     }
     if (targetIds.length < 2) {
@@ -219,6 +261,7 @@ export function convertMermaid(graph: MermaidGraph): MermaidConvertResult {
       strokeWidth: first.style === "thick" ? 4 : 2,
       stroke: CONNECTOR_STROKE,
       ...(Object.keys(branchLabels).length ? { branchLabels } : {}),
+      ...(Object.keys(branchTargetT).length ? { branchTargetT } : {}),
     });
   }
 
@@ -245,9 +288,13 @@ export function convertMermaid(graph: MermaidGraph): MermaidConvertResult {
     const sourceAnchor = skipsRank ? side : flowSource;
     const targetAnchor = skipsRank ? side : flowTarget;
 
-    // 시작/끝점은 앵커 변의 중앙 — attached 커넥터라 도형 이동 시 재계산됨
+    // 시작점은 앵커 변의 중앙, 도착점은 배정된 슬롯 — attached 커넥터라
+    // 도형을 옮기면 렌더러가 같은 비율로 다시 계산한다
+    const targetT = arrivalT.get(edge);
     const start = anchorPoint(from, sourceAnchor);
-    const end = anchorPoint(to, targetAnchor);
+    const end = anchorPoint(to, targetAnchor, targetT ?? 0.5);
+    const targetRatios =
+      targetT == null ? undefined : anchorRatios(targetAnchor, targetT);
 
     // 모이는 엣지면 출발 쪽(각 엣지의 세로 구간이 서로 다른 x),
     // 갈라지는 엣지면 도착 쪽으로. 둘 다면 모이는 쪽을 우선한다.
@@ -281,6 +328,12 @@ export function convertMermaid(graph: MermaidGraph): MermaidConvertResult {
       targetId,
       sourceAnchor,
       targetAnchor,
+      ...(targetRatios
+        ? {
+            targetOffsetRatioX: targetRatios.ratioX,
+            targetOffsetRatioY: targetRatios.ratioY,
+          }
+        : {}),
       // 레이어드 레이아웃이라 랭크를 가로지르는 사선보다 직교 경로가 읽기 쉽다
       pathStyle: "elbowed",
       elbowCornerStyle: "rounded",

@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
+  branchLabelPoint,
   computeBranchPaths,
   computeJunction,
   isBranchConnector,
@@ -118,6 +119,39 @@ describe("computeBranchPaths", () => {
     const r = computeBranchPaths({ ...input, targets: [] });
     expect(r.junction).toEqual(start);
     expect(r.branches).toEqual([]);
+  });
+});
+
+describe("branchLabelPoint", () => {
+  it("꺾임점이 아니라 드롭 구간 위에 놓는다", () => {
+    // 분기점(100,200) → 코너(300,200) → 타깃(300,400)
+    const p = branchLabelPoint([100, 200, 300, 200, 300, 400]);
+    expect(p.x).toBe(300);
+    expect(p.y).toBe(300); // 드롭 구간의 중간
+  });
+
+  it("갈래마다 다른 지점이 나온다 — 버스가 겹쳐도 라벨은 안 겹친다", () => {
+    // 같은 분기점에서 오른쪽으로 나란히 뻗는 두 갈래 (버스 구간이 겹친다)
+    const a = branchLabelPoint([100, 200, 300, 200, 300, 400]);
+    const b = branchLabelPoint([100, 200, 500, 200, 500, 400]);
+    expect(a).not.toEqual(b);
+  });
+
+  it("화살촉 위에는 놓지 않는다", () => {
+    // 드롭이 30px 이라 중간점(15)은 끝점에서 15 떨어진다 — 화살촉을 피한다
+    const p = branchLabelPoint([100, 200, 300, 200, 300, 230]);
+    expect(230 - p.y).toBeGreaterThanOrEqual(14);
+  });
+
+  it("드롭이 거의 없으면 앞 구간으로 물러선다", () => {
+    const p = branchLabelPoint([100, 200, 300, 200, 300, 210]);
+    expect(p.y).toBe(200); // 버스 구간 위
+    expect(p.x).toBeLessThan(300);
+  });
+
+  it("구간이 하나뿐이면 그 위에 놓는다", () => {
+    const p = branchLabelPoint([100, 200, 100, 400]);
+    expect(p).toEqual({ x: 100, y: 300 });
   });
 });
 

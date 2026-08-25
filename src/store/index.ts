@@ -528,6 +528,12 @@ export const useCanvasStore = create<CanvasStore>()(
                   JSON.stringify(obj.branchLabels)
               )
                 return false;
+              if (
+                pastObj.branchTargetT !== obj.branchTargetT &&
+                JSON.stringify(pastObj.branchTargetT) !==
+                  JSON.stringify(obj.branchTargetT)
+              )
+                return false;
             }
 
             // ConnectorLabel-specific (text on connector)
