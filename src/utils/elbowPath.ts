@@ -351,6 +351,14 @@ function connectSameAxis(
       return [s, { x: midX, y: s.y }, { x: midX, y: t.y }, t];
     }
 
+    // 둘 다 같은 쪽을 본다 → **세로 통로 하나**로 지나간다.
+    // 아래의 "등지고 있음" 경로로 떨어뜨리면 두 스텁의 x 가 달라서 통로가
+    // 둘로 갈리고 중간에 쓸데없는 갈지자가 생긴다 (실측: 5구간 → 3구간).
+    if (srcDir.x === tgtDir.x) {
+      const gutterX = srcDir.x > 0 ? Math.max(s.x, t.x) : Math.min(s.x, t.x);
+      return [s, { x: gutterX, y: s.y }, { x: gutterX, y: t.y }, t];
+    }
+
     // 등지고 있음 → 두 도형을 위/아래로 비껴간다
     const srcHalf = halfExtent(options?.sourceSize, "vertical");
     const tgtHalf = halfExtent(options?.targetSize, "vertical");
@@ -375,6 +383,12 @@ function connectSameAxis(
   if (canAdvance && targetFacesBack) {
     const midY = (s.y + t.y) / 2;
     return [s, { x: s.x, y: midY }, { x: t.x, y: midY }, t];
+  }
+
+  // 가로 흐름과 같은 이유 — 같은 쪽을 보면 가로 통로 하나로 지나간다
+  if (srcDir.y === tgtDir.y) {
+    const gutterY = srcDir.y > 0 ? Math.max(s.y, t.y) : Math.min(s.y, t.y);
+    return [s, { x: s.x, y: gutterY }, { x: t.x, y: gutterY }, t];
   }
 
   const srcHalf = halfExtent(options?.sourceSize, "horizontal");

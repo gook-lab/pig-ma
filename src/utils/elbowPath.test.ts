@@ -308,6 +308,45 @@ describe("반전 경로가 도형을 관통하지 않는다", () => {
 // 버그 2 — 혼합 앵커 무시
 // ---------------------------------------------------------------------------
 
+describe("같은 쪽을 보는 앵커는 통로 하나로 지나간다", () => {
+  // 우회 경로(랭크 건너뛰기 등)는 양끝이 같은 변으로 붙는다. 이때 세로 통로가
+  // 둘로 갈리면 중간에 쓸데없는 갈지자가 생긴다.
+  it("right→right: 세로 구간이 하나뿐이다", () => {
+    const p = elbow({ x: 300, y: 100 }, { x: 200, y: 600 }, "right", "right");
+    const verticals = p
+      .slice(1)
+      .map((pt, i) => ({ from: p[i]!, to: pt }))
+      .filter((s2) => s2.from.x === s2.to.x && s2.from.y !== s2.to.y);
+    expect(verticals).toHaveLength(1);
+  });
+
+  it("right→right: 통로가 두 도형보다 바깥에 있다", () => {
+    const p = elbow({ x: 300, y: 100 }, { x: 200, y: 600 }, "right", "right");
+    const maxX = Math.max(...p.map((pt) => pt.x));
+    expect(maxX).toBeGreaterThan(300);
+  });
+
+  it("left→left: 왼쪽 바깥으로 돈다", () => {
+    const p = elbow({ x: 300, y: 100 }, { x: 200, y: 600 }, "left", "left");
+    const minX = Math.min(...p.map((pt) => pt.x));
+    expect(minX).toBeLessThan(200);
+  });
+
+  it("bottom→bottom: 가로 구간이 하나뿐이다", () => {
+    const p = elbow({ x: 100, y: 300 }, { x: 600, y: 200 }, "bottom", "bottom");
+    const horizontals = p
+      .slice(1)
+      .map((pt, i) => ({ from: p[i]!, to: pt }))
+      .filter((s2) => s2.from.y === s2.to.y && s2.from.x !== s2.to.x);
+    expect(horizontals).toHaveLength(1);
+  });
+
+  it("등지고 있으면 통로를 합치지 않는다 (기존 동작 유지)", () => {
+    const p = elbow({ x: 300, y: 100 }, { x: 200, y: 600 }, "right", "left");
+    expect(p.length).toBeGreaterThan(2);
+  });
+});
+
 describe("혼합 앵커를 존중한다", () => {
   it("right→top: 타깃에 수직으로 진입한다", () => {
     const p = elbow({ x: 100, y: 100 }, { x: 400, y: 300 }, "right", "top");
