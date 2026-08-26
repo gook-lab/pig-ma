@@ -1,0 +1,5 @@
+{
+  "ignore": {
+    "files": ["figma-plugin/**", "dist/**", "build/**"]
+  }
+}
