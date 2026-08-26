@@ -277,6 +277,23 @@ describe("도착점 분산 (한 노드로 모이는 엣지)", () => {
     expect(branch.branchTargetT![cId]).not.toBe(plain.targetOffsetRatioX);
   });
 
+  it("들어오는 변이 다르면 도착점을 밀지 않는다", () => {
+    // A→C 는 위쪽 변으로, B→C 는 랭크를 건너뛰어 옆면으로 들어온다.
+    // 변이 다르면 애초에 안 겹치는데 밀어내면 곧은 선이 Z 자로 꺾인다.
+    const { objects } = convertMermaid(
+      parseMermaid("flowchart TD\n  A --> B\n  B --> C\n  A --> C"),
+    );
+    const conns = objects.filter((o) => o.type === "connector");
+    const straightIn = conns.filter((c) => c.targetAnchor === "top");
+    // 위쪽 변으로 들어오는 게 하나뿐이면 도착점을 건드리지 않는다
+    if (straightIn.length === 1) {
+      expect(straightIn[0]!.targetOffsetRatioX).toBeUndefined();
+    }
+    // 우회 엣지는 옆면으로 들어가므로 위쪽 엣지와 슬롯을 나눠 갖지 않는다
+    const sides = new Set(conns.map((c) => c.targetAnchor));
+    expect(sides.size).toBeGreaterThan(1);
+  });
+
   it("도착 비율은 변을 벗어나지 않는다", () => {
     const { objects } = convertMermaid(
       parseMermaid("flowchart TD\n  A --> E\n  B --> E\n  C --> E\n  D --> E"),

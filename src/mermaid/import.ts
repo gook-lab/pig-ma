@@ -176,18 +176,45 @@ export function convertMermaid(graph: MermaidGraph): MermaidConvertResult {
   const seenIn = new Map<string, number>();
   const seenOut = new Map<string, number>();
 
+  /** 이 엣지가 타깃의 어느 변으로 들어가는가 (우회 엣지는 옆면). */
+  const targetAnchorOf = (edge: (typeof graph.edges)[number]): AnchorSide => {
+    const from = nodeLayoutById.get(edge.from);
+    const to = nodeLayoutById.get(edge.to);
+    if (!from || !to) return flowTarget;
+    const span = vertical
+      ? Math.abs(
+          reversed
+            ? from.y - (to.y + to.height)
+            : to.y - (from.y + from.height),
+        )
+      : Math.abs(
+          reversed ? from.x - (to.x + to.width) : to.x - (from.x + from.width),
+        );
+    return span > RANK_GAP * 1.6 ? detourSide(from, to) : flowTarget;
+  };
+
   // 한 노드로 여러 엣지가 모이면 도착점이 변의 같은 중앙이라 마지막 구간이
   // 완전히 겹친다 — 서로 다른 두 연결이 한 줄로 보인다. 도착점을 앵커 변에
   // 고르게 나눠 준다. 갈래끼리도, 갈래와 1:1 커넥터 사이에도 적용된다.
+  //
+  // **같은 변으로 들어오는 엣지끼리만** 나눈다. 변이 다르면 애초에 겹치지
+  // 않는데도 밀어내면, 세로로 나란한 두 노드 사이가 곧은 직선에서 Z 자로
+  // 꺾인다 (실측: engine/loop → systems/* 가 우회 점선 때문에 꺾였다).
   const ARRIVAL_STEP = 0.22;
   const arrivalT = new Map<(typeof graph.edges)[number], number>();
   {
+    const perSide = new Map<string, number>();
+    for (const edge of graph.edges) {
+      const key = `${edge.to}|${targetAnchorOf(edge)}`;
+      perSide.set(key, (perSide.get(key) ?? 0) + 1);
+    }
     const seen = new Map<string, number>();
     for (const edge of graph.edges) {
-      const n = fanIn.get(edge.to) ?? 1;
+      const key = `${edge.to}|${targetAnchorOf(edge)}`;
+      const n = perSide.get(key) ?? 1;
       if (n < 2) continue;
-      const i = seen.get(edge.to) ?? 0;
-      seen.set(edge.to, i + 1);
+      const i = seen.get(key) ?? 0;
+      seen.set(key, i + 1);
       // 변을 벗어나지 않게 간격을 좁힌다 (0.17~0.83 안에 들어온다)
       const step = Math.min(ARRIVAL_STEP, 0.66 / n);
       arrivalT.set(edge, 0.5 + (i - (n - 1) / 2) * step);
