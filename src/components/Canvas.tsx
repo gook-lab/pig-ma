@@ -1,4 +1,11 @@
-import { useRef, useCallback, useEffect, useState, useMemo } from "react";
+import {
+  useRef,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+  useMemo,
+} from "react";
 import {
   Stage,
   Layer,
@@ -215,12 +222,20 @@ export function Canvas() {
   // 마키 드래그 발생 여부 (click 이벤트에서 선택 해제 방지용)
   const wasMarqueeDragRef = useRef(false);
 
-  // Sync refs with state
-  marqueeRef.current = marquee;
-  drawingRef.current = drawing;
-  arrowDrawingRef.current = arrowDrawing;
-  isPanningRef.current = isPanning;
-  panStartRef.current = panStart;
+  // 이벤트 핸들러가 최신 값을 읽도록 state 를 ref 에 옮겨 둔다.
+  //
+  // ⚠️ 렌더 중에 쓰면 안 된다. React 는 렌더를 버리거나 다시 돌릴 수 있어서,
+  // 커밋되지 않은 렌더의 값이 ref 에 남을 수 있다. 커밋 뒤에 쓴다.
+  // useEffect 가 아니라 useLayoutEffect 인 이유: 이 ref 들은 mousedown 직후의
+  // mouseup 에서 읽힌다. passive effect 는 비동기라 그 사이에 이벤트가 끼면
+  // 낡은 값을 읽는다.
+  useLayoutEffect(() => {
+    marqueeRef.current = marquee;
+    drawingRef.current = drawing;
+    arrowDrawingRef.current = arrowDrawing;
+    isPanningRef.current = isPanning;
+    panStartRef.current = panStart;
+  }, [marquee, drawing, arrowDrawing, isPanning, panStart]);
 
   // Reactive state: values needed for rendering/JSX
   const {
@@ -285,7 +300,9 @@ export function Canvas() {
   const stageWrapperRef = useRef<HTMLDivElement>(null);
   const [isCursorVisible, setIsCursorVisible] = useState(false);
   const isCursorVisibleRef = useRef(false);
-  isCursorVisibleRef.current = isCursorVisible;
+  useLayoutEffect(() => {
+    isCursorVisibleRef.current = isCursorVisible;
+  }, [isCursorVisible]);
 
   // Context menu state
   const [contextMenu, setContextMenu] = useState<{
@@ -532,8 +549,9 @@ export function Canvas() {
     objectsLen: 0,
   });
 
-  // objects 변경 시에만 bounds 재계산
-  useMemo(() => {
+  // objects 변경 시에만 bounds 재계산 — 계산은 순수하게(useMemo), ref 반영은
+  // 커밋 뒤에(useLayoutEffect). 렌더 중 ref 쓰기를 피한다.
+  const objectBounds = useMemo(() => {
     let minX = 0,
       maxX = 0,
       minY = 0,
@@ -546,14 +564,12 @@ export function Canvas() {
       if (obj.x + w + 200 > maxX) maxX = obj.x + w + 200;
       if (obj.y + h + 200 > maxY) maxY = obj.y + h + 200;
     }
-    objectBoundsRef.current = {
-      minX,
-      maxX,
-      minY,
-      maxY,
-      objectsLen: objects.length,
-    };
+    return { minX, maxX, minY, maxY, objectsLen: objects.length };
   }, [objects]);
+
+  useLayoutEffect(() => {
+    objectBoundsRef.current = objectBounds;
+  }, [objectBounds]);
 
   // Zoom with wheel (Cmd + scroll only, like FigJam)
   // getState() 기반 — viewport/objects 변경 시 콜백 재생성 방지

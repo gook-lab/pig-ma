@@ -1,4 +1,12 @@
-import { memo, useCallback, useMemo, useState, useEffect, useRef } from "react";
+import {
+  memo,
+  useCallback,
+  useMemo,
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from "react";
 import {
   Arrow,
   Line,
@@ -222,20 +230,23 @@ export const Connector = memo(function Connector({
     shapeVariant?: string;
     rotation?: number;
   } | null>(null);
-  if (sourceObject) {
-    sourceDataRef.current = {
-      x: sourceObject.x,
-      y: sourceObject.y,
-      type: sourceObject.type,
-      width: sourceObject.width,
-      height: sourceObject.height,
-      radius: sourceObject.radius,
-      shapeVariant: sourceObject.shapeVariant,
-      rotation: sourceObject.rotation,
-    };
-  } else {
-    sourceDataRef.current = null;
-  }
+  // 드래그 핸들러가 최신 도형 정보를 읽도록 스냅샷을 ref 에 담아 둔다.
+  // ⚠️ 렌더 중이 아니라 커밋 뒤에 쓴다 — 버려진 렌더의 값이 남으면 드래그가
+  // 존재하지 않는 위치를 기준으로 계산한다.
+  useLayoutEffect(() => {
+    sourceDataRef.current = sourceObject
+      ? {
+          x: sourceObject.x,
+          y: sourceObject.y,
+          type: sourceObject.type,
+          width: sourceObject.width,
+          height: sourceObject.height,
+          radius: sourceObject.radius,
+          shapeVariant: sourceObject.shapeVariant,
+          rotation: sourceObject.rotation,
+        }
+      : null;
+  }, [sourceObject]);
 
   const targetDataRef = useRef<{
     x: number;
@@ -247,20 +258,20 @@ export const Connector = memo(function Connector({
     shapeVariant?: string;
     rotation?: number;
   } | null>(null);
-  if (targetObject) {
-    targetDataRef.current = {
-      x: targetObject.x,
-      y: targetObject.y,
-      type: targetObject.type,
-      width: targetObject.width,
-      height: targetObject.height,
-      radius: targetObject.radius,
-      shapeVariant: targetObject.shapeVariant,
-      rotation: targetObject.rotation,
-    };
-  } else {
-    targetDataRef.current = null;
-  }
+  useLayoutEffect(() => {
+    targetDataRef.current = targetObject
+      ? {
+          x: targetObject.x,
+          y: targetObject.y,
+          type: targetObject.type,
+          width: targetObject.width,
+          height: targetObject.height,
+          radius: targetObject.radius,
+          shapeVariant: targetObject.shapeVariant,
+          rotation: targetObject.rotation,
+        }
+      : null;
+  }, [targetObject]);
 
   // 직접 Konva 라인 포인트 업데이트 (React 리렌더 없이)
   const updateLinePoints = useCallback(() => {
