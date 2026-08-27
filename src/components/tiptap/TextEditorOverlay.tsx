@@ -44,7 +44,10 @@ export function TextEditorOverlay() {
   const outerContainerRef = useRef<HTMLDivElement>(null);
   // ref를 사용하여 blur 핸들러에서 항상 최신 값을 참조
   const isFileDialogOpenRef = useRef(isFileDialogOpen);
-  isFileDialogOpenRef.current = isFileDialogOpen;
+  // 렌더 중이 아니라 커밋 뒤에 쓴다 (버려진 렌더의 값이 남지 않게)
+  useLayoutEffect(() => {
+    isFileDialogOpenRef.current = isFileDialogOpen;
+  }, [isFileDialogOpen]);
   // 에디터가 방금 열렸는지 추적 (blur 무시용)
   const justOpenedRef = useRef(true);
   // blur 이벤트가 내부 이동인지 추적
