@@ -93,19 +93,18 @@ export const ConnectorLabelOptionsBar = memo(function ConnectorLabelOptionsBar({
 
   const togglePanel = useCallback(
     (panel: "textColor" | "fontFamily" | "fontSize") => {
-      setActivePanel((prev) => {
-        if (prev === panel) return null;
-
-        const buttonEl = dropdownButtonRefs.current[panel];
-        if (buttonEl) {
-          const rect = buttonEl.getBoundingClientRect();
-          const dropdownHeight = 200;
-          const spaceBelow = window.innerHeight - rect.bottom;
-          setDropdownAbove(spaceBelow < dropdownHeight);
-        }
-
-        return panel;
-      });
+      // 경계 측정과 setDropdownAbove 는 업데이터 **밖**에서 한다.
+      // React 는 업데이터를 두 번 이상 실행할 수 있어서, 안에 두면 중첩
+      // setState 가 반복되거나 일관되지 않은 외부 상태를 읽는다.
+      // 닫히는 경우에 계산해 둬도 해가 없다 — 열려 있을 때만 쓰이는 값이다.
+      const buttonEl = dropdownButtonRefs.current[panel];
+      if (buttonEl) {
+        const rect = buttonEl.getBoundingClientRect();
+        const dropdownHeight = 200;
+        const spaceBelow = window.innerHeight - rect.bottom;
+        setDropdownAbove(spaceBelow < dropdownHeight);
+      }
+      setActivePanel((prev) => (prev === panel ? null : panel));
       setShowCustomPicker(false);
     },
     [],
