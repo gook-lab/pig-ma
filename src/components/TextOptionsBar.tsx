@@ -228,16 +228,14 @@ export function TextOptionsBar({
         | "image"
         | "table",
     ) => {
-      setActivePanel((prev) => {
-        if (prev === panel) return null;
-
-        // StickyNote는 옵션바가 아래에 있으므로 드롭다운은 항상 위로 열림
-        if (isStickyNote) {
-          setDropdownAbove(true);
-          return panel;
-        }
-
-        // 드롭다운이 열릴 때 화면 경계 체크
+      // 경계 측정과 setDropdownAbove 는 업데이터 **밖**에서 한다.
+      // React 는 업데이터를 두 번 이상 실행할 수 있어서, 안에 두면 중첩
+      // setState 가 반복되거나 일관되지 않은 외부 상태를 읽는다.
+      // 닫히는 경우에 계산해 둬도 해가 없다 — 열려 있을 때만 쓰이는 값이다.
+      if (isStickyNote) {
+        // StickyNote 는 옵션바가 아래에 있으므로 드롭다운은 항상 위로 열린다
+        setDropdownAbove(true);
+      } else {
         const buttonEl = dropdownButtonRefs.current[panel];
         if (buttonEl) {
           const rect = buttonEl.getBoundingClientRect();
@@ -246,9 +244,8 @@ export function TextOptionsBar({
           // 아래 공간이 부족하면 위로 표시
           setDropdownAbove(spaceBelow < dropdownHeight);
         }
-
-        return panel;
-      });
+      }
+      setActivePanel((prev) => (prev === panel ? null : panel));
     },
     [isStickyNote],
   );

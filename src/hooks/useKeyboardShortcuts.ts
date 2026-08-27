@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useCanvasStore, undo, redo } from "@/store";
 import { useShortcutsStore, matchesBinding } from "@/hooks/useShortcuts";
 import { useHistoryStore } from "@/hooks/useAutoSave";
@@ -60,7 +60,11 @@ export function useKeyboardShortcuts() {
   } = useCanvasStore();
 
   // Undo 핸들러 - Tiptap 편집 중이면 Tiptap 히스토리 우선
-  const handleUndo = () => {
+  //
+  // ⚠️ useCallback 이 필요하다. 이 두 핸들러는 아래 keydown useEffect 의 의존성
+  // 배열에 들어 있는데, 매 렌더 새 함수면 `===` 가 항상 실패해서 **렌더마다**
+  // 리스너를 떼었다 다시 붙인다 (react-doctor/no-effect-with-fresh-deps).
+  const handleUndo = useCallback(() => {
     if (editingTextId && activeEditor) {
       // Tiptap 히스토리가 있으면 사용
       if (activeEditor.can().undo()) {
@@ -71,10 +75,10 @@ export function useKeyboardShortcuts() {
       setEditingTextId(null);
     }
     undo();
-  };
+  }, [editingTextId, activeEditor, setEditingTextId]);
 
   // Redo 핸들러 - Tiptap 편집 중이면 Tiptap 히스토리 우선
-  const handleRedo = () => {
+  const handleRedo = useCallback(() => {
     if (editingTextId && activeEditor) {
       // Tiptap 히스토리가 있으면 사용
       if (activeEditor.can().redo()) {
@@ -85,7 +89,7 @@ export function useKeyboardShortcuts() {
       setEditingTextId(null);
     }
     redo();
-  };
+  }, [editingTextId, activeEditor, setEditingTextId]);
 
   // 선택된 객체들이 잠긴 그룹에 속해있는지 체크하는 헬퍼
   const isSelectionLocked = () => {

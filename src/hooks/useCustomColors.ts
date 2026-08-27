@@ -26,7 +26,9 @@ export function useCustomColors() {
   // 낭비된다 — lazy initializer 로 첫 렌더부터 저장된 값을 쓴다.
   const [customColors, setCustomColors] = useState<string[]>(readStoredColors);
 
-  // 색상 추가
+  // 색상 추가 — 업데이터는 다음 상태만 돌려준다.
+  // localStorage 쓰기를 업데이터 안에 두면 안 된다: React 는 업데이터를 두 번
+  // 이상 실행할 수 있어서 저장이 중복되거나 버려진 값이 디스크에 남는다.
   const addCustomColor = useCallback((color: string) => {
     setCustomColors((prev) => {
       // 이미 있으면 제거 (맨 앞으로 이동하기 위해)
@@ -34,16 +36,18 @@ export function useCustomColors() {
         (c) => c.toLowerCase() !== color.toLowerCase(),
       );
       // 맨 앞에 추가
-      const updated = [color.toLowerCase(), ...filtered].slice(0, MAX_COLORS);
-      // localStorage에 저장
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      } catch {
-        // 저장 실패 무시
-      }
-      return updated;
+      return [color.toLowerCase(), ...filtered].slice(0, MAX_COLORS);
     });
   }, []);
+
+  // 저장은 상태가 확정된 뒤에 한 번만 한다
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(customColors));
+    } catch {
+      // 저장 실패 무시 (사파리 프라이빗 모드 등)
+    }
+  }, [customColors]);
 
   // 팔레트에 없는 색상인지 확인하고 추가
   const addIfCustom = useCallback(
