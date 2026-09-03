@@ -1,4 +1,11 @@
-import { useEffect, useState, useCallback, useRef } from "react";
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+} from "react";
 import { Toaster } from "react-hot-toast";
 import { Agentation } from "agentation";
 import { Canvas } from "@/components/Canvas";
@@ -13,8 +20,7 @@ import { CodeBlockEditor } from "@/components/CodeBlockEditor";
 import { EmbedEditor } from "@/components/EmbedEditor";
 import { LineEditor } from "@/components/LineEditor";
 import { TextBoxEditor } from "@/components/TextBoxEditor";
-import { ShapesPanel } from "@/components/ShapesPanel";
-import { TemplatesPanel } from "@/components/TemplatesPanel";
+import { EmptyCanvasGuide } from "@/components/EmptyCanvasGuide";
 import { CanvasScrollbars } from "@/components/CanvasScrollbars";
 import { Minimap } from "@/components/Minimap";
 import { FloatingUtilityBar } from "@/components/FloatingUtilityBar";
@@ -37,6 +43,16 @@ import { useAutoSave } from "@/hooks/useAutoSave";
 import { useCanvasStore } from "@/store";
 
 const isAIEnabled = import.meta.env.VITE_ENABLE_AI === "true";
+const TemplatesPanel = lazy(() =>
+  import("@/components/TemplatesPanel").then((module) => ({
+    default: module.TemplatesPanel,
+  })),
+);
+const ShapesPanel = lazy(() =>
+  import("@/components/ShapesPanel").then((module) => ({
+    default: module.ShapesPanel,
+  })),
+);
 
 function App() {
   useKeyboardShortcuts();
@@ -49,6 +65,8 @@ function App() {
   const setViewport = useCanvasStore((s) => s.setViewport);
   const editingTextId = useCanvasStore((s) => s.editingTextId);
   const hideUI = useCanvasStore((s) => s.hideUI);
+  const showTemplatesPanel = useCanvasStore((s) => s.showTemplatesPanel);
+  const showShapesPanel = useCanvasStore((s) => s.showShapesPanel);
 
   // Track stage size for scrollbar calculation
   const [stageSize, setStageSize] = useState({
@@ -187,6 +205,7 @@ function App() {
       <Toolbar />
       <MultiSelectIndicator />
       <Header />
+      <EmptyCanvasGuide />
       <PencilPopover />
       <StickyNoteEditor />
       <ConnectorEditor />
@@ -199,8 +218,16 @@ function App() {
       <TextBoxEditor />
       <GroupEditor />
       <MultiSelectEditor />
-      <ShapesPanel />
-      <TemplatesPanel />
+      {showShapesPanel && (
+        <Suspense fallback={null}>
+          <ShapesPanel />
+        </Suspense>
+      )}
+      {showTemplatesPanel && (
+        <Suspense fallback={null}>
+          <TemplatesPanel />
+        </Suspense>
+      )}
       <CanvasScrollbars
         objects={objects}
         viewport={viewport}
