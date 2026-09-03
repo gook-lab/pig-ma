@@ -1,77 +1,50 @@
-# Pig-ma 캔버스 라이브러리 (Pig-ma Canvas Library)
+# Pig-ma 문서
 
-FigJam 스타일의 무한 캔버스 라이브러리. React + TypeScript + Konva.js 기반.
+Pig-ma는 React 애플리케이션에 삽입할 수 있는 FigJam 스타일 무한 캔버스
+라이브러리입니다. 설치와 기본 사용법은 저장소의 [README](../README.md)에서
+먼저 확인할 수 있습니다.
 
-## 기능 (Features)
+## 문서 찾기
 
-- **무한 캔버스**: 패닝 & 줌 (Figma 스타일 Cmd+스크롤)
-- **다양한 도형**: 사각형, 원, 다각형, 플로우차트 도형
-- **드로잉 도구**: 펜, 마커, 하이라이터
-- **텍스트**: 리치 텍스트 편집, 폰트 스타일링
-- **커넥터**: 도형 간 연결선, 자동 스냅
-- **댓글 시스템**: FigJam 스타일 캡션/코멘트
-- **컨텍스트 메뉴**: 우클릭 메뉴 (복사, 붙여넣기, Z-order 등)
-- **정렬/분배**: 다중 선택 시 정렬 옵션바 (등간격 분배 포함)
-- **Undo/Redo**: 히스토리 관리
-- **로컬 저장**: localStorage 자동 저장 + 열기 전 자동 백업
-- **파일 I/O**: `.pigma` 프로젝트 저장/열기, Excalidraw 양방향, Mermaid import, Figma 연동
+| 문서 | 읽을 때 |
+|---|---|
+| [도구 가이드](./TOOLS.md) | 캔버스 도구의 사용법과 단축키를 확인할 때 |
+| [API 레퍼런스](./API.md) | 공개 컴포넌트·훅·스토어 API를 연동할 때 |
+| [타입 레퍼런스](./TYPES.md) | `CanvasObject`와 세부 타입을 확인할 때 |
+| [아키텍처](./ARCHITECTURE.md) | 렌더링·상태·저장 구조와 설계 이유를 이해할 때 |
 
-## 빠른 시작 (Quick Start)
+## 기술 구성
 
-```bash
-npm install
-npm run dev
-```
+| 영역 | 기술 |
+|---|---|
+| UI | React 18·19, TypeScript |
+| 빌드 | Vite |
+| 캔버스 | Konva, react-konva |
+| 텍스트 편집 | Tiptap |
+| 상태 | Zustand, zundo, persist |
+| 스타일 | Tailwind CSS |
+| 테스트 | Vitest, Playwright |
 
-## 문서 (Documentation)
+## 저장소 구조
 
-- [아키텍처 (Architecture)](./ARCHITECTURE.md) - 전체 아키텍처 및 설계
-- [도구 가이드 (Tools Guide)](./TOOLS.md) - 도구별 상세 가이드
-- [API 레퍼런스 (API Reference)](./API.md) - 컴포넌트/훅 API
-- [타입 (Types)](./TYPES.md) - TypeScript 타입 정의
-
-## 기술 스택 (Tech Stack)
-
-| 분야 | 기술 |
-|------|------|
-| Framework | React 18 + TypeScript |
-| Build | Vite |
-| Canvas | Konva.js (react-konva) |
-| State | Zustand + zundo (undo/redo) + persist |
-| Styling | TailwindCSS |
-| Icons | Lucide React |
-
-## 프로젝트 구조 (Project Structure)
-
-```
+```text
 src/
-├── components/
-│   ├── Canvas.tsx          # 메인 캔버스
-│   ├── Toolbar.tsx         # 하단 도구 모음
-│   ├── ContextMenu.tsx     # 우클릭 메뉴
-│   ├── shapes/             # 도형 컴포넌트
-│   │   ├── Rectangle.tsx
-│   │   ├── Circle.tsx
-│   │   ├── Shape.tsx       # 통합 도형 (다각형, 플로우차트)
-│   │   ├── StickyNote.tsx
-│   │   ├── TextBox.tsx
-│   │   ├── Connector.tsx
-│   │   └── Line.tsx
-│   ├── captions/           # 댓글 시스템
-│   └── ...
-├── hooks/
-│   ├── useKeyboardShortcuts.ts
-│   ├── useDragCoordinator.ts
-│   └── ...
-├── utils/
-│   ├── factory.ts          # 객체 생성
-│   ├── geometry.ts         # 기하학 계산
-│   └── richText.ts         # 리치 텍스트 유틸
-├── store.ts                # Zustand 상태 관리
-├── types.ts                # TypeScript 타입
-└── App.tsx
+├── components/          # 캔버스와 도구 UI
+│   ├── captions/        # 댓글 패널과 마커
+│   └── shapes/          # 도형별 렌더러
+├── store/               # 상태 slice와 영속화·히스토리 처리
+├── hooks/               # 키보드·드래그·자동 저장 동작
+├── utils/               # 객체 생성, 기하 계산, 파일 변환
+├── figma/               # Figma 변환
+├── excalidraw/          # Excalidraw 변환
+├── mermaid/             # Mermaid 파싱과 배치
+└── index.ts             # npm 공개 API
 ```
 
-## 라이선스 (License)
+진행 중인 작업은 [`plans`](./plans/)에, 완료된 설계 기록은
+[`archive`](./archive/)에 분리되어 있습니다. 검토했지만 채택하지 않은 구조는
+[`proposals`](./proposals/)에서 확인할 수 있습니다.
 
-MIT
+## 라이선스
+
+[MIT](../LICENSE)
