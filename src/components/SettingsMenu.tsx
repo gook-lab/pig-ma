@@ -11,7 +11,7 @@ import { FONT_OPTIONS, fontStack } from "@/constants/fonts";
  * **앞으로 만들 객체**의 기본값을 정한다. 이미 있는 객체는 건드리지 않는다 —
  * 설정 한 번으로 문서 전체 서체가 바뀌면 되돌릴 방법이 없기 때문이다.
  */
-export function SettingsMenu() {
+export function SettingsMenu({ compact = false }: { compact?: boolean }) {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -33,13 +33,15 @@ export function SettingsMenu() {
   return (
     <div className="relative" ref={menuRef}>
       <button
+        type="button"
         onClick={() => setShowMenu((prev) => !prev)}
-        aria-label="Settings"
-        title="Settings"
+        aria-label="설정"
+        aria-expanded={showMenu}
+        title="설정"
         className={cn(
-          "flex h-12 w-12 items-center justify-center",
-          "rounded-xl border border-gray-200 bg-white shadow-lg",
-          "dark:border-[#c0c1c4] dark:bg-[#d6d7da]",
+          compact
+            ? "flex min-h-11 flex-col items-center justify-center gap-1 rounded-lg px-2 text-xs hover:bg-gray-50"
+            : "flex h-12 w-12 items-center justify-center rounded-xl border border-gray-200 bg-white shadow-lg dark:border-[#c0c1c4] dark:bg-[#d6d7da]",
           "text-gray-700 dark:text-gray-800",
           "transition-all hover:bg-gray-50 dark:hover:bg-[#c8c9cc]",
           "active:scale-95",
@@ -47,17 +49,16 @@ export function SettingsMenu() {
             "border-gray-300 bg-gray-50 dark:border-[#b0b1b4] dark:bg-[#c8c9cc]",
         )}
       >
-        <Settings size={18} />
+        <Settings size={18} aria-hidden="true" />
+        {compact && <span>설정</span>}
       </button>
 
       {showMenu && (
         <div className="popover-enter absolute top-full right-0 mt-2 w-60 rounded-xl border border-gray-200 bg-white py-2 shadow-xl">
           <div className="px-3 pb-1">
-            <div className="text-xs font-semibold text-gray-500">
-              Default font
-            </div>
+            <div className="text-xs font-semibold text-gray-500">기본 글꼴</div>
             <div className="mt-0.5 text-[11px] text-gray-400">
-              Applies to new objects only
+              새로 만드는 요소에만 적용됩니다
             </div>
           </div>
 

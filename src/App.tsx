@@ -54,6 +54,17 @@ const ShapesPanel = lazy(() =>
   })),
 );
 
+function PanelLoading({ label }: { label: string }) {
+  return (
+    <div
+      role="status"
+      className="fixed top-1/2 right-4 z-40 -translate-y-1/2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-500 shadow-lg"
+    >
+      {label} 불러오는 중…
+    </div>
+  );
+}
+
 function App() {
   useKeyboardShortcuts();
   useAutoSave();
@@ -219,12 +230,12 @@ function App() {
       <GroupEditor />
       <MultiSelectEditor />
       {showShapesPanel && (
-        <Suspense fallback={null}>
+        <Suspense fallback={<PanelLoading label="도형" />}>
           <ShapesPanel />
         </Suspense>
       )}
       {showTemplatesPanel && (
-        <Suspense fallback={null}>
+        <Suspense fallback={<PanelLoading label="템플릿" />}>
           <TemplatesPanel />
         </Suspense>
       )}

@@ -922,6 +922,9 @@ export function Toolbar() {
         >
           {/* Select */}
           <button
+            type="button"
+            aria-label="선택 도구"
+            aria-pressed={!showMoreMenu && tool === "select"}
             onClick={() => {
               if (isLocked) return;
               setTool("select");
@@ -943,6 +946,9 @@ export function Toolbar() {
 
           {/* Hand (Pan) - Always enabled even when locked */}
           <button
+            type="button"
+            aria-label="이동 도구"
+            aria-pressed={tool === "hand"}
             onClick={() => {
               setTool("hand");
               clearSelection();
@@ -963,6 +969,9 @@ export function Toolbar() {
 
           {/* Pencil */}
           <button
+            type="button"
+            aria-label="펜 도구"
+            aria-pressed={tool === "pencil"}
             onClick={() => {
               if (isLocked) return;
               setTool("pencil");
@@ -984,6 +993,9 @@ export function Toolbar() {
 
           {/* Unified Shape Selector */}
           <button
+            type="button"
+            aria-label="도형 도구"
+            aria-pressed={isShapeTool}
             onClick={() => {
               if (isLocked) return;
               if (!isShapeTool) {
@@ -1044,6 +1056,9 @@ export function Toolbar() {
               </div>
             )}
             <button
+              type="button"
+              aria-label="메모지 도구"
+              aria-pressed={tool === "stickyNote"}
               onClick={() => {
                 if (isLocked) return;
                 setTool("stickyNote");
@@ -1074,6 +1089,9 @@ export function Toolbar() {
 
           {/* TextBox - Top level */}
           <button
+            type="button"
+            aria-label="텍스트 도구"
+            aria-pressed={tool === "textBox"}
             onClick={() => {
               if (isLocked) return;
               setTool("textBox");
@@ -1096,6 +1114,9 @@ export function Toolbar() {
           {/* More menu — Table, Chart, Code Block, Embed, Image */}
           <div className="relative" ref={moreMenuRef}>
             <button
+              type="button"
+              aria-label="도구 더보기"
+              aria-expanded={showMoreMenu}
               onClick={() => {
                 if (isLocked) return;
                 setShowShapePopover(false);
@@ -1415,6 +1436,9 @@ export function Toolbar() {
 
           {/* Connector with path style popover */}
           <button
+            type="button"
+            aria-label="연결선 도구"
+            aria-pressed={tool === "connector"}
             onClick={() => {
               if (isLocked) return;
               setTool("connector");
@@ -1456,6 +1480,8 @@ export function Toolbar() {
 
           {/* Reset */}
           <button
+            type="button"
+            aria-label="전체 삭제"
             onClick={() => {
               if (objects.length > 0) {
                 setShowResetConfirm(true);
@@ -1478,6 +1504,9 @@ export function Toolbar() {
 
           {/* Lock/Unlock */}
           <button
+            type="button"
+            aria-label={isLocked ? "화면 잠금 해제" : "화면 잠금"}
+            aria-pressed={isLocked}
             onClick={() => {
               if (isLocked) {
                 window.dispatchEvent(new CustomEvent("canvas-unlock-request"));

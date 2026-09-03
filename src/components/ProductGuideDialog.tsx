@@ -115,7 +115,7 @@ export function ProductGuideDialog({
                   편집과 저장
                 </strong>
                 <span className="text-xs leading-5 text-gray-500">
-                  요소를 선택해 편집하고 File 메뉴에서 작업을 내보냅니다.
+                  요소를 선택해 편집하고 파일 메뉴에서 작업을 내보냅니다.
                 </span>
               </div>
             </li>

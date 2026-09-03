@@ -33,10 +33,10 @@ async function createTextBox(page: Page, x: number, y: number) {
 
 /** 현재 캔버스를 .pigma 로 저장해 현재 페이지 objects 를 얻는다 */
 async function saveAndGetObjects(page: Page) {
-  await page.getByRole("button", { name: "File" }).click();
+  await page.getByRole("button", { name: "파일" }).click();
   await page.waitForTimeout(150);
   const downloadPromise = page.waitForEvent("download");
-  await page.getByText("Save as file").click();
+  await page.getByText("파일로 저장").click();
   const download = await downloadPromise;
   const json = JSON.parse(fs.readFileSync((await download.path())!, "utf-8"));
   return json.pages.find((p: { id: string }) => p.id === json.currentPageId)

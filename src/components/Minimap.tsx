@@ -352,28 +352,34 @@ export const Minimap = memo(function Minimap({
       {/* 탭 라벨 + 줌 컨트롤 */}
       <div className="flex h-8 w-full items-center justify-between rounded-t border border-b-0 border-gray-200 bg-white px-2 dark:border-[#c0c1c4] dark:bg-[#d6d7da]">
         <span className="text-xs font-medium text-gray-500 dark:text-gray-600">
-          Minimap
+          미니맵
         </span>
         <div className="flex items-center gap-1">
           <button
+            type="button"
+            aria-label="축소"
             onClick={handleZoomOut}
             className="rounded p-1 transition-colors hover:bg-gray-100 dark:hover:bg-[#c8c9cc]"
-            title="Zoom Out"
+            title="축소"
           >
             <Minus className="h-4 w-4 text-gray-600 dark:text-gray-700" />
           </button>
           <button
+            type="button"
+            aria-label="확대"
             onClick={handleZoomIn}
             className="rounded p-1 transition-colors hover:bg-gray-100 dark:hover:bg-[#c8c9cc]"
-            title="Zoom In"
+            title="확대"
           >
             <Plus className="h-4 w-4 text-gray-600 dark:text-gray-700" />
           </button>
           {viewport.zoom !== DEFAULT_ZOOM && (
             <button
+              type="button"
+              aria-label="화면 배율 100%로 초기화"
               onClick={handleResetZoom}
               className="rounded p-1 transition-colors hover:bg-gray-100 dark:hover:bg-[#c8c9cc]"
-              title="Reset View (100%)"
+              title="화면 배율 초기화 (100%)"
             >
               <RotateCcw className="h-4 w-4 text-gray-600 dark:text-gray-700" />
             </button>

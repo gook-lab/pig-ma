@@ -17,7 +17,7 @@ async function createShape(page: Page, x: number, y: number) {
 }
 
 async function openFileMenu(page: Page) {
-  await page.getByRole("button", { name: "File" }).click();
+  await page.getByRole("button", { name: "파일" }).click();
   await page.waitForTimeout(150);
 }
 
@@ -66,7 +66,7 @@ test.describe("File I/O", () => {
 
     await openFileMenu(page);
     const { filename, json } = await downloadJson(page, () =>
-      page.getByText("Save as file").click(),
+      page.getByText("파일로 저장").click(),
     );
 
     expect(filename.endsWith(".pigma")).toBe(true);
@@ -128,7 +128,7 @@ test.describe("File I/O", () => {
 
     page.once("dialog", (dialog) => dialog.accept());
     await openFileMenu(page);
-    await chooseFile(page, "Open file", {
+    await chooseFile(page, "파일 열기", {
       name: "e2e.pigma",
       buffer: Buffer.from(JSON.stringify(pigmaFile)),
     });
@@ -160,21 +160,21 @@ test.describe("File I/O", () => {
     };
     page.once("dialog", (dialog) => dialog.accept());
     await openFileMenu(page);
-    await chooseFile(page, "Open file", {
+    await chooseFile(page, "파일 열기", {
       name: "replace.pigma",
       buffer: Buffer.from(JSON.stringify(pigmaFile)),
     });
     await expect(page.getByText("Project opened")).toBeVisible();
 
-    // Restore last backup 항목이 나타나고, 복원하면 이전 도형이 돌아온다
+    // 최근 백업 복원 항목이 나타나고, 복원하면 이전 도형이 돌아온다
     await openFileMenu(page);
-    await page.getByText("Restore last backup").click();
+    await page.getByText("최근 백업 복원").click();
     await expect(page.getByText("Backup restored")).toBeVisible();
 
     // 복원된 프로젝트를 저장해 도형 1개 확인
     await openFileMenu(page);
     const { json } = await downloadJson(page, () =>
-      page.getByText("Save as file").click(),
+      page.getByText("파일로 저장").click(),
     );
     const currentPage = json.pages.find(
       (p: { id: string }) => p.id === json.currentPageId,
@@ -214,7 +214,7 @@ test.describe("File I/O", () => {
     };
 
     await openFileMenu(page);
-    await chooseFile(page, "Import Excalidraw", {
+    await chooseFile(page, "Excalidraw 가져오기", {
       name: "e2e.excalidraw",
       buffer: Buffer.from(JSON.stringify(excalidraw)),
     });
@@ -230,7 +230,7 @@ test.describe("File I/O", () => {
 
     await openFileMenu(page);
     const { filename, json } = await downloadJson(page, () =>
-      page.getByText("Export Excalidraw").click(),
+      page.getByText("Excalidraw 내보내기").click(),
     );
 
     expect(filename.endsWith(".excalidraw")).toBe(true);
@@ -243,7 +243,7 @@ test.describe("File I/O", () => {
     page,
   }) => {
     await openFileMenu(page);
-    await page.getByText("Import Mermaid").click();
+    await page.getByText("Mermaid 가져오기").click();
 
     const textarea = page.getByPlaceholder(/flowchart TD/);
     await textarea.fill(
@@ -259,7 +259,7 @@ test.describe("File I/O", () => {
 
   test("Mermaid import — 잘못된 입력이면 인라인 에러", async ({ page }) => {
     await openFileMenu(page);
-    await page.getByText("Import Mermaid").click();
+    await page.getByText("Mermaid 가져오기").click();
     await page.getByPlaceholder(/flowchart TD/).fill("this is not mermaid");
     await page.getByRole("button", { name: "Import", exact: true }).click();
 
