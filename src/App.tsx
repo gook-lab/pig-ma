@@ -36,6 +36,8 @@ import { useImageDrop } from "@/hooks/useImageDrop";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { useCanvasStore } from "@/store";
 
+const isAIEnabled = import.meta.env.VITE_ENABLE_AI === "true";
+
 function App() {
   useKeyboardShortcuts();
   useAutoSave();
@@ -219,7 +221,7 @@ function App() {
       {showMentionPanel && (
         <MentionPanel onClose={() => setShowMentionPanel(false)} />
       )}
-      <AIPanel />
+      {isAIEnabled && <AIPanel />}
       <UnlockConfirmDialog />
       <LockOverlay />
       {cursorChatPosition && (
