@@ -45,14 +45,12 @@ const applyTheme = (theme: Theme) => {
 // Initial State
 // ============================================================================
 
-// 시스템 설정 또는 저장된 값 확인
+// 사용자가 선택한 값이 없으면 밝은 테마로 시작합니다.
 const getInitialTheme = (): Theme => {
   if (typeof window === "undefined") return "light";
   const stored = localStorage.getItem("pig-theme") as Theme | null;
   if (stored) return stored;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+  return "light";
 };
 
 export const uiInitialState: UIState = {
