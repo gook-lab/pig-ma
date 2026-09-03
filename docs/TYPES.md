@@ -1,8 +1,9 @@
-# 타입 정의 (Type Definitions)
+# 타입 레퍼런스
 
-전체 TypeScript 타입 정의를 참고할 수 있습니다.
+`pig-ma`가 공개하는 주요 TypeScript 타입을 정리합니다. 실제 선언의 기준은
+`src/types.ts`와 패키지에서 생성되는 `dist/index.d.ts`입니다.
 
-## 핵심 타입 (Core Types)
+## 핵심 타입
 
 ### ObjectType
 
@@ -83,7 +84,7 @@ type ShapeVariant =
 
 ---
 
-## 객체 인터페이스 (Object Interface)
+## 객체 인터페이스
 
 ### CanvasObject
 
@@ -162,7 +163,7 @@ interface CanvasObject {
 
 ---
 
-## 스타일 타입 (Style Types)
+## 스타일 타입
 
 ### PenType
 
@@ -219,7 +220,7 @@ type FontFamily =
   | 'IBM Plex Sans KR'
 ```
 
-### FontSize (프리셋 - Preset)
+### FontSize 프리셋
 
 ```typescript
 type FontSize = 'S' | 'M' | 'L' | 'XL' | 'XXL'
@@ -251,7 +252,7 @@ type ListType = 'none' | 'number' | 'bullet'
 
 ---
 
-## 리치 텍스트 (Rich Text)
+## 리치 텍스트
 
 ### TextSegment
 
@@ -280,7 +281,7 @@ const richText: TextSegment[] = [
 
 ---
 
-## 설정 (Settings)
+## 설정
 
 ### PenSettings
 
@@ -304,7 +305,7 @@ interface ShapeSettings {
 
 ---
 
-## 상태 타입 (State Types)
+## 상태 타입
 
 ### CanvasState
 
@@ -339,7 +340,7 @@ interface CanvasBounds {
 
 ---
 
-## 댓글 시스템 타입 (Caption System Types)
+## 댓글 시스템 타입
 
 ### CaptionThread
 
@@ -413,7 +414,7 @@ interface CaptionFilter {
 
 ---
 
-## 키보드 단축키 (Keyboard Shortcuts)
+## 키보드 단축키
 
 ### ShortcutAction
 

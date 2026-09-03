@@ -1,13 +1,16 @@
-# API 레퍼런스 (API Reference)
+# API 레퍼런스
 
-## Store (Zustand)
+이 문서는 npm 패키지 `pig-ma`가 공개하는 API를 설명합니다. 아래 예제는 모두
+패키지 진입점에서 가져오며, 저장소 내부 경로에 의존하지 않습니다.
+
+## Zustand 스토어
 
 ### useCanvasStore
 
 메인 상태 관리 스토어입니다.
 
 ```typescript
-import { useCanvasStore } from '@/store'
+import { useCanvasStore } from 'pig-ma'
 
 const {
   // 상태 (State)
@@ -25,7 +28,7 @@ const {
 } = useCanvasStore()
 ```
 
-### 상태 (State)
+### 상태
 
 | 필드 | 타입 | 설명 |
 |------|------|------|
@@ -44,9 +47,9 @@ const {
 | `hideUI` | `boolean` | UI 숨김 |
 | `lastMousePosition` | `{ x, y }` | 마지막 마우스 위치 |
 
-### 액션 (Actions)
+### 액션
 
-#### 객체 관리 (Object Management)
+#### 객체 관리
 
 ```typescript
 // 객체 추가
@@ -65,7 +68,7 @@ deleteObjects(ids: string[]): void
 clearAllObjects(): void
 ```
 
-#### 선택 (Selection)
+#### 선택
 
 ```typescript
 // 선택 설정
@@ -78,7 +81,7 @@ addToSelection(id: string): void
 clearSelection(): void
 ```
 
-#### 클립보드 & Z-order (Clipboard & Z-order)
+#### 클립보드와 표시 순서
 
 ```typescript
 // 복사
@@ -97,7 +100,7 @@ bringToFront(): void
 sendToBack(): void
 ```
 
-#### 잠금 (Lock)
+#### 잠금
 
 ```typescript
 // 선택 객체 잠금
@@ -110,7 +113,7 @@ unlockObjects(): void
 unlockAllObjects(): void
 ```
 
-#### 뷰포트 (Viewport)
+#### 뷰포트
 
 ```typescript
 // 뷰포트 설정
@@ -120,10 +123,10 @@ setViewport(viewport: Partial<Viewport>): void
 resetViewport(): void
 ```
 
-### Undo/Redo
+### 실행 취소와 다시 실행
 
 ```typescript
-import { undo, redo } from '@/store'
+import { undo, redo } from 'pig-ma'
 
 undo()  // Cmd+Z
 redo()  // Cmd+Shift+Z
@@ -131,21 +134,21 @@ redo()  // Cmd+Shift+Z
 
 ---
 
-## 컴포넌트 (Components)
+## 컴포넌트
 
 ### Canvas
 
 메인 캔버스 컴포넌트입니다.
 
 ```tsx
-import { Canvas } from '@/components/Canvas'
+import { Canvas } from 'pig-ma'
 
 <Canvas />
 ```
 
 내부적으로 Konva Stage, Layer, 모든 Shape 컴포넌트를 렌더링합니다.
 
-### Shape 컴포넌트 (Shape Components)
+### 도형 컴포넌트
 
 모든 Shape 컴포넌트는 동일한 props 인터페이스를 따릅니다:
 
@@ -166,7 +169,7 @@ interface ShapeProps {
 #### Rectangle
 
 ```tsx
-import { Rectangle } from '@/components/shapes/Rectangle'
+import { Rectangle } from 'pig-ma'
 
 <Rectangle
   shape={obj}
@@ -178,19 +181,17 @@ import { Rectangle } from '@/components/shapes/Rectangle'
 />
 ```
 
-#### Circle
+#### 원
 
-```tsx
-import { Circle } from '@/components/shapes/Circle'
-// Rectangle과 동일한 props 구조입니다
-```
+독립된 `Circle` 컴포넌트는 공개하지 않습니다. `Shape`에 `circle` variant를
+전달하거나 `createCircle`로 객체를 생성합니다.
 
 #### Shape (통합 도형)
 
 다양한 ShapeVariant를 렌더링할 수 있습니다.
 
 ```tsx
-import { Shape, getShapePath } from '@/components/shapes/Shape'
+import { Shape, getShapePath } from 'pig-ma'
 
 <Shape
   shape={obj}  // obj.shapeVariant로 도형 종류 결정
@@ -204,7 +205,7 @@ const path = getShapePath('triangle', 100, 100)  // [50, 0, 100, 100, 0, 100]
 #### StickyNote
 
 ```tsx
-import { StickyNote } from '@/components/shapes/StickyNote'
+import { StickyNote } from 'pig-ma'
 // Rectangle과 동일한 props 구조입니다
 // shape.backgroundColor로 배경색을 설정합니다
 // shape.authorName으로 작성자를 표시합니다
@@ -213,7 +214,7 @@ import { StickyNote } from '@/components/shapes/StickyNote'
 #### TextBox
 
 ```tsx
-import { TextBox } from '@/components/shapes/TextBox'
+import { TextBox } from 'pig-ma'
 
 <TextBox
   shape={obj}
@@ -225,7 +226,7 @@ import { TextBox } from '@/components/shapes/TextBox'
 #### Connector
 
 ```tsx
-import { Connector } from '@/components/shapes/Connector'
+import { Connector } from 'pig-ma'
 
 <Connector
   connector={obj}
@@ -242,7 +243,7 @@ import { Connector } from '@/components/shapes/Connector'
 #### Line
 
 ```tsx
-import { Line } from '@/components/shapes/Line'
+import { Line } from 'pig-ma'
 
 <Line
   shape={obj}
@@ -256,7 +257,7 @@ import { Line } from '@/components/shapes/Line'
 ### ContextMenu
 
 ```tsx
-import { ContextMenu } from '@/components/ContextMenu'
+import { ContextMenu } from 'pig-ma'
 
 <ContextMenu
   x={screenX}           // 화면 좌표
@@ -269,14 +270,14 @@ import { ContextMenu } from '@/components/ContextMenu'
 
 ---
 
-## Hook (Hooks)
+## 훅
 
 ### useKeyboardShortcuts
 
 전역 키보드 단축키를 처리합니다.
 
 ```typescript
-import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
+import { useKeyboardShortcuts } from 'pig-ma'
 
 // App.tsx에서 한 번만 호출하면 됩니다
 function App() {
@@ -290,7 +291,7 @@ function App() {
 드래그 성능 최적화를 위한 coordinator입니다.
 
 ```typescript
-import { dragCoordinator } from '@/hooks/useDragCoordinator'
+import { dragCoordinator } from 'pig-ma'
 
 // 위치를 업데이트합니다 (React state 없이)
 dragCoordinator.setPosition(id, x, y)
@@ -309,7 +310,7 @@ dragCoordinator.clear(id)
 히스토리 관리 및 자동 저장을 담당합니다.
 
 ```typescript
-import { useHistoryStore } from '@/hooks/useAutoSave'
+import { useHistoryStore } from 'pig-ma'
 
 const { history, addSnapshot, restoreFromHistory, clearHistory } = useHistoryStore()
 
@@ -322,7 +323,7 @@ restoreFromHistory(index)
 
 ---
 
-## 유틸리티 (Utilities)
+## 유틸리티
 
 ### factory.ts
 
@@ -342,7 +343,7 @@ import {
   snapToShapeGrid,
   GRID_SIZE,
   SHAPE_GRID_SIZE,
-} from '@/utils/factory'
+} from 'pig-ma'
 
 // 도형 생성
 const rect = createRectangle(x, y, shapeSettings, author?)
@@ -379,7 +380,7 @@ import {
   findClosestAnchor,
   findSnapTarget,
   SNAP_THRESHOLD,
-} from '@/utils/geometry'
+} from 'pig-ma'
 
 // 바운딩 박스
 const bounds = getObjectBounds(obj)  // { x, y, width, height }
@@ -413,7 +414,7 @@ import {
   textToRichText,
   richTextToPlainText,
   LINE_HEIGHT,
-} from '@/utils/richText'
+} from 'pig-ma'
 
 // 평문을 리치텍스트로 변환합니다
 const richText = textToRichText('Hello World')
@@ -429,7 +430,7 @@ const lineHeight = fontSize * LINE_HEIGHT  // 1.5
 
 ---
 
-## File I/O 모듈 (File I/O Modules, 2026-08)
+## 파일 입출력 모듈
 
 ### utils/pigmaFile
 
@@ -442,7 +443,7 @@ parsePigmaFile(json: string): PigmaFile   // 검증을 포함합니다, 실패 �
 exportCurrentProject(): PigmaFile
 applyPigmaFile(file): { backedUp: boolean }  // 프로젝트를 교체합니다 + 자동 백업 + undo 초기화
 getBackupInfo(): PigmaBackupInfo | null
-restoreBackup(): PigmaFile                // 현재 ↔ 백업 스왑이 가능합니다 (재복원 가능)
+restoreBackup(): PigmaFile                // 현재 프로젝트와 백업을 맞바꿔 다시 복원할 수 있음
 downloadPigmaFile(file, filename?)
 readPigmaFile(blob: File): Promise<PigmaFile>
 ```
@@ -478,7 +479,7 @@ isAlignable(obj): boolean  // 잠긴 객체와 attached 커넥터는 제외합�
 // 커넥터는 endX/endY + elbowBends(절대좌표)까지 강체로 이동합니다
 ```
 
-## 타입 (Types)
+## 타입
 
 ### CanvasObject
 
@@ -549,7 +550,7 @@ interface CanvasObject {
 }
 ```
 
-### Type Aliases
+### 타입 별칭
 
 ```typescript
 type ObjectType = 'rectangle' | 'circle' | 'image' | 'line' | 'stickyNote' | 'connector' | 'textBox' | 'shape'

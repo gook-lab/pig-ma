@@ -1,23 +1,25 @@
-# 아키텍처 (Architecture)
+# 아키텍처
 
-## 개요 (Overview)
+## 개요
 
-Pig-ma는 React-Konva 기반의 무한 캔버스 라이브러리입니다. Figma/FigJam의 UX를 참고해서 설계했습니다.
+Pig-ma는 React와 Konva를 기반으로 구현한 무한 캔버스 라이브러리입니다.
+Figma와 FigJam의 조작 방식을 참고하되, npm 패키지로 삽입할 수 있도록
+캔버스 엔진과 데모 애플리케이션을 분리했습니다.
 
-핵심 구조를 한 장으로 그리면 이렇습니다 — 텍스트를 두 엔진(보기: Konva /
-편집: Tiptap)으로 그리고, 두 경로가 `src/constants`의 같은 값을 import 하는
-게 이 라이브러리의 뼈대입니다:
+텍스트는 보기 모드에서 Konva로 렌더링하고 편집 모드에서 Tiptap으로 처리합니다.
+두 경로는 `src/constants`의 같은 설정을 사용해 글꼴과 줄 높이 차이를 줄입니다.
 
 <img src="diagrams/text-render-flow.png" width="620" alt="pig-ma 구조 — store를 중심으로 Konva 보기 경로와 Tiptap 편집 경로가 같은 상수를 공유합니다">
 
-> 이 다이어그램은 pig-ma 자신의 Mermaid import로 그렸습니다 (도그푸딩).
+> 이 다이어그램은 Pig-ma의 Mermaid 가져오기 기능으로 만들었습니다.
 > 원본 정의는 [`diagrams/text-render-flow.mmd`](diagrams/text-render-flow.mmd).
 
-## 핵심 개념 (Core Concepts)
+## 핵심 구조
 
-### 1. Flat Object Model
+### 1. 단일 객체 모델
 
-모든 캔버스 객체는 단일 `CanvasObject` 인터페이스를 사용합니다. 타입별 상속 대신 optional 필드로 구분하고 있습니다.
+모든 캔버스 객체는 `CanvasObject` 인터페이스로 저장합니다. 공통 필드와 타입별
+선택 필드를 한 객체에 두어 파일 저장과 마이그레이션 경로를 단순하게 유지합니다.
 
 ```typescript
 interface CanvasObject {
@@ -38,12 +40,12 @@ interface CanvasObject {
 }
 ```
 
-**장점이 많습니다:**
-- 단순한 직렬화/역직렬화
-- 상태 관리가 쉽습니다
-- 유연하게 확장 가능합니다
+이 구조는 직렬화와 기존 `.pigma` 파일 호환에는 유리하지만, 객체 종류와 무관한
+선택 필드가 함께 노출되는 한계가 있습니다. 타입별 `props` 분리안은
+[`proposals/canvas-object-props-separation.md`](proposals/canvas-object-props-separation.md)에
+검토 기록으로 남겨두었으며 현재 구조로 채택되지는 않았습니다.
 
-### 2. Layer System
+### 2. 레이어 구성
 
 Canvas는 4개의 Konva Layer로 이루어져 있습니다:
 
@@ -65,7 +67,7 @@ Canvas는 4개의 Konva Layer로 이루어져 있습니다:
 - `sendToBack()`: 배열 앞으로 이동시킵니다
 - 커넥터도 일반 객체와 같은 레이어에서 렌더링됩니다 (Z-order 존중)
 
-### 3. Viewport System
+### 3. 뷰포트
 
 무한 캔버스는 viewport 변환으로 구현되어 있습니다:
 
@@ -92,7 +94,7 @@ const screenY = canvasY * viewport.zoom + viewport.y
 - `Cmd + 스크롤`: 줌 인/아웃
 - `스크롤만`: 패닝 (2배속)
 
-### 4. State Management
+### 4. 상태 관리
 
 Zustand + zundo + persist 조합을 사용하고 있습니다:
 
@@ -116,9 +118,11 @@ const useCanvasStore = create(
 - 미세한 위치 변경 (< 1px), 높이 변경 (< 5px) 무시합니다
 - ID 추가/삭제, 텍스트 변경 같은 건 저장됩니다
 
-### 5. Drag Coordinator
+### 5. 드래그 조정자
 
-드래그 성능 최적화를 위한 React state 우회 패턴이 있어요:
+드래그 중 발생하는 고빈도 좌표 변경은 React 상태를 매번 갱신하지 않고
+`dragCoordinator`가 Konva 노드에 직접 전달합니다. 드래그가 끝날 때 최종 좌표만
+스토어에 반영해 렌더링 횟수와 히스토리 항목 증가를 줄입니다.
 
 ```typescript
 // 드래그 중에는 store 업데이트 없이 Konva를 직접 업데이트합니다
@@ -141,7 +145,7 @@ useEffect(() => {
 }, [connector.sourceId])
 ```
 
-### 6. Grid Virtualization
+### 6. 그리드 가상화
 
 줌 레벨에 따라 적응형 그리드를 구현했습니다:
 
@@ -159,7 +163,7 @@ const gap = Math.min(500, Math.max(10, Math.round(rawGap / 10) * 10))
 | 1x | 20px | 20px |
 | 10x | 10px | 100px |
 
-## 성능 최적화 (Performance Optimizations)
+## 성능 최적화
 
 ### 1. React.memo
 
@@ -171,7 +175,7 @@ export const Rectangle = memo(function Rectangle({ ... }) {
 })
 ```
 
-### 2. useMemo for Filtering
+### 2. `useMemo`를 이용한 필터링
 
 객체 타입별 필터링 결과를 캐싱합니다:
 
@@ -182,7 +186,7 @@ const lineObjects = useMemo(
 )
 ```
 
-### 3. objectsById Map
+### 3. `objectsById` 맵
 
 O(1) 객체 조회를 위해 Map을 사용합니다:
 
@@ -194,7 +198,7 @@ const objectsById = useMemo(() => {
 }, [objects])
 ```
 
-### 4. Konva Performance Props
+### 4. Konva 성능 속성
 
 ```typescript
 <Rect
@@ -204,9 +208,9 @@ const objectsById = useMemo(() => {
 />
 ```
 
-## 컴포넌트 통신 (Component Communication)
+## 컴포넌트 통신
 
-### Props는 아래로, 이벤트는 위로 (Props Down, Events Up)
+### 속성은 하위 컴포넌트로, 이벤트는 상위 컴포넌트로 전달
 
 ```
 App
@@ -221,15 +225,15 @@ App
      └─ TextBoxEditor
 ```
 
-### Store를 단일 진실 공급원으로 (Store as Single Source of Truth)
+### 상태의 기준은 스토어로 통일
 
-- 모든 상태를 Zustand store에서 관리합니다
-- 컴포넌트는 필요한 상태만 구독합니다
-- 로컬 UI 상태 (hover, editing 등)만 컴포넌트 state를 사용합니다
+- 캔버스 객체와 페이지, 선택 상태는 Zustand 스토어에서 관리합니다.
+- 컴포넌트는 렌더링에 필요한 상태만 selector로 구독합니다.
+- 호버와 임시 편집 상태처럼 저장할 필요가 없는 값은 컴포넌트 내부에 둡니다.
 
-## 이벤트 흐름 (Event Flow)
+## 이벤트 흐름
 
-### 마우스 이벤트 (Mouse Events)
+### 마우스 이벤트
 
 ```
 Stage.onMouseDown
@@ -251,7 +255,7 @@ Stage.onMouseUp
   → 화살표 완료 → 커넥터를 생성합니다
 ```
 
-### 키보드 이벤트 (Keyboard Events)
+### 키보드 이벤트
 
 ```
 useKeyboardShortcuts hook
@@ -261,9 +265,11 @@ useKeyboardShortcuts hook
   → 이동 단축키를 처리합니다 (Arrow keys)
 ```
 
-## File I/O & 포맷 변환 모듈 (2026-08)
+## 파일 입출력과 포맷 변환
 
-캔버스 상태와 외부 포맷 사이의 변환은 전부 **순수 변환 함수 + 얇은 store 적용부**로 분리해 뒀습니다. 새 포맷을 추가할 때 이 구조를 따르는 것이 좋습니다.
+캔버스 상태와 외부 포맷 사이의 변환은 **순수 변환 함수와 스토어 적용부**로
+분리했습니다. 변환 함수는 파일 형식만 다루고, 화면 배치와 상태 반영은 별도
+함수에서 처리합니다.
 
 | 모듈 | 방향 | 핵심 함수 | 비고 |
 |------|------|----------|------|
@@ -272,13 +278,15 @@ useKeyboardShortcuts hook
 | `src/mermaid/` | import | `parseMermaid` → `layoutGraph` → `convertMermaid` | flowchart 서브셋 자체 파서 + Kahn 위상정렬 레이아웃. 외부 의존성 없음 |
 | `src/figma/` | 양방향 | `figmaToPigma` / `pigmaToFigma` | REST API(PAT). characterStyleOverrides ↔ Tiptap, 폰트 실측 매핑 |
 
-공통 규칙을 정리했습니다:
-- 변환 함수는 순수 함수입니다(store 접근 금지) — 유닛 테스트는 변환 함수를 대상으로 합니다
-- import 는 **기존 캔버스에 추가**됩니다 + 뷰포트 중앙 배치. 열기(.pigma)만 **교체됩니다(confirm + 자동 백업)
-- UI 진입점은 `FileMenu.tsx` (숨김 input) + `useImageDrop.ts` (드래그&드롭 확장자 분기)입니다
-- 사용자 피드백은 `utils/toast`를 사용합니다 (성공 시 개수 포함, alert는 금지)
+공통 규칙은 다음과 같습니다.
 
-## 확장 포인트 (Extension Points)
+- 변환 함수에서는 스토어에 접근하지 않습니다. 단위 테스트도 변환 함수를 기준으로 작성합니다.
+- 가져오기는 기존 캔버스에 객체를 추가하고 뷰포트 중앙에 배치합니다.
+- `.pigma` 파일 열기만 현재 프로젝트를 교체하며, 교체 전에 자동 백업을 만듭니다.
+- `FileMenu.tsx`와 `useImageDrop.ts`가 파일 선택과 드래그 앤 드롭을 확장자별로 분기합니다.
+- 완료 여부와 가져온 객체 수는 공용 토스트로 안내합니다.
+
+## 확장 지점
 
 ### 새 도형 타입 추가할 때
 
