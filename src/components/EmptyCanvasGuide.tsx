@@ -84,7 +84,7 @@ export function EmptyCanvasGuide() {
 
   if (!isVisible || objectsCount > 0 || hideUI || isLocked) return null;
 
-  const current = STEPS[step];
+  const current = STEPS[step] ?? STEPS[0];
   const Icon = current.icon;
 
   return (
