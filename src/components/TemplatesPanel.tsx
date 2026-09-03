@@ -258,10 +258,12 @@ export function TemplatesPanel() {
         <div className="flex items-center gap-2">
           <LayoutTemplate className="h-5 w-5 text-violet-600" />
           <h2 className="font-semibold text-gray-800 dark:text-gray-800">
-            Templates
+            템플릿
           </h2>
         </div>
         <button
+          type="button"
+          aria-label="템플릿 패널 닫기"
           onClick={() => setShowTemplatesPanel(false)}
           className="rounded p-1 transition-colors hover:bg-gray-100 dark:hover:bg-[#c8c9cc]"
         >
@@ -277,7 +279,7 @@ export function TemplatesPanel() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search templates"
+            placeholder="템플릿 검색"
             className="pr-3 pl-9"
           />
         </div>
@@ -294,7 +296,7 @@ export function TemplatesPanel() {
             >
               <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
                 <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
-                Favorites
+                즐겨찾기
                 <span className="text-xs text-gray-400">
                   ({favorites.length})
                 </span>
@@ -332,7 +334,7 @@ export function TemplatesPanel() {
             >
               <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
                 <Clock className="h-4 w-4 text-gray-500" />
-                Recent
+                최근 사용
               </span>
               {expandedCategories.recent ? (
                 <ChevronUp className="h-4 w-4 text-gray-400" />
@@ -366,8 +368,7 @@ export function TemplatesPanel() {
               className="flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-gray-50"
             >
               <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                <User className="h-4 w-4 text-violet-500" />
-                My Templates
+                <User className="h-4 w-4 text-violet-500" />내 템플릿
                 <span className="text-xs text-gray-400">
                   ({customTemplates.length})
                 </span>
@@ -391,6 +392,8 @@ export function TemplatesPanel() {
                       }
                     />
                     <button
+                      type="button"
+                      aria-label={`${template.name} 템플릿 삭제`}
                       onClick={(e) =>
                         handleDeleteCustomTemplate(e, template.id)
                       }
@@ -399,7 +402,7 @@ export function TemplatesPanel() {
                         "bg-red-100 hover:bg-red-200",
                         "opacity-0 group-hover:opacity-100",
                       )}
-                      title="Delete template"
+                      title="템플릿 삭제"
                     >
                       <Trash2 className="h-3.5 w-3.5 text-red-500" />
                     </button>
@@ -461,9 +464,9 @@ export function TemplatesPanel() {
         {filteredTemplates.length === 0 && (
           <div className="flex flex-col items-center justify-center px-4 py-12 text-center">
             <LayoutTemplate className="mb-3 h-12 w-12 text-gray-300" />
-            <p className="text-sm text-gray-500">No templates found</p>
+            <p className="text-sm text-gray-500">검색된 템플릿이 없습니다</p>
             <p className="mt-1 text-xs text-gray-400">
-              Try a different search term
+              다른 검색어를 입력해 보세요
             </p>
           </div>
         )}

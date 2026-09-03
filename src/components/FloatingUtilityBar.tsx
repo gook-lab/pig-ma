@@ -1182,6 +1182,9 @@ export function FloatingUtilityBar() {
       >
         {/* Keyboard Button */}
         <button
+          type="button"
+          aria-label="키보드 단축키"
+          aria-pressed={showKeyboard}
           onClick={() => {
             setShowKeyboard(!showKeyboard);
             setShowHistory(false);
@@ -1191,7 +1194,7 @@ export function FloatingUtilityBar() {
             "hover:bg-gray-100",
             showKeyboard && "bg-gray-100",
           )}
-          title="Keyboard Shortcuts"
+          title="키보드 단축키"
         >
           <Keyboard className="h-4 w-4 text-gray-600" />
         </button>
@@ -1200,6 +1203,9 @@ export function FloatingUtilityBar() {
 
         {/* History Button */}
         <button
+          type="button"
+          aria-label="히스토리"
+          aria-pressed={showHistory}
           onClick={() => {
             setShowHistory(!showHistory);
             setShowKeyboard(false);
@@ -1218,6 +1224,9 @@ export function FloatingUtilityBar() {
 
         {/* Comments Button */}
         <button
+          type="button"
+          aria-label="댓글"
+          aria-pressed={isCaptionPanelOpen}
           onClick={() => {
             toggleCaptionPanel();
             setShowKeyboard(false);
@@ -1247,12 +1256,16 @@ export function FloatingUtilityBar() {
 
         {/* Theme Toggle Button */}
         <button
+          type="button"
+          aria-label={
+            theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환"
+          }
           onClick={toggleTheme}
           className={cn(
             "rounded-lg p-2 transition-colors",
             "hover:bg-gray-100",
           )}
-          title={theme === "dark" ? "Light Mode" : "Dark Mode"}
+          title={theme === "dark" ? "라이트 모드" : "다크 모드"}
         >
           {theme === "dark" ? (
             <Sun className="h-4 w-4 text-amber-500" />

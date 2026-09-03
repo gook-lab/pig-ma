@@ -11,15 +11,15 @@ import type { TemplateCategoryInfo, TemplateDefinition } from "@/types";
 // ============================================================================
 
 export const TEMPLATE_CATEGORIES: TemplateCategoryInfo[] = [
-  { id: "flowchart", label: "Flowchart" },
-  { id: "wireframe", label: "Wireframe" },
-  { id: "orgChart", label: "Org Chart" },
-  { id: "mindMap", label: "Mind Map" },
-  { id: "kanban", label: "Kanban" },
-  { id: "timeline", label: "Timeline" },
-  { id: "brainstorm", label: "Brainstorm" },
-  { id: "retro", label: "Retrospective" },
-  { id: "todo", label: "To-Do List" },
+  { id: "flowchart", label: "플로차트" },
+  { id: "wireframe", label: "와이어프레임" },
+  { id: "orgChart", label: "조직도" },
+  { id: "mindMap", label: "마인드맵" },
+  { id: "kanban", label: "칸반" },
+  { id: "timeline", label: "타임라인" },
+  { id: "brainstorm", label: "브레인스토밍" },
+  { id: "retro", label: "회고" },
+  { id: "todo", label: "할 일 목록" },
 ];
 
 // ============================================================================

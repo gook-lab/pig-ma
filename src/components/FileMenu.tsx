@@ -61,6 +61,7 @@ function MenuItem({
   const disabled = disabledWhenLocked && isLocked;
   return (
     <button
+      type="button"
       onClick={() => {
         if (disabled) return;
         onClick();
@@ -86,7 +87,7 @@ function MenuItem({
  * Header 의 File 드롭다운 — 파일 열기/저장, Excalidraw/Figma import/export,
  * 이미지 다운로드. 숨김 file input 과 Figma 모달까지 이 컴포넌트가 소유한다.
  */
-export function FileMenu() {
+export function FileMenu({ compact = false }: { compact?: boolean }) {
   const [showMenu, setShowMenu] = useState(false);
   const [showFigmaImport, setShowFigmaImport] = useState(false);
   const [showFigmaExport, setShowFigmaExport] = useState(false);
@@ -232,11 +233,16 @@ export function FileMenu() {
     <>
       <div className="relative" ref={menuRef}>
         <button
+          type="button"
+          aria-label="파일"
+          aria-expanded={showMenu}
           onClick={() => setShowMenu((prev) => !prev)}
           className={cn(
-            "flex h-12 items-center gap-2 px-3",
-            "rounded-xl border border-gray-200 bg-white shadow-lg",
-            "dark:border-[#c0c1c4] dark:bg-[#d6d7da]",
+            compact
+              ? "flex min-h-11 flex-col items-center justify-center gap-1 rounded-lg px-2 text-xs hover:bg-gray-50"
+              : "flex h-12 items-center gap-2 px-3",
+            !compact &&
+              "rounded-xl border border-gray-200 bg-white shadow-lg dark:border-[#c0c1c4] dark:bg-[#d6d7da]",
             "text-sm font-medium text-gray-700 dark:text-gray-800",
             "transition-all hover:bg-gray-50 dark:hover:bg-[#c8c9cc]",
             "active:scale-95",
@@ -244,20 +250,23 @@ export function FileMenu() {
               "border-gray-300 bg-gray-50 dark:border-[#b0b1b4] dark:bg-[#c8c9cc]",
           )}
         >
-          <FolderDown size={18} />
-          File
-          <ChevronDown
-            size={14}
-            className={cn("transition-transform", showMenu && "rotate-180")}
-          />
+          <FolderDown size={18} aria-hidden="true" />
+          {compact ? "파일" : "파일"}
+          {!compact && (
+            <ChevronDown
+              size={14}
+              aria-hidden="true"
+              className={cn("transition-transform", showMenu && "rotate-180")}
+            />
+          )}
         </button>
 
         {showMenu && (
           <div className="popover-enter absolute top-full right-0 mt-2 w-56 rounded-xl border border-gray-200 bg-white py-1 shadow-xl">
             <MenuItem
               icon={FolderOpen}
-              label="Open file"
-              description="Open a .pigma project file"
+              label="파일 열기"
+              description=".pigma 프로젝트 파일을 엽니다"
               disabledWhenLocked
               isLocked={isLocked}
               onClick={() => {
@@ -267,16 +276,16 @@ export function FileMenu() {
             />
             <MenuItem
               icon={FileDown}
-              label="Save as file"
-              description="Download project as .pigma"
+              label="파일로 저장"
+              description="프로젝트를 .pigma로 내려받습니다"
               isLocked={isLocked}
               onClick={handleSavePigma}
             />
             {backupInfo && (
               <MenuItem
                 icon={RotateCcw}
-                label="Restore last backup"
-                description={`"${backupInfo.projectName}" before last open`}
+                label="최근 백업 복원"
+                description={`파일을 열기 전의 "${backupInfo.projectName}"`}
                 disabledWhenLocked
                 isLocked={isLocked}
                 onClick={handleRestoreBackup}
@@ -284,8 +293,8 @@ export function FileMenu() {
             )}
             <MenuItem
               icon={Download}
-              label="Import Excalidraw"
-              description="Add shapes from .excalidraw"
+              label="Excalidraw 가져오기"
+              description=".excalidraw 도형을 추가합니다"
               disabledWhenLocked
               isLocked={isLocked}
               onClick={() => {
@@ -295,15 +304,15 @@ export function FileMenu() {
             />
             <MenuItem
               icon={Upload}
-              label="Export Excalidraw"
-              description="Download page as .excalidraw"
+              label="Excalidraw 내보내기"
+              description="페이지를 .excalidraw로 저장합니다"
               isLocked={isLocked}
               onClick={handleExportExcalidraw}
             />
             <MenuItem
               icon={Workflow}
-              label="Import Mermaid"
-              description="Paste a flowchart definition"
+              label="Mermaid 가져오기"
+              description="플로차트 정의를 붙여 넣습니다"
               disabledWhenLocked
               isLocked={isLocked}
               onClick={() => {
@@ -316,8 +325,8 @@ export function FileMenu() {
 
             <MenuItem
               icon={Figma}
-              label="Figma Import"
-              description="Import from Figma file"
+              label="Figma 가져오기"
+              description="Figma 파일을 불러옵니다"
               disabledWhenLocked
               isLocked={isLocked}
               onClick={() => {
@@ -327,8 +336,8 @@ export function FileMenu() {
             />
             <MenuItem
               icon={Upload}
-              label="Figma Export"
-              description="Export to Figma (SVG / JSON)"
+              label="Figma 내보내기"
+              description="SVG 또는 JSON으로 내보냅니다"
               disabledWhenLocked
               isLocked={isLocked}
               onClick={() => {
@@ -341,8 +350,8 @@ export function FileMenu() {
 
             <MenuItem
               icon={Image}
-              label="Download image"
-              description="PNG, JPEG, SVG"
+              label="이미지 내려받기"
+              description="PNG, JPEG 또는 SVG로 저장합니다"
               isLocked={isLocked}
               onClick={() => {
                 setShowMenu(false);

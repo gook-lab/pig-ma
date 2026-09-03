@@ -53,7 +53,7 @@ function getSearchableText(obj: CanvasObject): string[] {
   return texts;
 }
 
-export function SearchPanel() {
+export function SearchPanel({ mobile = false }: { mobile?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -167,6 +167,8 @@ export function SearchPanel() {
   if (!isOpen) {
     return (
       <button
+        type="button"
+        aria-label="검색"
         onClick={() => {
           setIsOpen(true);
           setTimeout(() => inputRef.current?.focus(), 50);
@@ -178,7 +180,7 @@ export function SearchPanel() {
           "text-gray-600 transition-all hover:bg-gray-50",
           "dark:text-gray-700 dark:hover:bg-[#c8c9cc]",
         )}
-        title="Search (Cmd+F)"
+        title="검색 (Cmd+F)"
       >
         <Search size={18} />
       </button>
@@ -189,6 +191,7 @@ export function SearchPanel() {
     <div
       className={cn(
         "pointer-events-auto flex items-center gap-2",
+        mobile && "fixed top-4 right-4 left-4",
         "rounded-xl border border-gray-200 bg-white px-3 py-2 shadow-lg",
         "dark:border-[#c0c1c4] dark:bg-[#d6d7da]",
       )}
@@ -203,8 +206,11 @@ export function SearchPanel() {
           setQuery(e.target.value);
           setCurrentIndex(0);
         }}
-        placeholder="Search..."
-        className="w-48 bg-transparent text-sm outline-none placeholder:text-gray-400 dark:text-gray-800 dark:caret-gray-800"
+        placeholder="캔버스 검색"
+        className={cn(
+          "min-w-0 bg-transparent text-sm outline-none placeholder:text-gray-400 dark:text-gray-800 dark:caret-gray-800",
+          mobile ? "flex-1" : "w-48",
+        )}
         autoFocus
       />
 
@@ -214,16 +220,20 @@ export function SearchPanel() {
             {currentIndex + 1}/{results.length}
           </span>
           <button
+            type="button"
+            aria-label="이전 검색 결과"
             onClick={goPrev}
             className="rounded p-0.5 hover:bg-gray-100 dark:hover:bg-[#c8c9cc]"
-            title="Previous (Shift+Enter)"
+            title="이전 결과 (Shift+Enter)"
           >
             <ChevronUp size={14} />
           </button>
           <button
+            type="button"
+            aria-label="다음 검색 결과"
             onClick={goNext}
             className="rounded p-0.5 hover:bg-gray-100 dark:hover:bg-[#c8c9cc]"
-            title="Next (Enter)"
+            title="다음 결과 (Enter)"
           >
             <ChevronDown size={14} />
           </button>
@@ -231,10 +241,12 @@ export function SearchPanel() {
       )}
 
       {query && results.length === 0 && (
-        <span className="text-xs text-gray-400">No results</span>
+        <span className="text-xs text-gray-400">검색 결과 없음</span>
       )}
 
       <button
+        type="button"
+        aria-label="검색 닫기"
         onClick={() => {
           setIsOpen(false);
           setQuery("");

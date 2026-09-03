@@ -140,10 +140,10 @@ function generateBoard(n: number) {
 
 async function loadBoard(page: Page, n: number) {
   const board = generateBoard(n);
-  await page.getByRole("button", { name: "File" }).click();
+  await page.getByRole("button", { name: "파일" }).click();
   await page.waitForTimeout(150);
   const chooserPromise = page.waitForEvent("filechooser");
-  await page.getByText("Open file").click();
+  await page.getByText("파일 열기").click();
   const chooser = await chooserPromise;
   const t0 = Date.now();
   await chooser.setFiles({
