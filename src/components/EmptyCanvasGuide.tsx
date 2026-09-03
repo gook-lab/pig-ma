@@ -79,7 +79,9 @@ export function EmptyCanvasGuide() {
   }, [hideUI, isLocked, isVisible, nextStep, objectsCount]);
 
   useEffect(() => {
-    if (objectsCount > 0 && isVisible) completeTour();
+    if (objectsCount === 0 || !isVisible) return;
+    const frame = window.requestAnimationFrame(completeTour);
+    return () => window.cancelAnimationFrame(frame);
   }, [completeTour, isVisible, objectsCount]);
 
   if (!isVisible || objectsCount > 0 || hideUI || isLocked) return null;
