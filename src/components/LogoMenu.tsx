@@ -80,13 +80,22 @@ export function LogoMenu() {
       {/* Logo Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        type="button"
+        aria-label="Pig-ma 메뉴 열기"
+        aria-expanded={isOpen}
+        title="Pig-ma 메뉴"
         className={cn(
-          "flex items-center justify-center rounded-lg transition-colors",
+          "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors",
           "hover:bg-gray-100",
           isOpen && "bg-gray-100",
         )}
       >
-        <img src={logoSvg} alt="Pig-ma" className="h-8 px-1" />
+        <img
+          src={logoSvg}
+          alt=""
+          aria-hidden="true"
+          className="h-7 w-7 object-contain"
+        />
       </button>
 
       {/* Dropdown Menu */}
