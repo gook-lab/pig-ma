@@ -1,10 +1,34 @@
-import { useState, useRef, useEffect, useCallback } from "react";
-import { Grid3X3, Square, LayoutGrid, Eye, EyeOff, Check } from "lucide-react";
+import {
+  lazy,
+  Suspense,
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+} from "react";
+import {
+  Grid3X3,
+  Square,
+  LayoutGrid,
+  Eye,
+  EyeOff,
+  Check,
+  CircleHelp,
+  BookOpen,
+  Github,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCanvasStore } from "@/store";
 import { Z_OPTIONS_BAR } from "@/constants/zIndex";
 import type { GridType } from "@/types";
 import logoSvg from "@/assets/logo.svg";
+import type { ProductGuideSection } from "./ProductGuideDialog";
+
+const ProductGuideDialog = lazy(() =>
+  import("./ProductGuideDialog").then((module) => ({
+    default: module.ProductGuideDialog,
+  })),
+);
 
 const GRID_COLORS = [
   "#d4d4d4", // gray (default)
@@ -33,6 +57,9 @@ const GRID_OPTIONS: GridOption[] = [
 export function LogoMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [guideSection, setGuideSection] = useState<ProductGuideSection | null>(
+    null,
+  );
   const menuRef = useRef<HTMLDivElement>(null);
 
   const gridType = useCanvasStore((state) => state.gridType);
@@ -74,6 +101,12 @@ export function LogoMenu() {
   );
 
   const currentGridOption = GRID_OPTIONS.find((opt) => opt.type === gridType);
+
+  const openGuide = (section: ProductGuideSection) => {
+    setGuideSection(section);
+    setIsOpen(false);
+    setShowColorPicker(false);
+  };
 
   return (
     <div className="relative" ref={menuRef}>
@@ -171,6 +204,37 @@ export function LogoMenu() {
 
           <div className="my-1 h-px bg-gray-100 dark:bg-[#c0c1c4]" />
 
+          <div className="px-2 py-1.5 text-xs font-medium text-gray-500 uppercase">
+            Pig-ma
+          </div>
+          <button
+            type="button"
+            onClick={() => openGuide("about")}
+            className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-gray-50"
+          >
+            <CircleHelp size={16} aria-hidden="true" />
+            <span>Pig-ma 소개</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => openGuide("guide")}
+            className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-gray-50"
+          >
+            <BookOpen size={16} aria-hidden="true" />
+            <span>사용 방법</span>
+          </button>
+          <a
+            href="https://github.com/gook-lab/pig-ma"
+            target="_blank"
+            rel="noreferrer"
+            className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-gray-50"
+          >
+            <Github size={16} aria-hidden="true" />
+            <span>GitHub</span>
+          </a>
+
+          <div className="my-1 h-px bg-gray-100 dark:bg-[#c0c1c4]" />
+
           {/* Interface Section */}
           <div className="px-2 py-1.5 text-xs font-medium text-gray-500 uppercase">
             Interface
@@ -191,6 +255,14 @@ export function LogoMenu() {
             <span className="text-xs text-gray-400">Cmd+/</span>
           </button>
         </div>
+      )}
+      {guideSection && (
+        <Suspense fallback={null}>
+          <ProductGuideDialog
+            section={guideSection}
+            onClose={() => setGuideSection(null)}
+          />
+        </Suspense>
       )}
     </div>
   );
