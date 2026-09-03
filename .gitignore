@@ -29,3 +29,4 @@ captures/
 tests/capture/
 *.zip
 .gstack/
+.vercel
