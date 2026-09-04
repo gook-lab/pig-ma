@@ -403,6 +403,123 @@
   animation: popoverEnter 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* First-visit tour: mute the canvas and reveal only the control being explained. */
+.onboarding-spotlight {
+  --spot-x: 50%;
+  --spot-y: 50%;
+  --spot-rx: 0px;
+  --spot-ry: 0px;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: rgba(17, 24, 39, 0.3);
+  backdrop-filter: grayscale(1) brightness(0.72);
+  -webkit-backdrop-filter: grayscale(1) brightness(0.72);
+  mask-image: radial-gradient(
+    ellipse var(--spot-rx) var(--spot-ry) at var(--spot-x) var(--spot-y),
+    transparent 96%,
+    #000 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse var(--spot-rx) var(--spot-ry) at var(--spot-x) var(--spot-y),
+    transparent 96%,
+    #000 100%
+  );
+}
+
+.onboarding-spotlight-center {
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+.onboarding-spotlight-toolbar {
+  --spot-x: 50%;
+  --spot-y: calc(100% - 54px);
+  --spot-rx: min(300px, calc(50vw - 12px));
+  --spot-ry: 50px;
+  --spot-width: min(600px, calc(100vw - 24px));
+  --spot-height: 100px;
+}
+
+.onboarding-spotlight-minimap {
+  --spot-x: calc(100% - 108px);
+  --spot-y: calc(100% - 82px);
+  --spot-rx: 116px;
+  --spot-ry: 76px;
+  --spot-width: 232px;
+  --spot-height: 152px;
+}
+
+.onboarding-spotlight-header {
+  --spot-x: calc(100% - 218px);
+  --spot-y: 38px;
+  --spot-rx: 228px;
+  --spot-ry: 50px;
+  --spot-width: 456px;
+  --spot-height: 100px;
+}
+
+.onboarding-spotlight-ring {
+  position: fixed;
+  left: var(--spot-x);
+  top: var(--spot-y);
+  width: var(--spot-width);
+  height: var(--spot-height);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  border: 2px solid rgba(139, 92, 246, 0.8);
+  border-radius: 9999px;
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.14);
+  animation: onboardingSpotlightPulse 1.8s ease-in-out infinite;
+}
+
+.onboarding-card-enter {
+  animation: onboardingCardEnter 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes onboardingCardEnter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes onboardingSpotlightPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(139, 92, 246, 0.2);
+  }
+}
+
+@media (max-width: 639px) {
+  .onboarding-spotlight-minimap {
+    --spot-x: calc(100% - 106px);
+    --spot-y: calc(100% - 122px);
+    --spot-rx: 100px;
+    --spot-ry: 58px;
+    --spot-width: 200px;
+    --spot-height: 116px;
+  }
+
+  .onboarding-spotlight-header {
+    --spot-x: calc(100% - 72px);
+    --spot-rx: 82px;
+    --spot-width: 164px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onboarding-card-enter,
+  .onboarding-spotlight-ring {
+    animation: none;
+  }
+}
+
 /* Tiptap mention style */
 .mention {
   background-color: rgba(124, 58, 237, 0.1);

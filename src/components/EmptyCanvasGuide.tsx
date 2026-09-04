@@ -88,62 +88,78 @@ export function EmptyCanvasGuide() {
 
   const current = STEPS[step] ?? STEPS[0];
   const Icon = current.icon;
+  const spotlightClass = `onboarding-spotlight-${current.position}`;
 
   return (
-    <aside
-      aria-live="polite"
-      aria-label={`시작 안내 ${step + 1}/${STEPS.length}`}
-      className={cn(
-        "pointer-events-auto fixed flex-none rounded-2xl border border-violet-200 bg-white/95 p-5 shadow-2xl shadow-violet-200/40 backdrop-blur-sm dark:border-violet-300 dark:bg-[#d6d7da]/95",
-        POSITION_CLASS[current.position],
+    <>
+      <div
+        aria-hidden="true"
+        className={cn("onboarding-spotlight", spotlightClass)}
+        style={{ zIndex: Z_HEADER + 5 }}
+      />
+      {current.position !== "center" && (
+        <div
+          aria-hidden="true"
+          className={cn("onboarding-spotlight-ring", spotlightClass)}
+          style={{ zIndex: Z_HEADER + 6 }}
+        />
       )}
-      style={{
-        width: "min(360px, calc(100vw - 32px))",
-        zIndex: Z_HEADER + 10,
-      }}
-    >
-      <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-100">
-          <Icon size={20} aria-hidden="true" />
+      <aside
+        key={step}
+        aria-live="polite"
+        aria-label={`시작 안내 ${step + 1}/${STEPS.length}`}
+        className={cn(
+          "onboarding-card-enter pointer-events-auto fixed flex-none rounded-2xl border border-violet-200 bg-white/95 p-5 shadow-2xl shadow-violet-200/40 backdrop-blur-sm dark:border-violet-300 dark:bg-[#d6d7da]/95",
+          POSITION_CLASS[current.position],
+        )}
+        style={{
+          width: "min(360px, calc(100vw - 32px))",
+          zIndex: Z_HEADER + 10,
+        }}
+      >
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-100">
+            <Icon size={20} aria-hidden="true" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <strong className="block text-sm font-semibold text-gray-900">
+              {current.title}
+            </strong>
+            <p className="mt-1 text-xs leading-5 text-gray-500 dark:text-gray-600">
+              {current.description}
+            </p>
+          </div>
         </div>
-        <div className="min-w-0 flex-1">
-          <strong className="block text-sm font-semibold text-gray-900">
-            {current.title}
-          </strong>
-          <p className="mt-1 text-xs leading-5 text-gray-500 dark:text-gray-600">
-            {current.description}
-          </p>
-        </div>
-      </div>
 
-      <div className="mt-4 flex items-center gap-3">
-        <div className="flex gap-1" aria-hidden="true">
-          {STEPS.map((item, index) => (
-            <span
-              key={item.title}
-              className={cn(
-                "h-1.5 rounded-full transition-all",
-                index === step ? "w-5 bg-violet-500" : "w-1.5 bg-gray-200",
-              )}
-            />
-          ))}
+        <div className="mt-4 flex items-center gap-3">
+          <div className="flex gap-1" aria-hidden="true">
+            {STEPS.map((item, index) => (
+              <span
+                key={item.title}
+                className={cn(
+                  "h-1.5 rounded-full transition-all",
+                  index === step ? "w-5 bg-violet-500" : "w-1.5 bg-gray-200",
+                )}
+              />
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={completeTour}
+            className="ml-auto min-h-9 px-2 text-xs text-gray-400 hover:text-gray-700"
+          >
+            건너뛰기
+          </button>
+          <button
+            type="button"
+            onClick={nextStep}
+            className="inline-flex min-h-9 items-center gap-1 rounded-lg bg-violet-500 px-3 text-xs font-medium text-white hover:bg-violet-600"
+          >
+            {step === STEPS.length - 1 ? "시작하기" : "다음"}
+            <ArrowRight size={14} aria-hidden="true" />
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={completeTour}
-          className="ml-auto min-h-9 px-2 text-xs text-gray-400 hover:text-gray-700"
-        >
-          건너뛰기
-        </button>
-        <button
-          type="button"
-          onClick={nextStep}
-          className="inline-flex min-h-9 items-center gap-1 rounded-lg bg-violet-500 px-3 text-xs font-medium text-white hover:bg-violet-600"
-        >
-          {step === STEPS.length - 1 ? "시작하기" : "다음"}
-          <ArrowRight size={14} aria-hidden="true" />
-        </button>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }
