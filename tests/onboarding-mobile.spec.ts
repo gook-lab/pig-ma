@@ -8,18 +8,22 @@ test.describe("온보딩과 모바일 헤더", () => {
     await expect(page.getByLabel("시작 안내 1/4")).toContainText(
       "Pig-ma에 오신 것을 환영합니다",
     );
+    await expect(page.locator(".onboarding-spotlight-center")).toBeVisible();
     await page.getByRole("button", { name: "다음" }).click();
     await expect(page.getByLabel("시작 안내 2/4")).toContainText(
       "하단 도구에서 시작하세요",
     );
+    await expect(page.locator(".onboarding-spotlight-toolbar")).toHaveCount(2);
     await page.getByRole("button", { name: "다음" }).click();
     await expect(page.getByLabel("시작 안내 3/4")).toContainText(
       "미니맵으로 전체 위치를 확인하세요",
     );
+    await expect(page.locator(".onboarding-spotlight-minimap")).toHaveCount(2);
     await page.getByRole("button", { name: "다음" }).click();
     await expect(page.getByLabel("시작 안내 4/4")).toContainText(
       "상단 메뉴에서 작업을 관리하세요",
     );
+    await expect(page.locator(".onboarding-spotlight-header")).toHaveCount(2);
     await page.getByRole("button", { name: "시작하기" }).click();
 
     await expect(page.getByLabel(/시작 안내/)).toHaveCount(0);
