@@ -497,6 +497,12 @@
 }
 
 @media (max-width: 639px) {
+  .mobile-primary-toolbar > button,
+  .mobile-primary-toolbar > div > button {
+    min-width: 40px;
+    min-height: 44px;
+  }
+
   .onboarding-spotlight-minimap {
     --spot-x: calc(100% - 106px);
     --spot-y: calc(100% - 122px);

@@ -168,25 +168,25 @@ export class ErrorBoundary extends Component<Props, State> {
     return (
       <div style={S.backdrop} role="alertdialog" aria-modal="true">
         <div style={S.card}>
-          <h2 style={S.title}>Something went wrong</h2>
+          <h2 style={S.title}>예상하지 못한 오류가 발생했습니다</h2>
           <p style={S.body}>
-            The canvas hit an unexpected error. Save a backup before resetting —
-            a reset clears the locally stored board.
+            초기화하면 현재 기기에 저장된 보드가 삭제됩니다. 먼저 백업 파일을
+            저장해 주세요.
           </p>
           <pre style={S.pre}>{error.message}</pre>
 
           <div style={S.actions}>
             <button style={S.secondary} onClick={downloadRawBackup}>
-              Save a backup (.pigma)
+              백업 저장 (.pigma)
             </button>
             <button
               style={S.secondary}
               onClick={() => window.location.reload()}
             >
-              Reload
+              새로고침
             </button>
             <button style={S.danger} onClick={this.resetPersistedState}>
-              Reset saved board and reload
+              저장된 보드 초기화 후 새로고침
             </button>
           </div>
         </div>

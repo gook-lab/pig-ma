@@ -75,7 +75,7 @@ test.describe("File I/O", () => {
       (p: { id: string }) => p.id === json.currentPageId,
     );
     expect(currentPage.objects.length).toBe(1);
-    await expect(page.getByText(/^Saved /)).toBeVisible();
+    await expect(page.getByText(/프로젝트를 저장했습니다/)).toBeVisible();
   });
 
   test(".pigma 열기 — 교체 confirm 후 프로젝트가 로드된다", async ({
@@ -133,10 +133,10 @@ test.describe("File I/O", () => {
       buffer: Buffer.from(JSON.stringify(pigmaFile)),
     });
 
-    await expect(page.getByText("Project opened")).toBeVisible();
-    await expect(page.getByText(/"E2E Project" — 1 page/)).toBeVisible();
+    await expect(page.getByText("프로젝트를 열었습니다")).toBeVisible();
+    await expect(page.getByText(/"E2E Project" — 1페이지/)).toBeVisible();
     // 이전 프로젝트 백업 안내 포함
-    await expect(page.getByText(/backed up/)).toBeVisible();
+    await expect(page.getByText(/이전 프로젝트 백업 완료/)).toBeVisible();
   });
 
   test("백업 복원 — 열기 이전 프로젝트로 되돌아간다", async ({ page }) => {
@@ -164,12 +164,12 @@ test.describe("File I/O", () => {
       name: "replace.pigma",
       buffer: Buffer.from(JSON.stringify(pigmaFile)),
     });
-    await expect(page.getByText("Project opened")).toBeVisible();
+    await expect(page.getByText("프로젝트를 열었습니다")).toBeVisible();
 
     // 최근 백업 복원 항목이 나타나고, 복원하면 이전 도형이 돌아온다
     await openFileMenu(page);
     await page.getByText("최근 백업 복원").click();
-    await expect(page.getByText("Backup restored")).toBeVisible();
+    await expect(page.getByText("최근 백업을 복원했습니다")).toBeVisible();
 
     // 복원된 프로젝트를 저장해 도형 1개 확인
     await openFileMenu(page);
@@ -219,8 +219,10 @@ test.describe("File I/O", () => {
       buffer: Buffer.from(JSON.stringify(excalidraw)),
     });
 
-    await expect(page.getByText("Excalidraw imported")).toBeVisible();
-    await expect(page.getByText("2 object(s) added")).toBeVisible();
+    await expect(
+      page.getByText("Excalidraw 파일을 가져왔습니다"),
+    ).toBeVisible();
+    await expect(page.getByText("객체 2개를 추가했습니다")).toBeVisible();
   });
 
   test("Excalidraw export — 캔버스 도형이 요소로 내보내진다", async ({
@@ -236,7 +238,7 @@ test.describe("File I/O", () => {
     expect(filename.endsWith(".excalidraw")).toBe(true);
     expect(json.type).toBe("excalidraw");
     expect(json.elements.length).toBeGreaterThanOrEqual(1);
-    await expect(page.getByText(/Exported 1 object/)).toBeVisible();
+    await expect(page.getByText(/객체 1개를 Excalidraw 파일로/)).toBeVisible();
   });
 
   test("Mermaid import — flowchart 가 도형/커넥터로 생성된다", async ({
@@ -249,11 +251,11 @@ test.describe("File I/O", () => {
     await textarea.fill(
       "flowchart TD\n  A[Start] --> B{OK?}\n  B -->|yes| C[Done]",
     );
-    await page.getByRole("button", { name: "Import", exact: true }).click();
+    await page.getByRole("button", { name: "가져오기", exact: true }).click();
 
-    await expect(page.getByText("Diagram imported")).toBeVisible();
+    await expect(page.getByText("다이어그램을 가져왔습니다")).toBeVisible();
     await expect(
-      page.getByText("3 node(s), 2 connector(s) added"),
+      page.getByText("노드 3개와 연결선 2개를 추가했습니다"),
     ).toBeVisible();
   });
 
@@ -261,7 +263,7 @@ test.describe("File I/O", () => {
     await openFileMenu(page);
     await page.getByText("Mermaid 가져오기").click();
     await page.getByPlaceholder(/flowchart TD/).fill("this is not mermaid");
-    await page.getByRole("button", { name: "Import", exact: true }).click();
+    await page.getByRole("button", { name: "가져오기", exact: true }).click();
 
     await expect(page.getByText(/Not a flowchart/)).toBeVisible();
   });

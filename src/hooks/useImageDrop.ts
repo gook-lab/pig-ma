@@ -12,7 +12,7 @@ import toast from "@/utils/toast";
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 
-// .pigma 드롭 열기 — Header 의 "Open file" 과 동일한 UX (교체 확인 포함)
+// .pigma 드롭 열기 — 헤더의 "파일 열기"와 동일한 UX (교체 확인 포함)
 async function openDroppedPigmaFile(fileBlob: File): Promise<void> {
   try {
     const file = await readPigmaFile(fileBlob);
@@ -22,22 +22,20 @@ async function openDroppedPigmaFile(fileBlob: File): Promise<void> {
     // 파괴적 동작(프로젝트 교체)이라 confirm 은 유지한다
     if (
       hasContent &&
-      !window.confirm(
-        "Opening a file will replace the current project. Continue?",
-      )
+      !window.confirm("파일을 열면 현재 프로젝트를 교체합니다. 계속할까요?")
     ) {
       return;
     }
     applyPigmaFile(file);
     toast.success({
       message: file.projectName
-        ? `Opened "${file.projectName}"`
-        : "Project opened",
+        ? `“${file.projectName}” 프로젝트를 열었습니다`
+        : "프로젝트를 열었습니다",
     });
   } catch (err) {
     toast.error({
       message:
-        err instanceof PigmaFileError ? err.message : "Failed to open file",
+        err instanceof PigmaFileError ? err.message : "파일을 열지 못했습니다",
     });
   }
 }
@@ -67,8 +65,8 @@ export function useImageDrop() {
             toast.success({
               message:
                 summary.skippedCount > 0
-                  ? `Imported ${summary.importedCount} objects (${summary.skippedCount} skipped)`
-                  : `Imported ${summary.importedCount} objects`,
+                  ? `객체 ${summary.importedCount}개 추가, ${summary.skippedCount}개 제외`
+                  : `객체 ${summary.importedCount}개를 추가했습니다`,
             });
           })
           .catch((err) => {
@@ -76,7 +74,7 @@ export function useImageDrop() {
               message:
                 err instanceof ExcalidrawImportError
                   ? err.message
-                  : "Failed to import Excalidraw file",
+                  : "Excalidraw 파일을 가져오지 못했습니다",
             });
           });
         return;
@@ -85,7 +83,7 @@ export function useImageDrop() {
       if (!file.type.startsWith("image/")) return;
 
       if (file.size > MAX_SIZE) {
-        toast.error({ message: "Images must be 10MB or smaller" });
+        toast.error({ message: "이미지는 10MB 이하만 추가할 수 있습니다" });
         return;
       }
 

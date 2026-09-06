@@ -137,7 +137,7 @@ test.describe("손상 데이터 내성", () => {
     await openBoard(page, [BROKEN_CHART, BROKEN_LINE, HEALTHY_SHAPE]);
 
     // 사용자에게 제외 사실을 알린다
-    await expect(page.getByText(/damaged object\(s\) skipped/)).toBeVisible();
+    await expect(page.getByText(/손상된 객체 2개 제외/)).toBeVisible();
 
     const objects = await saveAndGetObjects(page);
     expect(objects.map((o) => o.id)).toEqual(["ok-1"]);
@@ -171,7 +171,7 @@ test.describe("손상 데이터 내성", () => {
 
   test("정상 보드는 경고 없이 열린다", async ({ page }) => {
     await openBoard(page, [HEALTHY_SHAPE]);
-    await expect(page.getByText("Project opened")).toBeVisible();
+    await expect(page.getByText("프로젝트를 열었습니다")).toBeVisible();
     await expect(page.getByText(/damaged/)).toHaveCount(0);
   });
 });

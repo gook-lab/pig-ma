@@ -1,5 +1,12 @@
 import { useEffect } from "react";
-import { Github, LayoutTemplate, MousePointer2, Shapes, X } from "lucide-react";
+import {
+  Github,
+  LayoutTemplate,
+  MousePointer2,
+  RotateCcw,
+  Shapes,
+  X,
+} from "lucide-react";
 import { Z_MODAL_BACKDROP, Z_MODAL_CONTENT } from "@/constants/zIndex";
 
 export type ProductGuideSection = "about" | "guide";
@@ -85,41 +92,54 @@ export function ProductGuideDialog({
             않습니다.
           </div>
         ) : (
-          <ol className="mt-5 space-y-3">
-            <li className="flex gap-3 rounded-xl bg-gray-50 p-3">
-              <Shapes className="mt-0.5 text-violet-500" size={18} />
-              <div>
-                <strong className="block text-sm text-gray-900">
-                  직접 그리기
-                </strong>
-                <span className="text-xs leading-5 text-gray-500">
-                  하단 도구에서 도형, 메모, 텍스트와 연결선을 선택합니다.
-                </span>
-              </div>
-            </li>
-            <li className="flex gap-3 rounded-xl bg-gray-50 p-3">
-              <LayoutTemplate className="mt-0.5 text-violet-500" size={18} />
-              <div>
-                <strong className="block text-sm text-gray-900">
-                  템플릿 적용
-                </strong>
-                <span className="text-xs leading-5 text-gray-500">
-                  플로차트, 마인드맵 등 준비된 구성을 선택합니다.
-                </span>
-              </div>
-            </li>
-            <li className="flex gap-3 rounded-xl bg-gray-50 p-3">
-              <MousePointer2 className="mt-0.5 text-violet-500" size={18} />
-              <div>
-                <strong className="block text-sm text-gray-900">
-                  편집과 저장
-                </strong>
-                <span className="text-xs leading-5 text-gray-500">
-                  요소를 선택해 편집하고 파일 메뉴에서 작업을 내보냅니다.
-                </span>
-              </div>
-            </li>
-          </ol>
+          <>
+            <ol className="mt-5 space-y-3">
+              <li className="flex gap-3 rounded-xl bg-gray-50 p-3">
+                <Shapes className="mt-0.5 text-violet-500" size={18} />
+                <div>
+                  <strong className="block text-sm text-gray-900">
+                    직접 그리기
+                  </strong>
+                  <span className="text-xs leading-5 text-gray-500">
+                    하단 도구에서 도형, 메모, 텍스트와 연결선을 선택합니다.
+                  </span>
+                </div>
+              </li>
+              <li className="flex gap-3 rounded-xl bg-gray-50 p-3">
+                <LayoutTemplate className="mt-0.5 text-violet-500" size={18} />
+                <div>
+                  <strong className="block text-sm text-gray-900">
+                    템플릿 적용
+                  </strong>
+                  <span className="text-xs leading-5 text-gray-500">
+                    플로차트, 마인드맵 등 준비된 구성을 선택합니다.
+                  </span>
+                </div>
+              </li>
+              <li className="flex gap-3 rounded-xl bg-gray-50 p-3">
+                <MousePointer2 className="mt-0.5 text-violet-500" size={18} />
+                <div>
+                  <strong className="block text-sm text-gray-900">
+                    편집과 저장
+                  </strong>
+                  <span className="text-xs leading-5 text-gray-500">
+                    요소를 선택해 편집하고 파일 메뉴에서 작업을 내보냅니다.
+                  </span>
+                </div>
+              </li>
+            </ol>
+            <button
+              type="button"
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent("restart-onboarding"));
+                onClose();
+              }}
+              className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl bg-violet-50 px-4 text-sm font-medium text-violet-700 transition-colors hover:bg-violet-100"
+            >
+              <RotateCcw size={17} aria-hidden="true" />
+              시작 안내 다시 보기
+            </button>
+          </>
         )}
 
         <a

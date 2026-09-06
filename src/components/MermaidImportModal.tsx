@@ -35,21 +35,21 @@ export function MermaidImportModal({ onClose }: MermaidImportModalProps) {
 
   const handleImport = () => {
     if (!source.trim()) {
-      setError("Paste a Mermaid flowchart first");
+      setError("Mermaid 플로차트 정의를 먼저 붙여 넣어 주세요");
       return;
     }
     try {
       const { nodeCount, edgeCount } = importMermaidToCanvas(source);
       toast.success({
-        title: "Diagram imported",
-        message: `${nodeCount} node(s), ${edgeCount} connector(s) added`,
+        title: "다이어그램을 가져왔습니다",
+        message: `노드 ${nodeCount}개와 연결선 ${edgeCount}개를 추가했습니다`,
       });
       onClose();
     } catch (err) {
       setError(
         err instanceof MermaidImportError
           ? err.message
-          : "Failed to import diagram",
+          : "다이어그램을 가져오지 못했습니다",
       );
     }
   };
@@ -73,21 +73,20 @@ export function MermaidImportModal({ onClose }: MermaidImportModalProps) {
           <div className="flex items-center gap-2">
             <Workflow size={20} className="text-violet-600" />
             <h2 className="text-lg font-semibold text-gray-900">
-              Import Mermaid
+              Mermaid 가져오기
             </h2>
           </div>
           <button
             onClick={onClose}
             className="rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-            aria-label="Close"
+            aria-label="닫기"
           >
             <X size={18} />
           </button>
         </div>
 
         <p className="mb-3 text-sm text-gray-500">
-          Paste a flowchart definition. Nodes and connectors are created on the
-          canvas.
+          플로차트 정의를 붙여 넣으면 노드와 연결선을 캔버스에 추가합니다.
         </p>
 
         <textarea
@@ -113,13 +112,13 @@ export function MermaidImportModal({ onClose }: MermaidImportModalProps) {
             onClick={onClose}
             className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100"
           >
-            Cancel
+            취소
           </button>
           <button
             onClick={handleImport}
             className="rounded-lg bg-violet-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-violet-600"
           >
-            Import
+            가져오기
           </button>
         </div>
       </div>

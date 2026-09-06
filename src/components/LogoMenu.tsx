@@ -49,9 +49,9 @@ interface GridOption {
 }
 
 const GRID_OPTIONS: GridOption[] = [
-  { type: "dots", label: "Dot Grid", icon: Grid3X3, hasColor: true },
-  { type: "blank", label: "Blank", icon: Square, hasColor: false },
-  { type: "lines", label: "Line Grid", icon: LayoutGrid, hasColor: true },
+  { type: "dots", label: "점 격자", icon: Grid3X3, hasColor: true },
+  { type: "blank", label: "빈 배경", icon: Square, hasColor: false },
+  { type: "lines", label: "선 격자", icon: LayoutGrid, hasColor: true },
 ];
 
 export function LogoMenu() {
@@ -139,7 +139,7 @@ export function LogoMenu() {
         >
           {/* View Section */}
           <div className="px-2 py-1.5 text-xs font-medium text-gray-500 uppercase dark:text-gray-600">
-            View
+            화면
           </div>
 
           {/* Grid Type Options */}
@@ -170,7 +170,7 @@ export function LogoMenu() {
                     onClick={() => setShowColorPicker(!showColorPicker)}
                     className="absolute top-1/2 right-8 h-4 w-4 -translate-y-1/2 rounded border border-gray-300"
                     style={{ backgroundColor: gridColor }}
-                    title="Change grid color"
+                    title="격자 색상 변경"
                   />
                 )}
               </div>
@@ -181,7 +181,7 @@ export function LogoMenu() {
           {showColorPicker && currentGridOption?.hasColor && (
             <div className="border-t border-gray-100 px-3 py-2">
               <div className="mb-2 text-xs font-medium text-gray-500">
-                Grid Color
+                격자 색상
               </div>
               <div className="flex flex-wrap gap-1">
                 {GRID_COLORS.map((color) => (
@@ -237,7 +237,7 @@ export function LogoMenu() {
 
           {/* Interface Section */}
           <div className="px-2 py-1.5 text-xs font-medium text-gray-500 uppercase">
-            Interface
+            인터페이스
           </div>
 
           <button
@@ -251,7 +251,9 @@ export function LogoMenu() {
             )}
           >
             {hideUI ? <Eye size={16} /> : <EyeOff size={16} />}
-            <span className="flex-1">{hideUI ? "Show UI" : "Hide UI"}</span>
+            <span className="flex-1">
+              {hideUI ? "인터페이스 표시" : "인터페이스 숨기기"}
+            </span>
             <span className="text-xs text-gray-400">Cmd+/</span>
           </button>
         </div>
