@@ -348,9 +348,12 @@ export const Minimap = memo(function Minimap({
   }
 
   return (
-    <div className="fixed right-4 bottom-6 z-40 flex flex-col items-end">
+    <div
+      data-testid="minimap"
+      className="fixed right-4 bottom-24 z-40 flex flex-col items-end sm:bottom-6"
+    >
       {/* 탭 라벨 + 줌 컨트롤 */}
-      <div className="flex h-8 w-full items-center justify-between rounded-t border border-b-0 border-gray-200 bg-white px-2 dark:border-[#c0c1c4] dark:bg-[#d6d7da]">
+      <div className="flex h-11 w-full items-center justify-between rounded-t border border-b-0 border-gray-200 bg-white px-2 sm:h-8 dark:border-[#c0c1c4] dark:bg-[#d6d7da]">
         <span className="text-xs font-medium text-gray-500 dark:text-gray-600">
           미니맵
         </span>
@@ -359,7 +362,7 @@ export const Minimap = memo(function Minimap({
             type="button"
             aria-label="축소"
             onClick={handleZoomOut}
-            className="rounded p-1 transition-colors hover:bg-gray-100 dark:hover:bg-[#c8c9cc]"
+            className="flex h-11 w-11 items-center justify-center rounded transition-colors hover:bg-gray-100 sm:h-6 sm:w-6 dark:hover:bg-[#c8c9cc]"
             title="축소"
           >
             <Minus className="h-4 w-4 text-gray-600 dark:text-gray-700" />
@@ -368,7 +371,7 @@ export const Minimap = memo(function Minimap({
             type="button"
             aria-label="확대"
             onClick={handleZoomIn}
-            className="rounded p-1 transition-colors hover:bg-gray-100 dark:hover:bg-[#c8c9cc]"
+            className="flex h-11 w-11 items-center justify-center rounded transition-colors hover:bg-gray-100 sm:h-6 sm:w-6 dark:hover:bg-[#c8c9cc]"
             title="확대"
           >
             <Plus className="h-4 w-4 text-gray-600 dark:text-gray-700" />
@@ -378,7 +381,7 @@ export const Minimap = memo(function Minimap({
               type="button"
               aria-label="화면 배율 100%로 초기화"
               onClick={handleResetZoom}
-              className="rounded p-1 transition-colors hover:bg-gray-100 dark:hover:bg-[#c8c9cc]"
+              className="flex h-11 w-11 items-center justify-center rounded transition-colors hover:bg-gray-100 sm:h-6 sm:w-6 dark:hover:bg-[#c8c9cc]"
               title="화면 배율 초기화 (100%)"
             >
               <RotateCcw className="h-4 w-4 text-gray-600 dark:text-gray-700" />

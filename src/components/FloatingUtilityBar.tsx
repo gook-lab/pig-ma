@@ -140,55 +140,60 @@ const SHORTCUT_CATEGORIES: ShortcutCategory[] = [
     id: "tools",
     label: "도구",
     items: [
-      { name: "Select", keys: ["v"], action: "select", editable: true },
-      { name: "Hand", keys: ["h"], action: "hand", editable: true },
-      { name: "Pencil", keys: ["p"], action: "pencil", editable: true },
-      { name: "Shape", keys: ["r"], action: "shape", editable: true },
-      { name: "Comment", keys: ["c"] }, // Not in shortcuts store
+      { name: "선택", keys: ["v"], action: "select", editable: true },
+      { name: "이동", keys: ["h"], action: "hand", editable: true },
+      { name: "펜", keys: ["p"], action: "pencil", editable: true },
+      { name: "도형", keys: ["r"], action: "shape", editable: true },
+      { name: "댓글", keys: ["c"] }, // Not in shortcuts store
       {
-        name: "Sticky Note",
+        name: "메모지",
         keys: ["s"],
         action: "stickyNote",
         editable: true,
       },
-      { name: "Connector", keys: ["l"], action: "connector", editable: true },
-      { name: "TextBox", keys: ["t"], action: "textBox", editable: true },
+      { name: "연결선", keys: ["l"], action: "connector", editable: true },
+      { name: "텍스트", keys: ["t"], action: "textBox", editable: true },
     ],
   },
   {
     id: "edit",
     label: "편집",
     items: [
-      { name: "Undo", keys: ["Meta", "z"], action: "undo", editable: true },
       {
-        name: "Redo",
+        name: "실행 취소",
+        keys: ["Meta", "z"],
+        action: "undo",
+        editable: true,
+      },
+      {
+        name: "다시 실행",
         keys: ["Meta", "Shift", "z"],
         action: "redo",
         editable: true,
       },
-      { name: "Copy", keys: ["Meta", "c"] }, // System shortcut
-      { name: "Paste", keys: ["Meta", "v"] }, // System shortcut
-      { name: "Delete", keys: ["Backspace"], action: "delete", editable: true },
+      { name: "복사", keys: ["Meta", "c"] }, // System shortcut
+      { name: "붙여넣기", keys: ["Meta", "v"] }, // System shortcut
+      { name: "삭제", keys: ["Backspace"], action: "delete", editable: true },
     ],
   },
   {
     id: "canvas",
     label: "캔버스",
     items: [
-      { name: "Move Up", keys: ["ArrowUp"] },
-      { name: "Move Down", keys: ["ArrowDown"] },
-      { name: "Move Left", keys: ["ArrowLeft"] },
-      { name: "Move Right", keys: ["ArrowRight"] },
-      { name: "Move Fast", keys: ["Shift", "ArrowUp"] },
+      { name: "위로 이동", keys: ["ArrowUp"] },
+      { name: "아래로 이동", keys: ["ArrowDown"] },
+      { name: "왼쪽으로 이동", keys: ["ArrowLeft"] },
+      { name: "오른쪽으로 이동", keys: ["ArrowRight"] },
+      { name: "빠르게 이동", keys: ["Shift", "ArrowUp"] },
     ],
   },
   {
     id: "other",
     label: "기타",
     items: [
-      { name: "Lock Screen", keys: ["Meta", "l"] },
-      { name: "Save", keys: ["Meta", "s"] },
-      { name: "Cursor Chat", keys: ["/"] },
+      { name: "화면 잠금", keys: ["Meta", "l"] },
+      { name: "저장", keys: ["Meta", "s"] },
+      { name: "커서 채팅", keys: ["/"] },
     ],
   },
 ];
@@ -370,16 +375,19 @@ function KeyboardVisualizer({
     }
     setPendingChanges(new Map());
     setConflictingAction(null);
-    toast.success({ message: "Shortcuts saved", duration: 1500 });
+    toast.success({ message: "단축키를 저장했습니다", duration: 1500 });
   }, [pendingChanges, updateShortcut]);
 
   // Handle reset
   const handleReset = useCallback(() => {
-    if (window.confirm("Reset all shortcuts to defaults?")) {
+    if (window.confirm("모든 단축키를 기본값으로 되돌릴까요?")) {
       resetToDefaults();
       setPendingChanges(new Map());
       setConflictingAction(null);
-      toast.success({ message: "Shortcuts reset", duration: 1500 });
+      toast.success({
+        message: "단축키를 기본값으로 복원했습니다",
+        duration: 1500,
+      });
     }
   }, [resetToDefaults]);
 
@@ -419,7 +427,7 @@ function KeyboardVisualizer({
         // Check Korean key
         if (binding.key && isKoreanKey(binding.key)) {
           toast.error({
-            message: "Korean input not allowed",
+            message: "한글 키는 단축키로 지정할 수 없습니다",
             duration: 2000,
           });
           cancelEditing();
@@ -429,7 +437,7 @@ function KeyboardVisualizer({
         // Check system reserved key
         if (binding.key && isSystemReservedKey(binding)) {
           toast.error({
-            message: "System shortcut - cannot use",
+            message: "시스템 단축키는 사용할 수 없습니다",
             duration: 2000,
           });
           cancelEditing();
@@ -440,7 +448,7 @@ function KeyboardVisualizer({
         const currentBinding = getBinding(editingAction);
         if (bindingsEqual(currentBinding, binding)) {
           toast.warning({
-            message: "Same as current key",
+            message: "현재 단축키와 같습니다",
             duration: 2000,
           });
           cancelEditing();
@@ -453,7 +461,7 @@ function KeyboardVisualizer({
           setConflictingAction(conflict);
           const conflictName = getActionName(conflict);
           toast.error({
-            message: `Already used by "${conflictName}"`,
+            message: `“${conflictName}”에서 이미 사용 중입니다`,
             duration: 2000,
           });
           // Don't save - keep original key, but keep conflict highlight for 3s
@@ -604,13 +612,13 @@ function KeyboardVisualizer({
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Keyboard className="h-5 w-5 text-white" />
-            <span className="font-semibold text-white">Keyboard Shortcuts</span>
+            <span className="font-semibold text-white">키보드 단축키</span>
             <span className="ml-2 text-xs text-gray-400">
               {isMac ? "macOS" : "Windows"}
             </span>
             {hasChanges && (
               <span className="ml-2 rounded bg-amber-500 px-2 py-0.5 text-xs text-white">
-                {pendingChanges.size} unsaved
+                저장되지 않음 {pendingChanges.size}건
               </span>
             )}
           </div>
@@ -621,28 +629,28 @@ function KeyboardVisualizer({
                   onClick={discardChanges}
                   className="rounded-lg px-3 py-1.5 text-sm text-gray-400 transition-colors hover:bg-gray-700 hover:text-white"
                 >
-                  Discard
+                  변경 취소
                 </button>
                 <button
                   onClick={saveChanges}
                   className="flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white transition-colors hover:bg-blue-700"
                 >
                   <Check className="h-4 w-4" />
-                  Save
+                  저장
                 </button>
               </>
             )}
             <button
               onClick={handleReset}
               className="rounded-lg p-1.5 transition-colors hover:bg-gray-700"
-              title="Reset to defaults"
+              title="기본값으로 복원"
             >
               <RotateCcw className="h-4 w-4 text-gray-400" />
             </button>
             <button
               onClick={() => {
                 if (hasChanges) {
-                  if (window.confirm("Discard unsaved changes?")) {
+                  if (window.confirm("저장하지 않은 변경사항을 취소할까요?")) {
                     discardChanges();
                     onClose();
                   }
@@ -1012,7 +1020,7 @@ export function FloatingUtilityBar() {
     return (
       <>
         {/* Mobile Floating Button - 미니맵 상단에 위치 */}
-        <div className="fixed z-50" style={{ right: "16px", bottom: "200px" }}>
+        <div className="fixed right-4 bottom-64 z-50 sm:bottom-60">
           {/* Popup Menu */}
           {mobileMenuOpen && (
             <div
@@ -1037,7 +1045,7 @@ export function FloatingUtilityBar() {
                 )}
               >
                 <Keyboard className="h-5 w-5 text-gray-600" />
-                <span className="text-sm text-gray-700">Keyboard</span>
+                <span className="text-sm text-gray-700">키보드</span>
               </button>
 
               {/* History Button */}
@@ -1052,7 +1060,7 @@ export function FloatingUtilityBar() {
                 )}
               >
                 <History className="h-5 w-5 text-gray-600" />
-                <span className="text-sm text-gray-700">History</span>
+                <span className="text-sm text-gray-700">히스토리</span>
               </button>
 
               {/* Comments Button */}
@@ -1080,7 +1088,7 @@ export function FloatingUtilityBar() {
                     </span>
                   )}
                 </div>
-                <span className="text-sm text-gray-700">Comments</span>
+                <span className="text-sm text-gray-700">댓글</span>
               </button>
 
               {/* Mentions Button */}
@@ -1095,7 +1103,7 @@ export function FloatingUtilityBar() {
                 )}
               >
                 <AtSign className="h-5 w-5 text-violet-600" />
-                <span className="text-sm text-gray-700">Mentions</span>
+                <span className="text-sm text-gray-700">멘션</span>
               </button>
 
               {/* Theme Toggle Button */}
@@ -1115,7 +1123,7 @@ export function FloatingUtilityBar() {
                   <Moon className="h-5 w-5 text-gray-600" />
                 )}
                 <span className="text-sm text-gray-700">
-                  {theme === "dark" ? "Light Mode" : "Dark Mode"}
+                  {theme === "dark" ? "라이트 모드" : "다크 모드"}
                 </span>
               </button>
             </div>

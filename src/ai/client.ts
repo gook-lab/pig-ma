@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import type { GoogleGenAI } from "@google/genai";
 import type {
   AIGenerateResponse,
   AIShapeDefinition,
@@ -155,8 +155,9 @@ async function callClaude(
 // Gemini API (via @google/genai SDK)
 // ============================================================================
 
-function getGeminiClient(apiKey: string): GoogleGenAI {
+async function getGeminiClient(apiKey: string): Promise<GoogleGenAI> {
   if (!geminiClient || geminiClientKey !== apiKey) {
+    const { GoogleGenAI } = await import("@google/genai");
     geminiClient = new GoogleGenAI({ apiKey });
     geminiClientKey = apiKey;
   }
@@ -168,7 +169,7 @@ async function callGemini(
   systemPrompt: string,
   userMessage: string,
 ): Promise<string> {
-  const ai = getGeminiClient(apiKey);
+  const ai = await getGeminiClient(apiKey);
 
   try {
     const response = await ai.models.generateContent({

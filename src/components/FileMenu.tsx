@@ -116,7 +116,7 @@ export function FileMenu({ compact = false }: { compact?: boolean }) {
     const file = exportCurrentProject();
     downloadPigmaFile(file);
     toast.success({
-      message: `Saved "${file.projectName}" (${file.pages.length} page${file.pages.length > 1 ? "s" : ""})`,
+      message: `“${file.projectName}” 프로젝트를 저장했습니다. (${file.pages.length}페이지)`,
     });
   };
 
@@ -132,9 +132,7 @@ export function FileMenu({ compact = false }: { compact?: boolean }) {
         state.pages.some((p) => p.objects.length > 0);
       if (
         hasContent &&
-        !window.confirm(
-          "Opening a file will replace the current project. Continue?",
-        )
+        !window.confirm("파일을 열면 현재 프로젝트를 교체합니다. 계속할까요?")
       ) {
         return;
       }
@@ -145,22 +143,28 @@ export function FileMenu({ compact = false }: { compact?: boolean }) {
       );
       const dropped = file.droppedObjects ?? 0;
       const detail = [
-        `${file.pages.length} page(s), ${objectCount} object(s)`,
-        dropped > 0 ? `${dropped} damaged object(s) skipped` : null,
-        backedUp ? "previous project backed up" : null,
+        `${file.pages.length}페이지, 객체 ${objectCount}개`,
+        dropped > 0 ? `손상된 객체 ${dropped}개 제외` : null,
+        backedUp ? "이전 프로젝트 백업 완료" : null,
       ]
         .filter(Boolean)
         .join(". ");
       const notify = dropped > 0 ? toast.warning : toast.success;
       notify({
-        title: dropped > 0 ? "Project opened with warnings" : "Project opened",
+        title:
+          dropped > 0
+            ? "일부 항목을 제외하고 열었습니다"
+            : "프로젝트를 열었습니다",
         message: `"${file.projectName}" — ${detail}`,
         duration: 3500,
       });
     } catch (err) {
       toast.error({
-        title: "Failed to open file",
-        message: err instanceof PigmaFileError ? err.message : "Unknown error",
+        title: "파일을 열지 못했습니다",
+        message:
+          err instanceof PigmaFileError
+            ? err.message
+            : "알 수 없는 오류가 발생했습니다",
       });
     }
   };
@@ -169,20 +173,20 @@ export function FileMenu({ compact = false }: { compact?: boolean }) {
     setShowMenu(false);
     const { data, exportedCount, skippedCount } = exportCanvasToExcalidraw();
     if (exportedCount === 0) {
-      toast.warning({ message: "Nothing to export" });
+      toast.warning({ message: "내보낼 객체가 없습니다" });
       return;
     }
     const projectName = useCanvasStore.getState().projectName;
     downloadExcalidrawFile(data, `${projectName}.excalidraw`);
     if (skippedCount > 0) {
       toast.warning({
-        title: "Exported with skips",
-        message: `${exportedCount} exported, ${skippedCount} unsupported object(s) skipped`,
+        title: "지원하지 않는 객체를 제외했습니다",
+        message: `객체 ${exportedCount}개를 내보내고 ${skippedCount}개를 제외했습니다`,
         duration: 3500,
       });
     } else {
       toast.success({
-        message: `Exported ${exportedCount} object(s) to .excalidraw`,
+        message: `객체 ${exportedCount}개를 Excalidraw 파일로 내보냈습니다`,
       });
     }
   };
@@ -192,14 +196,17 @@ export function FileMenu({ compact = false }: { compact?: boolean }) {
     try {
       const file = restoreBackup();
       toast.success({
-        title: "Backup restored",
-        message: `"${file.projectName}" — restore again to switch back`,
+        title: "최근 백업을 복원했습니다",
+        message: `“${file.projectName}” · 다시 복원하면 이전 상태로 돌아갑니다`,
         duration: 3000,
       });
     } catch (err) {
       toast.error({
-        title: "Failed to restore backup",
-        message: err instanceof PigmaFileError ? err.message : "Unknown error",
+        title: "백업을 복원하지 못했습니다",
+        message:
+          err instanceof PigmaFileError
+            ? err.message
+            : "알 수 없는 오류가 발생했습니다",
       });
     }
   };
@@ -214,17 +221,19 @@ export function FileMenu({ compact = false }: { compact?: boolean }) {
       const text = await fileBlob.text();
       const { importedCount, skippedCount } = importExcalidrawToCanvas(text);
       toast.success({
-        title: "Excalidraw imported",
+        title: "Excalidraw 파일을 가져왔습니다",
         message:
           skippedCount > 0
-            ? `${importedCount} object(s) added, ${skippedCount} skipped`
-            : `${importedCount} object(s) added`,
+            ? `객체 ${importedCount}개 추가, ${skippedCount}개 제외`
+            : `객체 ${importedCount}개를 추가했습니다`,
       });
     } catch (err) {
       toast.error({
-        title: "Failed to import Excalidraw",
+        title: "Excalidraw 파일을 가져오지 못했습니다",
         message:
-          err instanceof ExcalidrawImportError ? err.message : "Unknown error",
+          err instanceof ExcalidrawImportError
+            ? err.message
+            : "알 수 없는 오류가 발생했습니다",
       });
     }
   };

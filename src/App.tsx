@@ -7,7 +7,6 @@ import {
   useRef,
 } from "react";
 import { Toaster } from "react-hot-toast";
-import { Agentation } from "agentation";
 import { Canvas } from "@/components/Canvas";
 import { Toolbar } from "@/components/Toolbar";
 import { PencilPopover } from "@/components/PencilPopover";
@@ -36,7 +35,6 @@ import { GroupEditor } from "@/components/GroupEditor";
 import { MultiSelectEditor } from "@/components/MultiSelectEditor";
 import { MultiSelectIndicator } from "@/components/MultiSelectIndicator";
 import { MentionPanel } from "@/components/MentionPanel";
-import { AIPanel } from "@/components/AIPanel";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { useImageDrop } from "@/hooks/useImageDrop";
 import { useAutoSave } from "@/hooks/useAutoSave";
@@ -52,6 +50,14 @@ const ShapesPanel = lazy(() =>
   import("@/components/ShapesPanel").then((module) => ({
     default: module.ShapesPanel,
   })),
+);
+const AIPanel = lazy(() =>
+  import("@/components/AIPanel").then((module) => ({
+    default: module.AIPanel,
+  })),
+);
+const Agentation = lazy(() =>
+  import("agentation").then((module) => ({ default: module.Agentation })),
 );
 
 function PanelLoading({ label }: { label: string }) {
@@ -259,7 +265,11 @@ function App() {
       {showMentionPanel && (
         <MentionPanel onClose={() => setShowMentionPanel(false)} />
       )}
-      {isAIEnabled && <AIPanel />}
+      {isAIEnabled && (
+        <Suspense fallback={<PanelLoading label="AI 도구" />}>
+          <AIPanel />
+        </Suspense>
+      )}
       <UnlockConfirmDialog />
       <LockOverlay />
       {cursorChatPosition && (
@@ -302,7 +312,11 @@ function App() {
           },
         }}
       />
-      {import.meta.env.DEV && <Agentation endpoint="http://localhost:4747" />}
+      {import.meta.env.DEV && (
+        <Suspense fallback={null}>
+          <Agentation endpoint="http://localhost:4747" />
+        </Suspense>
+      )}
     </div>
   );
 }

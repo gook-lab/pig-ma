@@ -151,7 +151,7 @@ async function loadBoard(page: Page, n: number) {
     mimeType: "application/json",
     buffer: Buffer.from(JSON.stringify(board)),
   });
-  await page.getByText("Project opened").waitFor({ timeout: 30000 });
+  await page.getByText("프로젝트를 열었습니다").waitFor({ timeout: 30000 });
   const loadMs = Date.now() - t0;
   await page.waitForTimeout(1000); // 초기 렌더 안정화
   return loadMs;

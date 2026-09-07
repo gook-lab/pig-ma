@@ -11,6 +11,7 @@ import { useCanvasStore } from "@/store";
 import { Z_HEADER } from "@/constants/zIndex";
 
 const STORAGE_KEY = "pig-onboarding-complete";
+const RESTART_EVENT = "restart-onboarding";
 const STEP_DURATION = 2600;
 
 const STEPS = [
@@ -83,6 +84,16 @@ export function EmptyCanvasGuide() {
     const frame = window.requestAnimationFrame(completeTour);
     return () => window.cancelAnimationFrame(frame);
   }, [completeTour, isVisible, objectsCount]);
+
+  useEffect(() => {
+    const restartTour = () => {
+      localStorage.removeItem(STORAGE_KEY);
+      setStep(0);
+      setIsVisible(true);
+    };
+    window.addEventListener(RESTART_EVENT, restartTour);
+    return () => window.removeEventListener(RESTART_EVENT, restartTour);
+  }, []);
 
   if (!isVisible || objectsCount > 0 || hideUI || isLocked) return null;
 

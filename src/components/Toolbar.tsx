@@ -914,8 +914,9 @@ export function Toolbar() {
 
         {/* Main Toolbar */}
         <div
+          data-testid="main-toolbar"
           className={cn(
-            "flex h-12 items-center gap-1 px-3",
+            "mobile-primary-toolbar flex h-14 items-center gap-0 px-1 sm:h-12 sm:gap-1 sm:px-3",
             "rounded-xl border border-gray-200 bg-white shadow-lg",
             "dark:border-[#c0c1c4] dark:bg-[#d6d7da]",
           )}

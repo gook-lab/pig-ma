@@ -47,4 +47,37 @@ test.describe("온보딩과 모바일 헤더", () => {
     await expect(page.getByRole("button", { name: "템플릿" })).toBeVisible();
     await expect(page.getByRole("button", { name: "공유" })).toBeVisible();
   });
+
+  test("제품 안내에서 시작 안내를 다시 열 수 있다", async ({ page }) => {
+    await page.addInitScript(() =>
+      localStorage.setItem("pig-onboarding-complete", "true"),
+    );
+    await page.goto("/");
+
+    await page.getByRole("button", { name: "Pig-ma 메뉴 열기" }).click();
+    await page.getByRole("button", { name: "사용 방법" }).click();
+    await page.getByRole("button", { name: "시작 안내 다시 보기" }).click();
+
+    await expect(page.getByLabel("시작 안내 1/4")).toBeVisible();
+  });
+
+  test("375px에서 미니맵이 툴바와 겹치지 않는다", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.addInitScript(() =>
+      localStorage.setItem("pig-onboarding-complete", "true"),
+    );
+    await page.goto("/");
+
+    const minimap = await page.getByTestId("minimap").boundingBox();
+    const toolbar = await page.getByTestId("main-toolbar").boundingBox();
+    expect(minimap).not.toBeNull();
+    expect(toolbar).not.toBeNull();
+    expect(minimap!.y + minimap!.height).toBeLessThanOrEqual(toolbar!.y);
+
+    for (const label of ["축소", "확대"]) {
+      const box = await page.getByRole("button", { name: label }).boundingBox();
+      expect(box?.width).toBeGreaterThanOrEqual(44);
+      expect(box?.height).toBeGreaterThanOrEqual(44);
+    }
+  });
 });
