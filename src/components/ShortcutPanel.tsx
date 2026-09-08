@@ -351,28 +351,28 @@ export function ShortcutPanel() {
                     onClick={discardChanges}
                     className="rounded px-2 py-1 text-xs text-gray-600 transition-colors hover:bg-gray-200"
                   >
-                    Discard
+                    변경 취소
                   </button>
                   <button
                     onClick={saveChanges}
                     className="flex items-center gap-1 rounded bg-blue-500 px-2 py-1 text-xs text-white transition-colors hover:bg-blue-600"
                   >
                     <Check className="h-3 w-3" />
-                    Save
+                    저장
                   </button>
                 </div>
               </div>
             ) : (
               <>
-                <div className="mb-2 text-xs text-gray-500">Movement</div>
+                <div className="mb-2 text-xs text-gray-500">이동</div>
                 <div className="flex items-center justify-between text-xs text-gray-600">
-                  <span>Arrow keys: 1px</span>
+                  <span>방향키: 1px</span>
                 </div>
                 <div className="mt-1 flex items-center justify-between text-xs text-gray-600">
-                  <span>Shift + Arrow: 10px</span>
+                  <span>Shift + 방향키: 10px</span>
                 </div>
                 <div className="mt-3 text-xs text-gray-400">
-                  Click to edit. ESC to cancel.
+                  클릭해 수정하고 ESC로 취소합니다.
                 </div>
               </>
             )}

@@ -59,7 +59,7 @@ export function MentionPanel({ onClose }: MentionPanelProps) {
       <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
         <div className="flex items-center gap-2">
           <AtSign size={16} className="text-violet-600" />
-          <span className="text-sm font-semibold text-gray-900">Mentions</span>
+          <span className="text-sm font-semibold text-gray-900">멘션</span>
           <span className="rounded-full bg-violet-100 px-1.5 py-0.5 text-[10px] font-medium text-violet-700">
             {mentions.length}
           </span>

@@ -102,7 +102,7 @@ export function AIPanel() {
         onClick={() => setIsOpen(true)}
         className="fixed right-4 bottom-20 flex items-center gap-2 rounded-full bg-violet-600 px-4 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:bg-violet-700 active:scale-95"
         style={{ zIndex: Z_SIDE_PANEL }}
-        title="AI Diagram Generator"
+        title="AI 다이어그램 생성"
       >
         <Sparkles className="h-4 w-4" />
         AI
@@ -121,7 +121,7 @@ export function AIPanel() {
       <div className="flex items-center justify-between border-b border-gray-700 px-4 py-3">
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-violet-400" />
-          <span className="text-sm font-medium text-white">AI Generate</span>
+          <span className="text-sm font-medium text-white">AI로 생성</span>
         </div>
         <button
           onClick={() => {
@@ -173,7 +173,7 @@ export function AIPanel() {
             >
               <Key className="h-3.5 w-3.5" />
               <div className="text-left">
-                <div>Set API key</div>
+                <div>API 키 설정</div>
                 <div className="mt-0.5 text-[10px] text-gray-500">
                   {PROVIDER_KEY_HINTS[aiProvider]}
                 </div>
@@ -189,7 +189,7 @@ export function AIPanel() {
                   if (e.key === "Enter") handleSaveKey();
                   e.stopPropagation();
                 }}
-                placeholder="Paste your API key..."
+                placeholder="API 키를 붙여 넣으세요"
                 className="flex-1 rounded border border-gray-600 bg-gray-700 px-2 py-1.5 text-xs text-white outline-none focus:border-violet-500"
                 autoFocus
               />

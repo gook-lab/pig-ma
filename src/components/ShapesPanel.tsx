@@ -223,9 +223,7 @@ export function ShapesPanel() {
     >
       {/* Header */}
       <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-[#c0c1c4]">
-        <h2 className="font-semibold text-gray-800 dark:text-gray-800">
-          Shapes
-        </h2>
+        <h2 className="font-semibold text-gray-800 dark:text-gray-800">도형</h2>
         <button
           onClick={() => setShowShapesPanel(false)}
           className="rounded p-1 transition-colors hover:bg-gray-100 dark:hover:bg-[#c8c9cc]"
@@ -242,7 +240,7 @@ export function ShapesPanel() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search shapes"
+            placeholder="도형 검색"
             className="pr-3 pl-9"
           />
         </div>
@@ -259,7 +257,7 @@ export function ShapesPanel() {
             >
               <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
                 <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
-                Favorites
+                즐겨찾기
                 <span className="text-xs text-gray-400">
                   ({favoriteShapes.length}/{MAX_FAVORITES})
                 </span>
