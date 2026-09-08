@@ -6,6 +6,8 @@
 
 [Demo](https://pig-ma.vercel.app) · [Architecture](docs/ARCHITECTURE.md) · [API](docs/API.md)
 
+<img src="docs/screenshots/cover.png" alt="pig-ma 무한 캔버스" width="100%">
+
 ## 프로젝트 소개
 
 캔버스 편집기에서 반복되는 선택·이동·확대·축소·정렬 동작을 재사용 가능한 라이브러리로 분리했습니다. 도형과 HTML 오버레이가 같은 좌표계를 사용하도록 뷰포트 상태를 통합하고, 커넥터는 도형의 앵커와 크기를 기준으로 경로를 계산합니다.

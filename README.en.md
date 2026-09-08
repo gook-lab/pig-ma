@@ -1,8 +1,25 @@
-# Pig-ma
+# pig-ma
 
 [한국어](README.md) | **English**
 
-FigJam-style infinite canvas library for React with rich text editing, shapes, connectors, and comments.
+An infinite canvas library for React that brings shapes, rich text, connectors, and comments into one workspace.
+
+[Demo](https://pig-ma.vercel.app) · [Architecture](docs/ARCHITECTURE.md) · [API](docs/API.md)
+
+<img src="docs/screenshots/cover.png" alt="pig-ma infinite canvas" width="100%">
+
+## Project overview
+
+The project extracts the selection, movement, zoom, and alignment behavior shared by canvas editors into a reusable library. Canvas objects and HTML overlays use the same viewport transform, while connector paths are calculated from each shape's anchors and dimensions.
+
+Complete workspaces can be saved and reopened as `.pigma` files. Excalidraw, Mermaid, and Figma data can also be converted into canvas objects, with local auto-save and undo history protecting in-progress work.
+
+### Problems addressed
+
+- **Canvas and HTML editor alignment**: a shared viewport transform keeps text editors aligned with their objects after panning and zooming.
+- **Connectors crossing shapes**: routing uses anchor direction and object dimensions to calculate detours, backed by intersection tests.
+- **Saving compound objects**: serialization restores object IDs and connector references so relationships survive copy, paste, and file import.
+- **Rendering cost as features grow**: selector-based subscriptions and off-screen filtering limit updates to the objects that changed.
 
 ## Screenshots
 
@@ -332,7 +349,7 @@ npm run dev -- --port 5000   # test server (Playwright specs expect this port)
 npm run build        # demo app build
 npm run build:lib    # library build (dist/) + type declarations
 npm run lint
-npm test             # vitest unit tests (471)
+npm test             # Vitest unit tests
 npm run test:watch
 
 npx playwright test  # E2E specs in tests/
