@@ -26,6 +26,9 @@ jobs:
 
       - run: npm ci
 
+      - name: 운영 의존성 보안 검사
+        run: npm audit --omit=dev --audit-level=high
+
       - name: 타입체크
         run: npm run typecheck
 
