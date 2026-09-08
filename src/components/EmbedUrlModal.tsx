@@ -115,7 +115,7 @@ export function EmbedUrlModal({
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 px-5 py-3">
-          <h2 className="text-base font-semibold text-gray-900">Embed URL</h2>
+          <h2 className="text-base font-semibold text-gray-900">URL 삽입</h2>
           <button
             onClick={onClose}
             className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
@@ -128,7 +128,7 @@ export function EmbedUrlModal({
         <div className="p-5">
           {/* Supported services */}
           <div className="mb-4 flex flex-wrap items-center gap-3 text-sm text-gray-500">
-            <span>Supported:</span>
+            <span>지원 서비스:</span>
             <div className="flex items-center gap-1">
               <Youtube className="h-4 w-4 text-red-500" />
               <span>YouTube</span>
@@ -151,7 +151,7 @@ export function EmbedUrlModal({
               value={url}
               onChange={handleUrlChange}
               onKeyDown={handleKeyDown}
-              placeholder="Paste YouTube, Figma, or Notion URL..."
+              placeholder="YouTube, Figma 또는 Notion URL을 붙여 넣으세요"
               className={cn(
                 "pr-10",
                 error &&
@@ -190,10 +190,10 @@ export function EmbedUrlModal({
                     </div>
                     <span className="text-gray-600">
                       {parsedUrl.metadata.videoId
-                        ? `Video ID: ${parsedUrl.metadata.videoId}`
-                        : "Video detected"}
+                        ? `영상 ID: ${parsedUrl.metadata.videoId}`
+                        : "영상을 확인했습니다"}
                       {parsedUrl.metadata.startTime
-                        ? ` (starts at ${parsedUrl.metadata.startTime}s)`
+                        ? ` (${parsedUrl.metadata.startTime}초부터 재생)`
                         : ""}
                     </span>
                   </>
@@ -216,7 +216,7 @@ export function EmbedUrlModal({
                       Notion
                     </div>
                     <span className="text-gray-600">
-                      {parsedUrl.metadata.pageName || "Notion Page"}
+                      {parsedUrl.metadata.pageName || "Notion 페이지"}
                     </span>
                   </>
                 )}
@@ -231,14 +231,14 @@ export function EmbedUrlModal({
             className="mt-4 flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600"
           >
             <HelpCircle className="h-3.5 w-3.5" />
-            <span>{showHelp ? "Hide help" : "How to get the URL?"}</span>
+            <span>{showHelp ? "도움말 닫기" : "URL은 어디서 찾나요?"}</span>
           </button>
 
           {/* Help content */}
           {showHelp && (
             <div className="mt-3 rounded-lg bg-blue-50 p-3 text-xs text-gray-600">
               <div className="mb-2 font-medium text-gray-700">
-                Supported URL formats:
+                지원하는 URL 형식
               </div>
               <div className="space-y-2">
                 <div>
@@ -258,12 +258,12 @@ export function EmbedUrlModal({
                     Figma
                   </div>
                   <ul className="mt-1 ml-4 list-disc text-gray-500">
-                    <li>figma.com/design/... (Design file)</li>
+                    <li>figma.com/design/... (디자인 파일)</li>
                     <li>figma.com/board/... (FigJam)</li>
-                    <li>figma.com/proto/... (Prototype)</li>
+                    <li>figma.com/proto/... (프로토타입)</li>
                   </ul>
                   <div className="mt-1 text-gray-400">
-                    * Team pages (/files/team/...) are not supported
+                    * 팀 페이지(/files/team/...) 주소는 지원하지 않습니다
                   </div>
                 </div>
                 <div>
@@ -276,13 +276,13 @@ export function EmbedUrlModal({
                     <li>notion.site/Page-Name-...</li>
                   </ul>
                   <div className="mt-1 text-gray-400">
-                    * Page must be shared publicly
+                    * 페이지가 공개로 공유되어 있어야 합니다
                   </div>
                 </div>
               </div>
               <div className="mt-2 border-t border-blue-100 pt-2 text-gray-500">
-                <span className="font-medium">Tip:</span> Open the file in your
-                browser and copy the URL from the address bar.
+                <span className="font-medium">도움말:</span> 브라우저에서 파일을
+                열고 주소창의 URL을 복사하세요.
               </div>
             </div>
           )}
@@ -294,7 +294,7 @@ export function EmbedUrlModal({
             onClick={onClose}
             className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
           >
-            Cancel
+            취소
           </button>
           <button
             onClick={handleSubmit}
@@ -306,7 +306,7 @@ export function EmbedUrlModal({
                 : "cursor-not-allowed bg-gray-300",
             )}
           >
-            Embed
+            삽입
           </button>
         </div>
       </div>

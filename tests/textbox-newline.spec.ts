@@ -9,7 +9,10 @@ const EDITOR = ".tiptap-editor [contenteditable='true']";
 
 test.describe("TextBox 줄바꿈 회귀", () => {
   test.beforeEach(async ({ page }) => {
-    await page.addInitScript(() => localStorage.clear());
+    await page.addInitScript(() => {
+      localStorage.clear();
+      localStorage.setItem("pig-onboarding-complete", "true");
+    });
     await page.goto("/");
     await page.waitForLoadState("networkidle");
   });

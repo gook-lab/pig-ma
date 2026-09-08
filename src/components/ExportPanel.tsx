@@ -381,7 +381,7 @@ export function ExportPanel() {
                   onChange={(e) => setIncludeBackground(e.target.checked)}
                   className="h-3.5 w-3.5 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
                 />
-                <span className="text-xs text-gray-600">Background</span>
+                <span className="text-xs text-gray-600">배경 포함</span>
               </label>
               {format !== "svg" && exportBounds && (
                 <span className="rounded bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-500">
@@ -391,7 +391,7 @@ export function ExportPanel() {
             </div>
             {format !== "svg" && (
               <p className="mb-4 text-[11px] text-gray-400">
-                Higher scale = more pixels = sharper when zoomed in or printed
+                배율이 높을수록 확대하거나 인쇄할 때 더 선명합니다
               </p>
             )}
 

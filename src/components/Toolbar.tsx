@@ -747,7 +747,7 @@ export function Toolbar() {
 
               {/* Fill Color */}
               <div className="flex items-center gap-3">
-                <span className="w-10 text-xs text-gray-500">Fill</span>
+                <span className="w-10 text-xs text-gray-500">채우기</span>
                 <div className="flex gap-1">
                   {FILL_COLORS.map((color) => (
                     <button
@@ -779,7 +779,7 @@ export function Toolbar() {
 
               {/* Stroke Color */}
               <div className="flex items-center gap-3">
-                <span className="w-10 text-xs text-gray-500">Stroke</span>
+                <span className="w-10 text-xs text-gray-500">선</span>
                 <div className="flex gap-1">
                   {STROKE_COLORS.map((color) => (
                     <button

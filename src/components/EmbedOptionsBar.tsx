@@ -113,12 +113,12 @@ export function EmbedOptionsBar({
               {isPlaying ? (
                 <>
                   <Square className="h-3.5 w-3.5" />
-                  <span>Stop</span>
+                  <span>정지</span>
                 </>
               ) : (
                 <>
                   <Play className="h-3.5 w-3.5" />
-                  <span>Play</span>
+                  <span>재생</span>
                 </>
               )}
             </button>
@@ -140,7 +140,7 @@ export function EmbedOptionsBar({
         <button
           onClick={handleOpenExternal}
           className="rounded p-1.5 text-gray-300 transition-all hover:bg-gray-700 hover:text-white"
-          title="Open in new tab"
+          title="새 탭에서 열기"
         >
           <ExternalLink className="h-4 w-4" />
         </button>

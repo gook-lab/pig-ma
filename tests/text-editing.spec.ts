@@ -45,7 +45,10 @@ async function saveAndGetObjects(page: Page) {
 
 test.describe("텍스트 편집 (Tiptap 오버레이)", () => {
   test.beforeEach(async ({ page }) => {
-    await page.addInitScript(() => localStorage.clear());
+    await page.addInitScript(() => {
+      localStorage.clear();
+      localStorage.setItem("pig-onboarding-complete", "true");
+    });
     await page.goto("/");
     await page.waitForLoadState("networkidle");
   });

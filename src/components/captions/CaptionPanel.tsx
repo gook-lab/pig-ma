@@ -115,7 +115,7 @@ export function CaptionPanel() {
       <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
         <div className="flex items-center gap-2">
           <MessageSquare size={18} className="text-violet-500" />
-          <span className="font-semibold text-gray-800">Comments</span>
+          <span className="font-semibold text-gray-800">댓글</span>
           <span className="text-sm text-gray-400">({captions.length})</span>
         </div>
         <button
