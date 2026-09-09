@@ -28,6 +28,17 @@ const MINIMAP_PADDING = 0;
 // 최소 줌 (10%)에서의 최대 뷰포트를 기준으로 미니맵 범위 설정
 const MIN_ZOOM = 0.1;
 
+const MINIMAP_COLORS = {
+  stickyNote: "#facc15",
+  shape: "#22d3ee",
+  rectangle: "#a78bfa",
+  textBox: "#4ade80",
+  image: "#fb923c",
+  line: "#f472b6",
+  connector: "#60a5fa",
+  default: "#94a3b8",
+};
+
 export const Minimap = memo(function Minimap({
   objects,
   viewport,
@@ -228,18 +239,6 @@ export const Minimap = memo(function Minimap({
       onViewportChange,
     ],
   );
-
-  // 미니맵용 형광색 (눈에 잘 띄는 색상)
-  const MINIMAP_COLORS = {
-    stickyNote: "#facc15", // 밝은 노란색
-    shape: "#22d3ee", // 밝은 시안
-    rectangle: "#a78bfa", // 밝은 보라색
-    textBox: "#4ade80", // 밝은 녹색
-    image: "#fb923c", // 밝은 주황색
-    line: "#f472b6", // 밝은 핑크
-    connector: "#60a5fa", // 밝은 파란색
-    default: "#94a3b8", // 기본 회색
-  };
 
   // 최소 표시 크기 (눈에 잘 보이도록)
   const MIN_DISPLAY_SIZE = 4;

@@ -535,7 +535,6 @@ export const Connector = memo(function Connector({
     connectorPathStyle,
     connectorElbowBends,
     connectorElbowCornerStyle,
-    connectorElbowCornerRadius,
     elbowSizeOptions,
   ]);
 
@@ -785,8 +784,8 @@ export const Connector = memo(function Connector({
       connector.id,
       pathStyle,
       connector.elbowBends,
-      connector.elbowCornerStyle,
-      connector.elbowCornerRadius,
+      connector.sourceAnchor,
+      connector.targetAnchor,
       elbowSizeOptions,
     ],
   );
@@ -866,8 +865,6 @@ export const Connector = memo(function Connector({
       endY,
       pathStyle,
       currentElbowBends,
-      connector.elbowCornerStyle,
-      connector.elbowCornerRadius,
       connector.sourceAnchor,
       connector.targetAnchor,
       elbowSizeOptions,
@@ -1605,9 +1602,13 @@ export const Connector = memo(function Connector({
       endX,
       endY,
       pathStyle,
-      connector.elbowCornerStyle,
-      connector.elbowCornerRadius,
       connector.elbowBends,
+      connector.sourceAnchor,
+      connector.sourceId,
+      connector.targetAnchor,
+      connector.targetId,
+      startMarker,
+      endMarker,
       elbowSizeOptions,
     ],
   );

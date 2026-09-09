@@ -1067,7 +1067,7 @@ export function Canvas() {
         }
       }
     },
-    [hoveredShapeForConnector, arrowDrawing],
+    [hoveredShapeForConnector, arrowDrawing, eraseAtPosition],
   );
 
   // Mouse move for marquee, pencil, arrow, panning, and shape preview
@@ -1286,7 +1286,15 @@ export function Canvas() {
     } else {
       setHoveredShapeForConnector(null);
     }
-  }, [marquee, drawing, arrowDrawing, isPanning, panStart]);
+  }, [
+    marquee,
+    drawing,
+    arrowDrawing,
+    isPanning,
+    panStart,
+    eraseAtPosition,
+    isErasing,
+  ]);
 
   // Mouse up for marquee, pencil, arrow, and panning
   const handleMouseUp = useCallback(() => {
@@ -1372,7 +1380,7 @@ export function Canvas() {
       setIsErasing(false);
     }
     // connector tool uses click-click mode, not drag - do nothing on mouseUp
-  }, []);
+  }, [isErasing]);
 
   // Window-level mouseup handler for fast drag outside Stage
   useEffect(() => {

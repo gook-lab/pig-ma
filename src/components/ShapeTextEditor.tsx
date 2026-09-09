@@ -50,7 +50,7 @@ export function ShapeTextEditor() {
       // Reset when not editing
       initializedRef.current = null;
     }
-  }, [editingObject?.id, isShape, pendingTextInput, setPendingTextInput]);
+  }, [editingObject, isShape, pendingTextInput, setPendingTextInput]);
 
   // Save and close editor
   const handleSave = useCallback(() => {

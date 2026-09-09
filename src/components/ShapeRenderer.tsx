@@ -484,7 +484,7 @@ export const ShapeRenderer = memo(function ShapeRenderer({
         }
       }
     },
-    [obj.id, obj.x, obj.y, obj.width, obj.height, obj.groupId],
+    [obj],
   );
 
   const fullDragEnd = useCallback(

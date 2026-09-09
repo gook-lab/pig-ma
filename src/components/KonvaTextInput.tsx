@@ -384,7 +384,7 @@ export const HiddenTextarea = memo(
         innerRef.current.focus();
         innerRef.current.setSelectionRange(value.length, value.length);
       }
-    }, [autoFocus]);
+    }, [autoFocus, value.length]);
 
     const handleInput = useCallback(
       (e: React.ChangeEvent<HTMLTextAreaElement>) => {

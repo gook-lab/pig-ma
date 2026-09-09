@@ -33,7 +33,7 @@
     "build:lib": "vite build --mode lib && npm run build:types",
     "build:types": "tsc -p tsconfig.lib.json",
     "format:check": "prettier --check .",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings=0",
     "lint:gate": "node scripts/lint-gate.js",
     "lint:gate:update": "node scripts/lint-gate.js --update",
     "preview": "vite preview",

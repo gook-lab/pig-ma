@@ -70,7 +70,7 @@ export const GroupBoundary = memo(function GroupBoundary({
   const [isResizing, setIsResizing] = useState(false);
 
   // 드래그 중인 객체 위치 추적 (bounds 재계산 트리거용)
-  const [dragPositions, setDragPositions] = useState<
+  const [, setDragPositions] = useState<
     Map<string, { x: number; y: number }>
   >(new Map());
 
@@ -252,7 +252,7 @@ export const GroupBoundary = memo(function GroupBoundary({
       width: maxX - minX,
       height: maxY - minY,
     };
-  }, [objects, group.id, dragPositions]);
+  }, [objects, group.id]);
 
   // 기본 bounds (customBounds와 objectBounds 중 더 큰 영역 사용)
   const baseBounds = useMemo(() => {

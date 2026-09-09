@@ -2,6 +2,7 @@ import {
   useState,
   useCallback,
   useEffect,
+  useMemo,
   type KeyboardEvent,
   type MouseEvent,
 } from "react";
@@ -179,7 +180,10 @@ function ChartOptionsBarInner({
   const curveType = chartData.curveType ?? "linear";
 
   // Multi-series data (Line chart only)
-  const seriesData = isLine ? getSeriesData(chartData) : [];
+  const seriesData = useMemo(
+    () => (isLine ? getSeriesData(chartData) : []),
+    [chartData, isLine],
+  );
   const canAddSeries = seriesData.length < 5;
 
   // Editing series values

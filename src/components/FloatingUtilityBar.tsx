@@ -517,7 +517,6 @@ function KeyboardVisualizer({
       isSystemReservedKey,
       getBinding,
       findConflict,
-      shortcuts,
       hasChanges,
       discardChanges,
       onClose,
