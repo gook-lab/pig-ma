@@ -92,6 +92,70 @@ export default defineConfig(({ mode }) => {
           minify: "esbuild",
           cssCodeSplit: false,
         }
-      : undefined,
+      : {
+          rollupOptions: {
+            output: {
+              manualChunks(id) {
+                if (
+                  id.includes("/src/components/Chart") ||
+                  id.includes("/src/components/shapes/Chart.tsx") ||
+                  id.includes("/src/utils/chart")
+                ) {
+                  return "feature-charts";
+                }
+                if (
+                  id.includes("/src/components/Connector") ||
+                  id.includes("/src/components/shapes/Connector.tsx") ||
+                  id.includes("/src/utils/elbow") ||
+                  id.includes("/src/utils/connector")
+                ) {
+                  return "feature-connectors";
+                }
+                if (!id.includes("node_modules")) return undefined;
+                if (id.includes("/konva/") || id.includes("/react-konva/")) {
+                  return "vendor-canvas";
+                }
+                if (
+                  id.includes("/lowlight/") ||
+                  id.includes("/highlight.js/") ||
+                  id.includes("/hast-util-") ||
+                  id.includes("/parse5/")
+                ) {
+                  return "vendor-highlight";
+                }
+                if (
+                  id.includes("/@tiptap/") ||
+                  id.includes("/prosemirror-")
+                ) {
+                  return "vendor-editor";
+                }
+                if (
+                  id.includes("/react/") ||
+                  id.includes("/react-dom/") ||
+                  id.includes("/scheduler/")
+                ) {
+                  return "vendor-react";
+                }
+                if (id.includes("/radix-ui/") || id.includes("/@radix-ui/")) {
+                  return "vendor-radix";
+                }
+                if (
+                  id.includes("/lucide-react/") ||
+                  id.includes("/zustand/") ||
+                  id.includes("/zundo/") ||
+                  id.includes("/dompurify/") ||
+                  id.includes("/tippy.js/") ||
+                  id.includes("/zod/") ||
+                  id.includes("/tailwind-merge/") ||
+                  id.includes("/class-variance-authority/") ||
+                  id.includes("/clsx/")
+                ) {
+                  return "vendor-ui-utils";
+                }
+                return undefined;
+              },
+            },
+          },
+        },
   };
 });
