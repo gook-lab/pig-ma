@@ -1951,37 +1951,6 @@ export function Canvas() {
     <>
       {/* Stage wrapper - cursor 스타일을 확실하게 적용 */}
       <div ref={stageWrapperRef} style={getWrapperCursorStyle()}>
-        {/* CSS Grid Pattern — applied to Konva Stage container after mount */}
-        {false &&
-          gridType !== "blank" &&
-          (() => {
-            const screenGap = 20;
-            const dotSize = gridType === "dots" ? 1.2 : 1;
-            const offsetX = viewport.x % screenGap;
-            const offsetY = viewport.y % screenGap;
-
-            return (
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  pointerEvents: "none",
-                  zIndex: 0,
-                  ...(gridType === "dots"
-                    ? {
-                        backgroundImage: `radial-gradient(circle, ${gridColor} ${dotSize}px, transparent ${dotSize}px)`,
-                        backgroundSize: `${screenGap}px ${screenGap}px`,
-                        backgroundPosition: `${offsetX}px ${offsetY}px`,
-                      }
-                    : {
-                        backgroundImage: `linear-gradient(${gridColor} 1px, transparent 1px), linear-gradient(90deg, ${gridColor} 1px, transparent 1px)`,
-                        backgroundSize: `${screenGap}px ${screenGap}px`,
-                        backgroundPosition: `${offsetX}px ${offsetY}px`,
-                      }),
-                }}
-              />
-            );
-          })()}
         <Stage
           ref={stageRef}
           width={stageSize.width}
@@ -2041,84 +2010,6 @@ export function Canvas() {
           }}
           onContextMenu={handleContextMenu}
         >
-          {/* Grid rendering moved to CSS div before Stage */}
-
-          {/* Legacy Konva grid removed — CSS pattern is 100x faster */}
-          {false && gridType !== "blank" && (
-            <Layer listening={false}>
-              <Shape
-                perfectDrawEnabled={false}
-                shadowForStrokeEnabled={false}
-                sceneFunc={(ctx) => {
-                  const zoomFactor = Math.min(1, viewport.zoom);
-                  const targetScreenGap = 50 * (0.5 + 0.5 * zoomFactor);
-                  const rawCanvasGap = targetScreenGap / viewport.zoom;
-                  const baseGap = 10;
-                  const power = Math.round(Math.log2(rawCanvasGap / baseGap));
-                  const gap = baseGap * Math.pow(2, Math.max(0, power));
-                  const viewportLeft = -viewport.x / viewport.zoom;
-                  const viewportTop = -viewport.y / viewport.zoom;
-                  const viewportRight =
-                    (-viewport.x + stageSize.width) / viewport.zoom;
-                  const viewportBottom =
-                    (-viewport.y + stageSize.height) / viewport.zoom;
-                  const visibleLeft =
-                    Math.floor(viewportLeft / gap) * gap - gap;
-                  const visibleTop = Math.floor(viewportTop / gap) * gap - gap;
-                  const visibleRight =
-                    Math.ceil(viewportRight / gap) * gap + gap;
-                  const visibleBottom =
-                    Math.ceil(viewportBottom / gap) * gap + gap;
-                  const maxCount = 100;
-                  const cols = Math.min(
-                    maxCount,
-                    Math.ceil((visibleRight - visibleLeft) / gap),
-                  );
-                  const rows = Math.min(
-                    maxCount,
-                    Math.ceil((visibleBottom - visibleTop) / gap),
-                  );
-
-                  if (gridType === "dots") {
-                    const dotRadius = 1.5 / viewport.zoom;
-                    ctx.fillStyle = gridColor;
-                    ctx.beginPath();
-                    for (let i = 0; i <= cols; i++) {
-                      for (let j = 0; j <= rows; j++) {
-                        const x = visibleLeft + i * gap;
-                        const y = visibleTop + j * gap;
-                        ctx.moveTo(x + dotRadius, y);
-                        ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
-                      }
-                    }
-                    ctx.fill();
-                  } else if (gridType === "lines") {
-                    const lineWidth = 1 / viewport.zoom;
-                    ctx.strokeStyle = gridColor;
-                    ctx.lineWidth = lineWidth;
-                    ctx.beginPath();
-
-                    // Vertical lines
-                    for (let i = 0; i <= cols; i++) {
-                      const x = visibleLeft + i * gap;
-                      ctx.moveTo(x, visibleTop);
-                      ctx.lineTo(x, visibleTop + rows * gap);
-                    }
-
-                    // Horizontal lines
-                    for (let j = 0; j <= rows; j++) {
-                      const y = visibleTop + j * gap;
-                      ctx.moveTo(visibleLeft, y);
-                      ctx.lineTo(visibleLeft + cols * gap, y);
-                    }
-
-                    ctx.stroke();
-                  }
-                }}
-              />
-            </Layer>
-          )}
-
           {/* Objects Layer (shapes, images, sticky notes - NOT lines) */}
           {/* Objects Layer - connector 툴일 때는 Shape 드래그 비활성화 (화살표 생성 우선) */}
           <Layer listening={tool !== "pencil" && tool !== "connector"}>
@@ -2632,8 +2523,8 @@ export function Canvas() {
                     );
                     if (!firstObj) return;
 
-                    let currentX = firstNode.x();
-                    let currentY = firstNode.y();
+                    const currentX = firstNode.x();
+                    const currentY = firstNode.y();
 
                     // 정렬 가이드 계산
                     const draggedBounds = {
