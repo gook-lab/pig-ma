@@ -79,8 +79,7 @@ export function TextBoxEditor() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [
-    selectedTextObject?.id,
-    selectedTextObject?.locked,
+    selectedTextObject,
     editingTextId,
     setEditingTextId,
   ]);
@@ -117,8 +116,7 @@ export function TextBoxEditor() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [
-    selectedShapeObject?.id,
-    selectedShapeObject?.locked,
+    selectedShapeObject,
     editingTextId,
     setEditingTextId,
     setPendingTextInput,

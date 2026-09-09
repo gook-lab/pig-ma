@@ -95,7 +95,7 @@ export function TableCellEditor() {
     if (editingTableCell) {
       justOpenedRef.current = true;
     }
-  }, [editingTableCell?.cellKey]);
+  }, [editingTableCell]);
 
   // Auto-fit row height based on content
   useEffect(() => {

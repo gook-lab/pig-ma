@@ -249,7 +249,16 @@ export function ExportPanel() {
     } finally {
       setIsExporting(false);
     }
-  }, [stageRef, format, scale, scope, exportBounds, objects, selectedIds]);
+  }, [
+    stageRef,
+    format,
+    scale,
+    scope,
+    exportBounds,
+    objects,
+    selectedIds,
+    includeBackground,
+  ]);
 
   return (
     <>

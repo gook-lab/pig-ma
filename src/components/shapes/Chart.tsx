@@ -1845,7 +1845,6 @@ function ChartInner({
     legendPosition,
     legendAlign,
     legendSize,
-    totalSize,
     width,
     height,
     headerHeight,

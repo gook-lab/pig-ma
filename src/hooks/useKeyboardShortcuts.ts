@@ -92,7 +92,7 @@ export function useKeyboardShortcuts() {
   }, [editingTextId, activeEditor, setEditingTextId]);
 
   // 선택된 객체들이 잠긴 그룹에 속해있는지 체크하는 헬퍼
-  const isSelectionLocked = () => {
+  const isSelectionLocked = useCallback(() => {
     const selectedObjs = objects.filter((obj) => selectedIds.includes(obj.id));
     // 개별 객체 잠금 체크
     if (selectedObjs.some((obj) => obj.locked)) return true;
@@ -101,10 +101,10 @@ export function useKeyboardShortcuts() {
       ...new Set(selectedObjs.map((o) => o.groupId).filter(Boolean)),
     ];
     return groupIds.some((gid) => groups.find((g) => g.id === gid)?.locked);
-  };
+  }, [groups, objects, selectedIds]);
 
   // 잠긴 그룹 ID 찾기
-  const getLockedGroupId = () => {
+  const getLockedGroupId = useCallback(() => {
     const selectedObjs = objects.filter((obj) => selectedIds.includes(obj.id));
     const groupIds = [
       ...new Set(selectedObjs.map((o) => o.groupId).filter(Boolean)),
@@ -114,7 +114,7 @@ export function useKeyboardShortcuts() {
       if (group?.locked) return gid;
     }
     return null;
-  };
+  }, [groups, objects, selectedIds]);
   const { shortcuts, isCapturing } = useShortcutsStore();
   const { addSnapshot } = useHistoryStore();
 
@@ -698,6 +698,8 @@ export function useKeyboardShortcuts() {
     ungroupSelected,
     updateGroup,
     activeEditor,
+    getLockedGroupId,
+    isSelectionLocked,
     setEditingTextId,
     setPendingTextInput,
     handleUndo,

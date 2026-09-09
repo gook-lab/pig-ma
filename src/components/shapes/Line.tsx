@@ -29,7 +29,7 @@ export const Line = memo(function Line({
   onDragEnd,
 }: LineProps) {
   void _isSelected; // Selection indicator handled by Transformer (단일 선택 시)
-  const points = shape.points ?? [];
+  const points = useMemo(() => shape.points ?? [], [shape.points]);
 
   // Calculate bounding box from points for multi-select border
   const bounds = useMemo(() => {

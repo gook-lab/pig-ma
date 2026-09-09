@@ -77,7 +77,13 @@ export function TextEditorOverlay() {
       tiptapContent: migrated,
       _contentVersion: 2,
     });
-  }, [editingObject?.id, updateObject]);
+  }, [
+    editingObject?.id,
+    editingObject?.lineIndents,
+    editingObject?.richText,
+    editingObject?.tiptapContent,
+    updateObject,
+  ]);
 
   const tiptapContent = useMemo((): JSONContent => {
     if (editingObject?.tiptapContent) {

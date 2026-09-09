@@ -1135,7 +1135,10 @@ function ChartRightPanelInner({
     hasLegendSelected;
 
   // Multi-series data (Line chart only)
-  const seriesData = isLine ? getSeriesData(chartData) : [];
+  const seriesData = useMemo(
+    () => (isLine ? getSeriesData(chartData) : []),
+    [chartData, isLine],
+  );
   const canAddSeries = seriesData.length < 5;
 
   // Editing series values
