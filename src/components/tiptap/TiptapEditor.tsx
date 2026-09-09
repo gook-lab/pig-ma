@@ -24,7 +24,7 @@ import { fontStack } from "@/constants/fonts";
 const lowlight = createLowlight(common);
 
 // 커스텀 FontSize 확장 - TextStyle mark에 fontSize 속성 추가
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 const FontSize = Extension.create({
   name: "fontSize",
 
@@ -106,7 +106,7 @@ export const tiptapExtensions = [
         let popup: TippyInstance[] | null = null;
 
         return {
-          onStart: (props: any) => {
+          onStart: (props) => {
             component = new ReactRenderer(MentionList, {
               props,
               editor: props.editor as Editor,
@@ -125,7 +125,7 @@ export const tiptapExtensions = [
             });
           },
 
-          onUpdate: (props: any) => {
+          onUpdate: (props) => {
             component?.updateProps(props);
             if (popup?.[0] && props.clientRect) {
               popup[0].setProps({

@@ -32,8 +32,8 @@ jobs:
       - name: 타입체크
         run: npm run typecheck
 
-      - name: lint 게이트 — 신규 위반만 검사
-        run: npm run lint:gate
+      - name: 전체 린트 검사
+        run: npm run lint
 
       - name: 유닛 테스트
         run: npm test

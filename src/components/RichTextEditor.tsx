@@ -68,7 +68,7 @@ export const RichTextEditor = forwardRef<
 
       return segments
         .map((seg) => {
-          let text = seg.text
+          const text = seg.text
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")

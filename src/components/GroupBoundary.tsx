@@ -415,7 +415,7 @@ export const GroupBoundary = memo(function GroupBoundary({
     // 원래 비율 계산
     const aspectRatio = startBounds.width / startBounds.height;
 
-    let newBounds = { ...startBounds };
+    const newBounds = { ...startBounds };
 
     // 코너 핸들: 비율 유지 스케일링
     if (

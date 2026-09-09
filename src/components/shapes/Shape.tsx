@@ -363,7 +363,7 @@ export function getShapePath(
         width * 0.1,
         height,
       ];
-    case "flowDelay":
+    case "flowDelay": {
       // D shape (half circle on right)
       const points: number[] = [0, 0, width * 0.5, 0];
       for (let i = 0; i <= 16; i++) {
@@ -375,6 +375,7 @@ export function getShapePath(
       }
       points.push(width * 0.5, height, 0, height);
       return points;
+    }
     default:
       return [0, 0, width, 0, width, height, 0, height];
   }
