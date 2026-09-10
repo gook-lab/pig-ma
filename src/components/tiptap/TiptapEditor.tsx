@@ -1,4 +1,5 @@
-import { useEditor, EditorContent, Editor, ReactRenderer } from "@tiptap/react";
+import { useEditor, EditorContent, ReactRenderer } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import { Extension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import { sinkListItem } from "@tiptap/pm/schema-list";
